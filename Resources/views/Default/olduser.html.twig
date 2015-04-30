@@ -1,0 +1,34 @@
+{% extends "SandboxBundle:Default:index.html.twig" %}
+{% block content %}
+<div class="container-fluid">
+	<div class="row"><h1>User {{app.user.username}} profile</h1></div>
+	<hr>
+	<div class="row"><p>First name: {{app.user.firstname}}</div>
+	<div class="row"><p>Last name: {{app.user.lastname}}</div>
+	<div class="row"><p>Joined: {{app.user.created|date('d-m-Y')}}</div>
+	<div class="row"><p>Email: {{app.user.email}}</div>
+	<hr>
+	<div class="row"><p>Last 5 uploads:</div>
+	        <!-- Page Features -->
+        {% if recent is defined %}
+        <div class="row text-center">
+        	{% for item in recent %}
+            <div class="col-sm-2 col-sm-3 hero-feature">
+                <div class="thumbnail">
+	         		<img src='{{ (item.getFileName~'.'~item.getExtension) | imagine_filter('thumb')}}' class="img-thumbnail">
+                    <div class="caption">
+                        <h3>{{item.getTitle}}</h3>
+                        <p>{{item.getDescription}}</p>
+                        <p>
+                            <a href='{{path('_image', { 'id' : item.getId })}}' class="btn btn-primary" >Check me out!</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
+        </div>
+        <!-- /.row -->
+		{% endif %}
+</div>
+{% endblock %}

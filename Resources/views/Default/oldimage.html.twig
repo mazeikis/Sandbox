@@ -1,0 +1,45 @@
+{% extends "SandboxBundle:Default:index.html.twig" %}
+{% block content %}
+{% if image is defined %}
+	<div class="container-fluid">
+  		<div class="row">
+  			<div class="col-lg-8">
+    			<div class='center-block'>
+    				<img class='img-responsive' src='{{asset('images/'~image.getFileName~'.'~image.getExtension)}}'>
+    			</div>
+    		</div>
+    			<div class="col-lg-3">
+    				<div class="text-left">
+		    			<b>Title:</b> {{image.getTitle}}<br>
+		    			<b>Resolution:</b> {{image.getResolution}}<br>
+		    			<b>File Size:</b> {{image.getSize}}<br>
+		    			<b>Description:</b><br>{{image.getDescription}}<br>
+                        <b>Uploaded:</b><br><dd>{{ image.getCreated|date('g:ia / l M j, Y') }}</dd>
+                        <b>Uploaded By:</b><a href="{{path('_user', { "slug" : image.getUserId })}}">{{image.getOwner.getUsername|default('NULL')}}</a>
+        			</div>
+                </div>
+                {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                    {% if app.user.id == image.getUserID %}
+                        {% if form is defined %}
+                            {% block form_row %}
+                                {{ form_start(form) }}
+                                {{ form_widget(form) }}
+                                {{ form_end(form) }}
+                            {% endblock form_row %}
+                        {% else %}
+                            <form class="form-group" action="{{path('_image_edit', { 'id' : image.getId })}}" method="post">
+                                <button type="submit" class="btn btn-warning" >Edit</button>
+                            </form>
+                            <form class="form-group" action="{{path('_image_delete', { 'id' : image.getId })}}" method="post">
+                                <button type="submit" class="btn btn-danger" >Delete</button>
+                            </form>
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+        </div>
+    </div>
+{% endif %}
+{% if content is defined %}
+	<h1>{{content}}</h1>
+{% endif %}
+{% endblock %}

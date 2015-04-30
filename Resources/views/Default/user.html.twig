@@ -1,0 +1,55 @@
+{% extends "AppBundle:Default:index.html.twig" %}
+{% block style %}
+{% spaceless %}
+    {{parent()}}
+    <link rel="stylesheet" href="{{ asset('css/portfolio-item.css') }}"/>
+{% endspaceless %}
+{% endblock %}
+{% block content %}
+    <div class="container">
+
+        <!-- Portfolio Item Heading -->
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">User <b>{{user.getusername}}</b>
+                </h1>
+            </div>
+        </div>
+        <!-- /.row -->
+
+        <!-- Portfolio Item Row -->
+        <div class="row">
+           <div class="col-md-8">
+                <h3>Just a blank space for now</h3>
+            </div>
+            <div class="col-md-4">
+                <h3>User Details</h3>
+                <ul>
+                    <li>{{test}}</li>
+                    <li>First Name: {{user.getfirstname}}</li>
+                    <li>Last Name: {{user.getlastname}}</li>
+                    <li>Email: {{user.getemail}}</li>
+                    <li>Joined: {{user.getcreated|date('d-m-Y')}}</li>
+                </ul>
+            </div>
+        </div>
+        {% if recent is defined %}
+        <hr>
+        <div class="row text-center">
+            {% for item in recent %}
+            <div class="col-sm-3 col-sm-4 hero-feature">
+                <div class="thumbnail">
+                    <img src='{{ (item.getFileName~'.'~item.getExtension) | imagine_filter('thumb')}}' class="img-thumbnail">
+                    <div class="caption">
+                        <h3>{{item.getTitle}}</h3>
+                        <p>{{item.getDescription}}</p>
+                        <p>
+                            <a href='{{path('_image', { 'id' : item.getId })}}' class="btn btn-primary" >Check me out!</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}

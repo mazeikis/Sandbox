@@ -1,0 +1,43 @@
+AppBundle\Entity\User:
+    type: entity
+    repositoryClass: AppBundle\Entity\UserRepository
+    table: user
+    id:
+        id:
+            type: integer
+            generator:
+                strategy: AUTO
+    fields:
+        username:
+            type: string
+            length: 50
+            unique: true
+        password:
+            type: string
+            length: 270
+        firstName: 
+            type: string
+            length: 100
+        lastName:
+            type: string
+            length: 100
+        email:
+            type: string
+            length: 100
+            unique: true
+        roles:
+            type: string
+            length: 20
+        enabled:
+            type: boolean
+        created:
+            type: datetime
+        updated:
+            type: datetime
+        token:
+            type: string
+            length: 100
+    oneToMany:
+        images:
+            targetEntity: Image
+            mappedBy: User

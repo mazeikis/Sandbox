@@ -1,0 +1,19 @@
+AppBundle\Entity\Comment:
+    type: entity
+    table: comment
+    id:
+        commentID:
+            type: integer
+            generator:
+                strategy: AUTO
+    fields:
+        userID:
+            type: integer
+        content:
+            type: string
+            length: 250
+        created:
+            type: date
+            timestampable:
+        updated:
+            type: datetime

@@ -1,0 +1,38 @@
+{% extends "SandboxBundle:Default:index.html.twig" %}
+{% block content %}
+<div class="container-fluid">
+    {% if app.session.flashBag.has('success') %}
+        <div class="alert alert-success">
+            {% for msg in app.session.flashBag.get('success') %}
+                {{ msg }}
+            {% endfor %}
+        </div>
+    {% endif %}
+    <div class="row">
+	<div class="col-lg-3">
+		<hr>
+    <form name="form" method="get" action="{{path('_search')}}" class="form-horizontal">
+		<fieldset>
+			<div id="form">
+				<div class="form-group">
+            		<input type="search" name="q" required="required" class="form-control" />
+            	</div>
+    	    	<div class="form-group">
+        			<button type="submit" class="btn"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+        		</div>
+        	</div>
+       	</fieldset>
+	</form>
+</div>
+</div>
+	{% if result is defined %}
+    	{% for item in result %}
+			<div class="col-lg-3 col-md-4 col-xs-6 thumb">
+	            <a href='{{path('_image', { 'id' : item.getId })}}'>
+	         		<img src='{{ (item.getFileName~'.'~item.getExtension) | imagine_filter('my_thumb')}}' class="img-thumbnail">
+				</a>
+			</div>
+		{% endfor %}
+    {% endif %}
+</div>
+{% endblock %}
