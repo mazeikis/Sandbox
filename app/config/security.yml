@@ -1,0 +1,54 @@
+# you can read more about security in the related section of the documentation
+# http://symfony.com/doc/current/book/security.html
+security:
+    # http://symfony.com/doc/current/book/security.html#encoding-the-user-s-password
+    encoders:
+        AppBundle\Entity\User: bcrypt
+
+
+    # http://symfony.com/doc/current/book/security.html#hierarchical-roles
+    role_hierarchy:
+        ROLE_ADMIN:       ROLE_USER
+        ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
+
+    # http://symfony.com/doc/current/book/security.html#where-do-users-come-from-user-providers
+    providers:
+        user_db:
+                entity: { class: AppBundle:User, property: username }
+
+    # the main part of the security, where you can set up firewalls
+    # for specific sections of your app
+    # the main part of the security, where you can set up firewalls
+    # for specific sections of your app
+    firewalls:
+        default:
+            anonymous: ~
+            form_login:
+                login_path: /login
+                check_path: /login_check
+            logout: { path: /logout, target: / }
+        secured_area:
+            pattern: ^/
+            anonymous: true
+            provider: user_db
+            security: true
+            form_login:
+                check_path: security_login_check
+                login_path: security_login_form
+            logout:
+                path: /logout
+                target: /
+                invalidate_session: true
+        login_firewall:
+            pattern:    ^/login$
+            anonymous:  ~
+        dev:
+            pattern:  ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+    access_control:
+        #- { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/user/reset, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/upload, roles: ROLE_USER }
+        - { path: ^/logout, roles: ROLE_USER }
+        - { path: ^/user, roles: ROLE_USER }
