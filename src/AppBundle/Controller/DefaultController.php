@@ -14,24 +14,36 @@ class DefaultController extends Controller
         $recentlyUploaded = $em->getRepository('AppBundle:Image')->GetRecentlyUploaded(4);
         return $this->render('AppBundle:Default:index.html.twig', array('title' => 'sandbox|project', 'recent' => $recentlyUploaded));
     }
-    public function aboutAction()
+    public function aboutAction(Request $request)
     {
-        return $this->render('AppBundle:Default:about.html.twig', array('title' => 'sandbox|about'));
-    }
-    public function contactAction(Request $request) //not in use currently
-    {
-        $message = \Swift_Message::newInstance()
-            >setSubject('Verification Email')
-            ->setFrom('robot@codesandbox.info')
-            ->setTo($user->getEmail())
-            ->setBody(
-                $this->renderView(
-                   'AppBundle:Email:email.txt.twig',
-                    array('link' => $user->getToken())
-                )
-            );
-        $this->get('mailer')->send($message);
-    
-        return $this->render('AppBundle:Default:about.html.twig', array('title' => 'sandbox|about'));
+        $tempData = array();
+        $form = $this->createFormBuilder($tempData)
+        ->add('from', 'email', array('label' => 'From', 'required' => true))
+        ->add('subject', 'text', array('label' => 'Subject', 'required' => true))
+        ->add('message', 'textarea', array('label' => 'Message:', 'required' => true))
+        ->add('Send', 'submit')
+        ->getForm();
+        
+        $form->handleRequest($request);
+
+        if($form->isValid()){
+            $data = $form->getData();
+            $message = \Swift_Message::newInstance()
+                ->setSubject($data['subject'])
+                ->setFrom($data['from'])
+                ->setTo('robot@codesandbox.info')
+                ->setBody(
+                    $this->renderView(
+                       'AppBundle:Email:contact.txt.twig',
+                        array('message' => $data['message'], 'user' => $this->getUser())
+                    )
+                );
+            $this->get('mailer')->send($message);
+            $request->getSession()
+                ->getFlashBag()
+                ->add('success', 'Message sent, thank you!');
+            return $this->redirectToRoute('_about');
+        }
+        return $this->render('AppBundle:Default:about.html.twig', array('title' => 'sandbox|about', 'form' => $form->createView()));
     }
 }

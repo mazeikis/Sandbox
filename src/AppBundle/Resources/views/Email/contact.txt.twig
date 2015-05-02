@@ -1,0 +1,16 @@
+{% block subject 'sandbox testing'  %}
+
+{% block body_text %}
+codesandbox.info contact me email
+----
+{{message|default("something went wrong and there's no message")}}
+
+{{user.getusername|default("something went wrongs and there's no user")}}
+ 
+
+----
+This is automated message, please do not reply. 
+If You are not trying to reset a user password at http://codesandbox.info/
+and were not expecting this message, please ignore it without following the link, 
+sorry for any inconvenience it may caused.
+{% endblock %}

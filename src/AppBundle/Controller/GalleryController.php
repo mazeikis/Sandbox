@@ -62,7 +62,7 @@ class GalleryController extends Controller
             
         $defaultData = array('message' => 'Type your message here');
         $form = $this->createFormBuilder($defaultData)
-            ->add('title', 'text', array('data' => $image->getTitle(), 'required' => true))
+            ->add('title', 'text', array('data' => $image->getTitle(), 'constraints' => new Length(array('min' => 3), new NotBlank))
             ->add('description', 'textarea', array( 'data' => $image->getDescription(), 'required' => true))
             ->add('Save', 'submit')
             ->getForm();
