@@ -1,0 +1,6 @@
+services:
+    security.access.image_voter:
+        class:      AppBundle\Security\ImageVoter
+        public:     false
+        tags:
+           - { name: security.voter }

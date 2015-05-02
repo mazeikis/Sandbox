@@ -1,0 +1,61 @@
+_home:
+    path:    /
+    defaults:  { _controller: AppBundle:Default:index }
+_about:
+    path:    /about
+    defaults: { _controller: AppBundle:Default:about }
+_gallery:
+    path:    /gallery/{page}/{sortBy}/{order}
+    defaults: { _controller: AppBundle:Gallery:index, page: 1, sortBy: created, order : DESC}
+    requirements:
+        page: \d+
+        sortBy: created|userId|id
+        order: ASC|DESC
+_image:
+    path:    /gallery/image/{id}
+    defaults: { _controller: AppBundle:Gallery:Image }
+    requirements:
+        id: \d+
+_image_edit:
+    path:    /gallery/image/edit/{id}
+    defaults: { _controller: AppBundle:Gallery:ImageEdit }
+    requirements:
+        id: \d+
+_image_delete:
+    path:    /gallery/image/delete/{id}
+    defaults: { _controller: AppBundle:Gallery:ImageDelete }
+    requirements:
+        id: \d+
+_upload:
+    path:    /upload
+    defaults: { _controller: AppBundle:Upload:index }
+_registration:
+    path:    /registration
+    defaults: { _controller: AppBundle:Registration:index }
+_verification:
+    path:    /verify/{token}
+    defaults: { _controller: AppBundle:Verification:email }
+    methods: [GET]
+_user:
+    path: /user/{slug}
+    defaults: { _controller: AppBundle:User:index }
+    requirements:
+        slug: \d+
+_reset:
+    path: /reset/
+    defaults: { _controller: AppBundle:Verification:reset }
+    requirements:
+        slug: \d+
+_password_verify_reset:
+    path: /reset/{token}
+    defaults: { _controller: AppBundle:Verification:verifyReset }
+_search:
+    path: /search/
+    defaults: { _controller: AppBundle:Search:index }
+login_route:
+    path:     /login
+    defaults: { _controller: AppBundle:Security:login }
+login_check:
+    path: /login_check
+logout:
+    pattern: /logout

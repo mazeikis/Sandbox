@@ -1,0 +1,21 @@
+AppBundle\Entity\User:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: username
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: email
+    properties:
+        username:
+            - NotBlank: ~
+        email:
+            - Email: ~
+            - NotBlank: ~
+        plainPassword:
+            - Length:
+                min: 6
+                max: 4096
+                minMessage: "Your password must be at least {{ limit }} characters long"
+                maxMessage: "Your password cannot be longer than {{ limit }} characters long"
+AppBundle\Entity\Image:
+    properties:
+        file:
+            - File:
+                maxSize: 5000000
