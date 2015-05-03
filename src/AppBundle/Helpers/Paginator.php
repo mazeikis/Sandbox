@@ -12,20 +12,12 @@ class Paginator
 	{
 		$this->page = $page;
 		$this->resultsPerPage = $resultsPerPage;
-
 		$this->setTotalPages($rowCount, $resultsPerPage);
 	}
-
 	public function setTotalPages($rowCount, $resultsPerPage)
 	{
 		$this->totalPages = ceil($rowCount / $resultsPerPage);
 	}
-
-	public function getTotalPages()
-	{
-		return $this->totalPages;
-	}
-
 	public function getPagesList()
 	{
 		$pageCount = 5;
@@ -52,7 +44,7 @@ class Paginator
 			}
 			return $result;
 		}
-		//////////////////////////////
+
 		if ($this->page + $half > $this->totalPages) // Close to end
         {
             while ($pageCount >= 1)

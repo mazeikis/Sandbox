@@ -1,0 +1,52 @@
+{% extends "AppBundle:Twig:layout.html.twig" %}
+{% block style %}
+{% spaceless %}
+    {{parent()}}
+    <link rel="stylesheet" href="{{ asset('css/portfolio-item.css') }}"/>
+{% endspaceless %}
+{% endblock %}
+{% block content %}
+    <div class="container">
+
+        <!-- Portfolio Item Heading -->
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">{{image.gettitle}}
+                    <small>Uploaded by: <a href="{{path('_user', { "slug" : image.getowner.getid })}}">{{image.getOwner.getUsername}}</a></small>
+                </h1>
+            </div>
+        </div>
+        <!-- /.row -->
+
+        <!-- Portfolio Item Row -->
+        <div class="row">
+
+            <div class="col-md-8">
+                <img class="img-responsive" src="{{asset('images/'~image.getFileName~'.'~image.getExtension)}}" alt="">
+            </div>
+
+            <div class="col-md-4">
+                {% if form is defined %}
+                            {% block form_row %}
+                                {{ form_start(form) }}
+                                {{ form_widget(form) }}
+                                {{ form_end(form) }}
+                            {% endblock form_row %}
+                {% elseif image.getowner == app.user %}
+                <a class="btn btn-warning btn-xs " href="{{path('_image_edit', { 'id' : image.getid })}}">edit</a>
+                <a class="btn btn-danger btn-xs " href="{{path('_image_delete', { 'id' : image.getid })}}">delete</a>
+                {% endif %}
+                <h3>Image Description</h3>
+                <p>{{image.getdescription}}</p>
+                <h3>Image Details</h3>
+                <ul>
+                    <li>{{image.getresolution}}</li>
+                    <li>{{image.getextension}}</li>
+                    <li>{{(image.getsize/1024/1024)|number_format(3, '.', ',') ~ ' MB'}}</li>
+                    <li>{{image.getcreated|date('g:ia / l M j, Y')}}</li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}

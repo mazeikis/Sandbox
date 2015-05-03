@@ -5,7 +5,6 @@ namespace AppBundle\Controller;
 use AppBundle\Helpers\Paginator;
 use Symfony\Component\HttpFoundation\Request;
 
-
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use AppBundle\Entity\Image;
 
@@ -22,17 +21,15 @@ class GalleryController extends Controller
         $startingItem = $resultsPerPage * ($page - 1) ;
         
         $em = $this->getDoctrine()->getManager();
-        $countRows = $em->getRepository('AppBundle:Image')->createQueryBuilder('id')->select('COUNT(id)')->getQuery()->getSingleScalarResult();
-        $lastPage = ceil($countRows / $resultsPerPage);
+        $totalRows = $em->getRepository('AppBundle:Image')->createQueryBuilder('id')->select('COUNT(id)')->getQuery()->getSingleScalarResult();
+        $lastPage = ceil($totalRows / $resultsPerPage);
 
-
-
-        $paginator = new Paginator($page, $countRows, $resultsPerPage);
+        $paginator = new Paginator($page, $totalRows, $resultsPerPage);
         $pageList = $paginator->getPagesList();
 
         $query = $em->getRepository('AppBundle:Image')->findBy(array(), array($sortBy => $order), $resultsPerPage, $startingItem);
   
-    	return $this->render('AppBundle:Default:gallery.html.twig', array(
+    	return $this->render('AppBundle:Twig:gallery.html.twig', array(
             'title' => 'sandbox|gallery',
             'page' => $page,
             'pageList' => $pageList,
@@ -48,7 +45,7 @@ class GalleryController extends Controller
         if(!$image){
             throw $this->createNotFoundException('No image with id '.$id);
             }
-        return $this->render('AppBundle:Default:image.html.twig', array('title' => 'sandbox|image', 'image' => $image));
+        return $this->render('AppBundle:Twig:image.html.twig', array('title' => 'sandbox|image', 'image' => $image));
 
     }
     public function imageEditAction(Request $request, $id)
@@ -62,7 +59,7 @@ class GalleryController extends Controller
             
         $defaultData = array('message' => 'Type your message here');
         $form = $this->createFormBuilder($defaultData)
-            ->add('title', 'text', array('data' => $image->getTitle(), 'constraints' => new Length(array('min' => 3), new NotBlank))
+            ->add('title', 'text', array('data' => $image->getTitle(), 'constraints' => new Length(array('min' => 3), new NotBlank)))
             ->add('description', 'textarea', array( 'data' => $image->getDescription(), 'required' => true))
             ->add('Save', 'submit')
             ->getForm();
@@ -73,18 +70,17 @@ class GalleryController extends Controller
             $data = $form->getData();
             $image->setTitle($data['title'])->setDescription($data['description'])->setUpdated(new \Datetime());
             $em->flush();
-            return $this->render('AppBundle:Default:image.html.twig', array('title' => 'sandbox|image', 'image' => $image));
+            return $this->render('AppBundle:Twig:image.html.twig', array('title' => 'sandbox|image', 'image' => $image));
             }
 
-        return $this->render('AppBundle:Default:image.html.twig', array('title' => 'sandbox|image', 'image' => $image, 'form' => $form->createView()));
-
+        return $this->render('AppBundle:Twig:image.html.twig', array('title' => 'sandbox|image', 'image' => $image, 'form' => $form->createView()));
     }
     public function imageDeleteAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
         $image = $em->getRepository('AppBundle:Image')->findOneBy(['id' => $id]);
-
-        if (false === $this->get('security.authorization_checker')->isGranted('delete', $image)) {
+        
+        if ($this->get('security.authorization_checker')->isGranted('delete', $image) === false) {
             throw new AccessDeniedException('Unauthorised access!');
         }
        

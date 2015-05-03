@@ -46,7 +46,7 @@ class RegistrationController extends Controller
             ->setTo($user->getEmail())
             ->setBody(
                 $this->renderView(
-                   'AppBundle:Email:email.txt.twig',
+                   'AppBundle:Email:registration.txt.twig',
                     array('link' => $user->getToken())
                 )
             );
@@ -62,7 +62,7 @@ class RegistrationController extends Controller
             $message = NULL;
         }
 
-        return $this->render('AppBundle:Default:registration.html.twig', array('title' => 'sandbox|project', 'message' => $message, 'form' => $form->createView()));
+        return $this->render('AppBundle:Twig:registration.html.twig', array('title' => 'sandbox|project', 'message' => $message, 'form' => $form->createView()));
     }
     private function authenticateUser(User $user)
     {

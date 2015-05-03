@@ -1,0 +1,44 @@
+{% extends "AppBundle:Twig:layout.html.twig" %}
+{% block content %}
+<div class="container" style="padding-top:70px">
+<div class="row">
+    {% if app.session.flashBag.has('success') %}
+        <div class="col-lg-12">
+            <div class="alert alert-success">
+                {% for msg in app.session.flashBag.get('success') %}
+                    <strong>{{ msg }}</strong>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+            <div class="col-lg-12">
+                <h1 class="page-header">About</h1>
+                <h3>wall of text wall of textwall of textwall of textwall of textwall of textwall of textwall of
+                wall of textwall of textwall of textwall of textwall of textwall of textwall of textwall of text
+                wall of textwall of textwall of textwall of textwall of textwall of textwall of textwall of text
+                wall of textwall of textwall of textwall of textwall of textwall of textwall of textwall of text
+                wall of textwall of textwall of textwall of textwall of textwall of textwall of textwall of text</h3><br><br>
+            </div>
+        </div>
+	<div class="row">
+            <div class="col-md-4">
+                <h3>Contact form</h3>
+                {% if form is defined %}
+                    {{ form_start(form) }}
+                    {{ form_widget(form) }}
+                    {{ form_end(form) }}
+                {% endif %}
+            </div>
+            <div class="col-md-4"></div>
+            <div class="col-md-4">
+                <h3>My details</h3>
+                <ul>
+                    <li>First Name: Feliksas</li>
+                    <li>Last Name: Mažeikis</li>
+                    <li>Age: 29</li>
+                    <li>Interests: Cars, Computers, Video Games, DIY and all things geeky ands mechanical.</li>
+                </ul>
+            </div>
+        </div>
+</div>
+{% endblock %}

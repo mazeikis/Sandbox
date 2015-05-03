@@ -1,0 +1,11 @@
+AppBundle\Entity\Rating:
+    type: entity
+    table: rating
+    id:
+        userID:
+            type: integer
+        imageID:
+            type: integer
+    fields:        
+        rating:
+            type: integer

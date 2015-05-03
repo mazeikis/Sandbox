@@ -7,7 +7,7 @@ use Doctrine\ORM\Query\Expr\Join;
 
 class ImageRepository extends EntityRepository
 {
-    public function SearchForQuery($q){
+    public function SearchForQuery($q, $limit = null, $offset = null){
         $query = $this->createQueryBuilder('image');
             $query->select('image')
                   ->leftJoin('image.owner', 'users', Join::WITH)
@@ -17,7 +17,9 @@ class ImageRepository extends EntityRepository
                       $query->expr()->like('users.username', ':key')
                       ))
                   ->orderBy('image.created', 'DESC')
-                  ->setParameter('key', '%'.$q.'%');
+                  ->setParameter('key', '%'.$q.'%')
+                  ->setMaxResults($limit)
+                  ->setFirstResult($offset);
             $result = $query->getQuery()->getResult();
 
         return $result;
@@ -28,13 +30,7 @@ class ImageRepository extends EntityRepository
             return $this->findBy(array('owner' => $slug), array('created' => 'DESC'), $count);
 
         }else {
-            return $this->findBy(array(), array('created' => 'DESC'), 4);
+            return $this->findBy(array(), array('created' => 'DESC'), $count);
         }
     }
 }
-
-
-
-
-
-

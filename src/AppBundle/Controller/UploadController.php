@@ -52,6 +52,6 @@ class UploadController extends Controller
           //empty
         }
 
-        return $this->render('AppBundle:Default:upload.html.twig', array('title' => 'sandbox|project', 'form' => $form->createView()));
+        return $this->render('AppBundle:Twig:upload.html.twig', array('title' => 'sandbox|project', 'form' => $form->createView()));
     }
 }

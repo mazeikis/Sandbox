@@ -62,7 +62,7 @@ class VerificationController extends Controller
 		                ->add('success', 'User '.$user->getUsername().' reset email sent successfuly!');
 			return $this->redirectToRoute('_home');
 			}
-		return $this->render('AppBundle:Default:reset.html.twig', array('title' => 'sandbox|project', 'requestForm' => $form->createView()));
+		return $this->render('AppBundle:Twig:reset.html.twig', array('title' => 'sandbox|project', 'requestForm' => $form->createView()));
     }
     public function verifyResetAction(Request $request, $token)
     {
@@ -99,7 +99,7 @@ class VerificationController extends Controller
 	        $this->authenticateUser($user);
 		    return $this->redirectToRoute('_user', array('slug' => $user->getId()));
 	        }
-    		return $this->render('AppBundle:Default:reset.html.twig', array('title' => 'sandbox|project', 'submitForm' => $form->createView()));
+    		return $this->render('AppBundle:Twig:reset.html.twig', array('title' => 'sandbox|project', 'submitForm' => $form->createView()));
     }
     private function authenticateUser(User $user)
     {

@@ -1,0 +1,64 @@
+{% extends "AppBundle:Twig:layout.html.twig" %}
+{% block style %}
+{% spaceless %}
+    {{parent()}}
+    <link rel="stylesheet" href="{{ asset('css/portfolio-item.css') }}"/>
+{% endspaceless %}
+{% endblock %}
+{% block content %}
+    <div class="container">
+
+        <!-- Portfolio Item Heading -->
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">User <b>{{user.getusername}}</b>
+                </h1>
+            </div>
+        </div>
+        {% if app.session.flashBag.has('success') %}
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="alert alert-success">
+                    {% for msg in app.session.flashBag.get('success') %}
+                        <strong>{{ msg }}</strong>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        <!-- /.row -->
+
+        <!-- Portfolio Item Row -->
+        <div class="row">
+           <div class="col-md-8">
+                <h3>Just a blank space for now</h3>
+            </div>
+            <div class="col-md-4">
+                <h3>User Details</h3>
+                <ul>
+                    <li>First Name: {{user.getfirstname}}</li>
+                    <li>Joined: {{user.getcreated|date('d-m-Y')}}</li>
+                </ul>
+            </div>
+        </div>
+        {% if recent is defined %}
+        <hr>
+        <div class="row text-center">
+            {% for item in recent %}
+            <div class="col-sm-3 col-sm-4 hero-feature">
+                <div class="thumbnail">
+                    <img src='{{ (item.getFileName~'.'~item.getExtension) | imagine_filter('thumb')}}' class="img-thumbnail">
+                    <div class="caption">
+                        <h3>{{item.getTitle}}</h3>
+                        <p>{{item.getDescription}}</p>
+                        <p>
+                            <a href='{{path('_image', { 'id' : item.getId })}}' class="btn btn-primary" >View Image</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    {% endif %}
+    </div>
+{% endblock %}

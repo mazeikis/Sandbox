@@ -12,7 +12,8 @@ class DefaultController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $recentlyUploaded = $em->getRepository('AppBundle:Image')->GetRecentlyUploaded(4);
-        return $this->render('AppBundle:Default:index.html.twig', array('title' => 'sandbox|project', 'recent' => $recentlyUploaded));
+        
+        return $this->render('AppBundle:Twig:index.html.twig', array('title' => 'sandbox|project', 'recent' => $recentlyUploaded));
     }
     public function aboutAction(Request $request)
     {
@@ -44,6 +45,6 @@ class DefaultController extends Controller
                 ->add('success', 'Message sent, thank you!');
             return $this->redirectToRoute('_about');
         }
-        return $this->render('AppBundle:Default:about.html.twig', array('title' => 'sandbox|about', 'form' => $form->createView()));
+        return $this->render('AppBundle:Twig:about.html.twig', array('title' => 'sandbox|about', 'form' => $form->createView()));
     }
 }
