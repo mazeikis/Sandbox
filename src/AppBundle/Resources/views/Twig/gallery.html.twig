@@ -14,8 +14,27 @@
             <div class="col-lg-12">
                 <h1 class="page-header">Image Gallery
                     <small>8 Images at a time</small></h1>
+                    <div class="btn-group">
+                        <a href="#" class="btn btn-primary btn-xs">Sort By</a>
+                        <a href="#" class="btn btn-primary btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                          <li><a href="{{path('_gallery',{ 'page' : page|default(1), 'sortBy': 'created', 'order' : order|default('DESC') })}}">Date</a></li>
+                          <li><a href="{{path('_gallery',{ 'page' : page|default(1), 'sortBy': 'owner', 'order' : order|default('DESC') })}}">User</a></li>
+                          <li><a href="{{path('_gallery',{ 'page' : page|default(1), 'sortBy': 'title', 'order' : order|default('DESC') })}}">Title</a></li>
+                        </ul>
+                    </div>
+                    <div class="btn-group">
+                        <a href="#" class="btn btn-success btn-xs">Order</a>
+                        <a href="#" class="btn btn-success btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                          <li><a href="{{path('_gallery',{ 'page' : page|default(1), 'sortBy': sortBy|default('created'), 'order' : 'ASC' })}}">Ascending</a></li>
+                          <li><a href="{{path('_gallery',{ 'page' : page|default(1), 'sortBy': sortBy|default('created'), 'order' : 'DESC' })}}">Descending</a></li>
+                        </ul>
+                    </div>
                     {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
                         <a class="btn btn-info btn-xs pull-right" href="{{path('_upload')}}">upload image</a><br><br>
+                    {% else %}
+                        <a class="btn btn-info btn-xs pull-right" disabled="disabled">upload image</a><br><br>
                     {% endif %}
             </div>
             {% if app.session.flashBag.has('success') %}
@@ -45,7 +64,7 @@
         <!-- End of Grid -->
 
         <!-- Pagination -->
-    {% if pageList is defined %}
+    {% if pageList is defined and pageList|length > 1 %}
         <div class="row text-center">
             <div class="col-lg-12">
                 <ul class="pagination">

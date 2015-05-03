@@ -30,6 +30,27 @@
                     </fieldset>
                 </form>
             </div>
+            {% if app.request.query.get('q') is not null %}
+            <div class="col-lg-4">
+            <div class="btn-group">
+                        <a href="#" class="btn btn-primary btn-small">Sort By</a>
+                        <a href="#" class="btn btn-primary btn-small dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                          <li><a href="{{path('_search',{ 'q' : app.request.query.get('q'), 'sortBy': 'created', 'order' : order|default('DESC'), 'page' : page|default(1) })}}">Date</a></li>
+                          <li><a href="{{path('_search',{ 'q' : app.request.query.get('q'), 'sortBy': 'owner', 'order' : order|default('DESC'), 'page' : page|default(1) })}}">User</a></li>
+                          <li><a href="{{path('_search',{ 'q' : app.request.query.get('q'), 'sortBy': 'title', 'order' : order|default('DESC'), 'page' : page|default(1) })}}">Title</a></li>
+                        </ul>
+                    </div>
+                    <div class="btn-group">
+                        <a href="#" class="btn btn-success btn-small">Order</a>
+                        <a href="#" class="btn btn-success btn-small dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                          <li><a href="{{path('_search',{'q' : app.request.query.get('q'), 'page' : page|default(1), 'sortBy': sortBy|default('created'), 'order' : 'ASC' })}}">Ascending</a></li>
+                          <li><a href="{{path('_search',{'q' : app.request.query.get('q'), 'page' : page|default(1), 'sortBy': sortBy|default('created'), 'order' : 'DESC' })}}">Descending</a></li>
+                        </ul>
+                    </div>
+                </div>
+            {% endif %}
         </div>
         {% if result|length > 0 %}<hr>{% endif %}
         <!-- /.row -->

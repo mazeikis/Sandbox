@@ -15,6 +15,8 @@ class SearchController extends Controller
 		
 		$q = $request->query->get('q');
 		$page = $request->query->get('page');
+		$sortBy = $request->query->get('sortBy');
+		$order = $request->query->get('order');
 		if(!$page){ 
 			$page = 1; 
 		}
@@ -26,7 +28,7 @@ class SearchController extends Controller
 			$startingItem = $resultsPerPage * ($page - 1) ;
         	$em = $this->getDoctrine()->getManager();
             $totalRows = count($em->getRepository('AppBundle:Image')->SearchForQuery($q));
-			$result = $em->getRepository('AppBundle:Image')->SearchForQuery($q, $resultsPerPage, $startingItem);
+			$result = $em->getRepository('AppBundle:Image')->SearchForQuery($q, $resultsPerPage, $startingItem, $sortBy, $order);
 			
             $lastPage = ceil($totalRows / $resultsPerPage);
 

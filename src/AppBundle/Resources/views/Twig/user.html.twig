@@ -34,11 +34,20 @@
                 <h3>Just a blank space for now</h3>
             </div>
             <div class="col-md-4">
-                <h3>User Details</h3>
+                <h3>User Details:</h3>
+                {% if app.user == user %}
+                <ul>
+                    <li>First Name: {{user.getfirstname}}</li>
+                    <li>Last Name: {{user.getLastName}}</li>
+                    <li>Email: {{user.getEmail}}</li>
+                    <li>Joined: {{user.getcreated|date('d-m-Y')}}</li>
+                </ul>
+                {% else %}
                 <ul>
                     <li>First Name: {{user.getfirstname}}</li>
                     <li>Joined: {{user.getcreated|date('d-m-Y')}}</li>
                 </ul>
+            {% endif %}
             </div>
         </div>
         {% if recent is defined %}
