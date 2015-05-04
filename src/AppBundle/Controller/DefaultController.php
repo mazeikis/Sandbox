@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use AppBundle\Form\ContactFormType;
 
 
 class DefaultController extends Controller
@@ -17,13 +18,7 @@ class DefaultController extends Controller
     }
     public function aboutAction(Request $request)
     {
-        $tempData = array();
-        $form = $this->createFormBuilder($tempData)
-        ->add('from', 'email', array('label' => 'From', 'required' => true))
-        ->add('subject', 'text', array('label' => 'Subject', 'required' => true))
-        ->add('message', 'textarea', array('label' => 'Message:', 'required' => true))
-        ->add('Send', 'submit')
-        ->getForm();
+        $form = $this->createForm(new ContactFormType());
         
         $form->handleRequest($request);
 

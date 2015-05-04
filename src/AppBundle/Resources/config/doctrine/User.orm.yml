@@ -34,7 +34,7 @@ AppBundle\Entity\User:
             type: datetime
         updated:
             type: datetime
-        token:
+        confirmationToken:
             type: string
             length: 100
     oneToMany:

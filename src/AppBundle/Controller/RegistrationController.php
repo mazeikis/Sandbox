@@ -6,7 +6,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use AppBundle\Entity\User;
-use AppBundle\Security\TokenGenerator;
+use AppBundle\Security\ConfirmationTokenGenerator;
+use AppBundle\Form\RegistrationFormType;
 
 
 class RegistrationController extends Controller
@@ -14,18 +15,7 @@ class RegistrationController extends Controller
     public function indexAction(Request $request)
     {
         $user = new User();
-        $form = $this->createFormBuilder($user)
-	        ->add('username', 'text', array('label'  => 'Choose username: ', 'required' => true))
-			->add('plainPassword', 'repeated', array(
-	           'first_name'  => 'password',
-	           'second_name' => 'confirm',
-	           'type'        => 'password'))
-			->add('firstName','text', array('label'  => 'Your first name: ', 'required' => true))
-			->add('lastName','text', array('label'  => 'Your last name: ', 'required' => true))
-			->add('email', 'email', array('label'  => 'Your email address: ', 'required' => true))
-			->add('save', 'submit', array('label' => 'Register'))
-			->getForm();
-		
+        $form = $this->createForm(new RegistrationFormType(), $user);
 		$form->handleRequest($request);
 
         if($form->isValid()){
@@ -33,8 +23,8 @@ class RegistrationController extends Controller
 			$encoded = $encoder->encodePassword($user, $user->getPlainPassword());
 			$user->setPassword($encoded);
 
-            $tokenGenerator = new TokenGenerator();
-            $user->setToken($tokenGenerator->generateToken());
+            $confirmationTokenManager = new ConfirmationTokenGenerator();
+            $user->setConfirmationToken($confirmationTokenManager->generateConfirmationToken());
 
         	$em = $this->getDoctrine()->getManager();
             $em->persist($user);
@@ -47,7 +37,7 @@ class RegistrationController extends Controller
             ->setBody(
                 $this->renderView(
                    'AppBundle:Email:registration.txt.twig',
-                    array('link' => $user->getToken())
+                    array('link' => $user->getConfirmationToken())
                 )
             );
             $this->get('mailer')->send($message);
@@ -66,7 +56,7 @@ class RegistrationController extends Controller
     }
     private function authenticateUser(User $user)
     {
-        $providerKey = 'secured_area'; // your firewall name
+        $providerKey = 'secured_area';
         $token = new UsernamePasswordToken($user, null, $providerKey, $user->getRoles());
 
         $this->container->get('security.context')->setToken($token);

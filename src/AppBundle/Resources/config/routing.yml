@@ -9,7 +9,7 @@ _gallery:
     defaults: { _controller: AppBundle:Gallery:index, page: 1, sortBy: created, order : DESC}
     requirements:
         page: \d+
-        sortBy: created|userId|id
+        sortBy: created|owner|title
         order: ASC|DESC
 _image:
     path:    /gallery/image/{id}
@@ -33,7 +33,7 @@ _registration:
     path:    /registration
     defaults: { _controller: AppBundle:Registration:index }
 _verification:
-    path:    /verify/{token}
+    path:    /verify/{confirmationToken}
     defaults: { _controller: AppBundle:Verification:email }
     methods: [GET]
 _user:
@@ -47,7 +47,7 @@ _reset:
     requirements:
         slug: \d+
 _password_verify_reset:
-    path: /reset/{token}
+    path: /reset/{confirmationToken}
     defaults: { _controller: AppBundle:Verification:verifyReset }
 _search:
     path: /search/

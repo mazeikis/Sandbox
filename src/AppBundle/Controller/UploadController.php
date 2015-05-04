@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\UploadedFile;
 use AppBundle\Entity\Image;
+use AppBundle\Form\UploadFormType;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class UploadController extends Controller
@@ -14,13 +15,7 @@ class UploadController extends Controller
     {
     
         $image = new Image();       
-        $tempData = array();
-        $form = $this->createFormBuilder($tempData)
-             ->add('title','text',array('label'  => 'Title of the photo', 'required' => true))
-             ->add('file', 'file',array('required' => true, 'data_class' => null))
-             ->add('description','textarea',array('label' => 'Description of your photo', 'required' => true))
-             ->add('save', 'submit', array('label' => 'Upload'))
-             ->getForm(); 
+        $form = $this->createForm(new UploadFormType());
         $user = $this->getUser();
         $form->handleRequest($request);
         if($form->isValid()){ 

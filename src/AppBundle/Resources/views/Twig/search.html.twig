@@ -78,13 +78,13 @@
                 <div class="row text-center">
                     <div class="col-lg-12">
                         <ul class="pagination">
-                            <li><a href='{{ path('_search', { 'page': 1 }) }}'>&laquo;</a></li>
+                            <li><a href='{{ path('_search', { 'page': 1, 'q'  : app.request.query.get('q'), 'sortBy': sortBy|default('created'), 'order' : 'DESC' }) }}'>&laquo;</a></li>
                             {% for x in pageList %}
                                 <li {% if x == page %}class="active"{% endif %}>
-                                    <a href='{{ path('_search', { 'page': x }) }}'>{{ x }}</a>
+                                    <a href='{{ path('_search', { 'page': x, 'q' : app.request.query.get('q'), 'sortBy': sortBy|default('created'), 'order' : 'DESC' }) }}'>{{ x }}</a>
                                 </li>
                             {% endfor %}
-                            <li><a href='{{ path('_search', { 'page': lastPage, 'q' : app.request.query.get('q')|default(null)}) }}'>&raquo;</a></li>
+                            <li><a href='{{ path('_search', { 'page': lastPage, 'q' : app.request.query.get('q')|default(null), 'sortBy': sortBy|default('created'), 'order' : 'DESC' }) }}'>&raquo;</a></li>
                         </ul>
                     </div>
                 </div>

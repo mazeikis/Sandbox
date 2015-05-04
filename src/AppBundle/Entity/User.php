@@ -16,7 +16,7 @@ class User implements UserInterface, \Serializable
 	protected $created;
 	protected $updated;
 
-    protected $token;
+    protected $confirmationToken;
 
     protected $plainPassword;
 	
@@ -26,7 +26,7 @@ class User implements UserInterface, \Serializable
         $this->setCreated(new \Datetime);
         $this->setUpdated(new \Datetime);
         $this->setRoles('ROLE_USER');
-        $this->setToken(NULL);
+        $this->setConfirmationToken(NULL);
     }
     /**
      * Set id
@@ -305,24 +305,24 @@ class User implements UserInterface, \Serializable
         return $this->plainPassword;
     }
     /**
-    * Set token
+    * Set confirmationToken
     *
-    * @param string $token
+    * @param string $confirmationToken
     * @return User
     */
-    public function setToken($token)
+    public function setConfirmationToken($confirmationToken)
     {
-        $this->token = $token;
+        $this->confirmationToken = $confirmationToken;
     }
 
     /**
     *
-    * Get token
+    * Get confirmationToken
     * @return string
     */
-    public function getToken()
+    public function getConfirmationToken()
     {
-        return $this->token;
+        return $this->confirmationToken;
     }
     /**
      * @var \Doctrine\Common\Collections\Collection

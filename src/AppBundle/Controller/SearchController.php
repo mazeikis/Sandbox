@@ -17,8 +17,14 @@ class SearchController extends Controller
 		$page = $request->query->get('page');
 		$sortBy = $request->query->get('sortBy');
 		$order = $request->query->get('order');
-		if(!$page){ 
+		if(!$page || $page < 1){ 
 			$page = 1; 
+		}
+		if(!in_array($sortBy, ['created', 'owner', 'title'])){
+			$sortBy = 'created';
+		}
+		if(!in_array($order, ['ASC', 'DESC'])){
+			$order = 'DESC';
 		}
 		$result = null;
 		$pageList = null;
@@ -27,7 +33,7 @@ class SearchController extends Controller
 		if($q){
 			$startingItem = $resultsPerPage * ($page - 1) ;
         	$em = $this->getDoctrine()->getManager();
-            $totalRows = count($em->getRepository('AppBundle:Image')->SearchForQuery($q));
+            $totalRows = $em->getRepository('AppBundle:Image')->CountResultRows($q);
 			$result = $em->getRepository('AppBundle:Image')->SearchForQuery($q, $resultsPerPage, $startingItem, $sortBy, $order);
 			
             $lastPage = ceil($totalRows / $resultsPerPage);
@@ -40,6 +46,8 @@ class SearchController extends Controller
         	'result' => $result, 
         	'page' => $page, 
         	'pageList' => $pageList, 
-        	'lastPage' => $lastPage));
+        	'lastPage' => $lastPage,
+        	'order' => $order,
+        	'sortBy' => $sortBy));
 	}
 }

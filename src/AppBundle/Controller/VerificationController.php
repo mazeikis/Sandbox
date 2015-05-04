@@ -6,23 +6,23 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use AppBundle\Entity\User;
-use AppBundle\Security\TokenGenerator;
+use AppBundle\Security\confirmationTokenGenerator;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 class VerificationController extends Controller
 {
-	public function emailAction(Request $request, $token)
+	public function emailAction(Request $request, $confirmationToken)
 	{
 		$em = $this->getDoctrine()->getManager();
-		$user = $em->getRepository('AppBundle:User')->findOneBy(['token' => $token]);
+		$user = $em->getRepository('AppBundle:User')->findOneBy(['confirmationToken' => $confirmationToken]);
 		if(!$user){
 			$request->getSession()
 	                ->getFlashBag()
 	                ->add('success', 'Oops, no matching token found!');
 	                return $this->redirectToRoute('_home');
 		}else{
-			$user->setEnabled(true)->setToken(NULL);
+			$user->setEnabled(true)->setConfirmationToken(NULL);
 			$em->flush();
 			$request->getSession()
 	                ->getFlashBag()
@@ -44,8 +44,8 @@ class VerificationController extends Controller
 			$data = $form->getData();
 			$user = $em->getRepository('AppBundle:User')->findOneBy(['username' => $data['username']]);
 
-		    $tokenGenerator = new TokenGenerator();
-			$user->setToken($tokenGenerator->generateToken());
+		    $confirmationTokenManager = new confirmationTokenGenerator();
+			$user->setConfirmationToken($confirmationTokenManager->generateConfirmationToken());
 	        $em->persist($user);
 	        $em->flush();
 
@@ -53,7 +53,7 @@ class VerificationController extends Controller
 	            ->setSubject('Password reset Email')
 	            ->setFrom('robot@codesandbox.info')
 	            ->setTo($user->getEmail())
-	            ->setBody($this->renderView('AppBundle:Email:reset.txt.twig', array('link' => $user->getToken())));
+	            ->setBody($this->renderView('AppBundle:Email:reset.txt.twig', array('link' => $user->getConfirmationToken())));
 
             $this->get('mailer')->send($message);
 	        
@@ -64,10 +64,10 @@ class VerificationController extends Controller
 			}
 		return $this->render('AppBundle:Twig:reset.html.twig', array('title' => 'sandbox|project', 'requestForm' => $form->createView()));
     }
-    public function verifyResetAction(Request $request, $token)
+    public function verifyResetAction(Request $request, $confirmationToken)
     {
     	$em = $this->getDoctrine()->getManager();
-    	$user = $em->getRepository('AppBundle:User')->findOneBy(['token' => $token]);
+    	$user = $em->getRepository('AppBundle:User')->findOneBy(['confirmationToken' => $confirmationToken]);
     	if(!$user){
 			$request->getSession()
 	                ->getFlashBag()
@@ -91,7 +91,7 @@ class VerificationController extends Controller
         	$encoder = $this->container->get('security.password_encoder');
 			$encoded = $encoder->encodePassword($user, $user->getPlainPassword());
 			$user->setPassword($encoded);
-			$user->setToken(null);
+			$user->setConfirmationToken(null);
 			$em->flush();
 			$request->getSession()
 	                ->getFlashBag()
