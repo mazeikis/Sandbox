@@ -15,8 +15,20 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class GalleryController extends Controller
 {
-    public function indexAction($page, $sortBy, $order)
+    public function indexAction(Request $request)
     {
+        $page = $request->query->get('page');
+        $sortBy = $request->query->get('sortBy');
+        $order = $request->query->get('order');
+        if(!$page || $page < 1){ 
+            $page = 1; 
+        }
+        if(!in_array($sortBy, ['created', 'owner', 'title'])){
+            $sortBy = 'created';
+        }
+        if(!in_array($order, ['ASC', 'DESC'])){
+            $order = 'DESC';
+        }       
         $resultsPerPage = 8;
         $startingItem = $resultsPerPage * ($page - 1) ;
         

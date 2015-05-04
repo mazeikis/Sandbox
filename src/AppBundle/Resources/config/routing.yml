@@ -5,12 +5,8 @@ _about:
     path:    /about
     defaults: { _controller: AppBundle:Default:about }
 _gallery:
-    path:    /gallery/{page}/{sortBy}/{order}
-    defaults: { _controller: AppBundle:Gallery:index, page: 1, sortBy: created, order : DESC}
-    requirements:
-        page: \d+
-        sortBy: created|owner|title
-        order: ASC|DESC
+    path:    /gallery/
+    defaults: { _controller: AppBundle:Gallery:index }
 _image:
     path:    /gallery/image/{id}
     defaults: { _controller: AppBundle:Gallery:Image }
