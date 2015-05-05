@@ -2,7 +2,7 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Helpers\Paginator;
+use AppBundle\Helpers\PageManager;
 use Symfony\Component\HttpFoundation\Request;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -17,38 +17,17 @@ class GalleryController extends Controller
 {
     public function indexAction(Request $request)
     {
-        $page = $request->query->get('page');
-        $sortBy = $request->query->get('sortBy');
-        $order = $request->query->get('order');
-        if(!$page || $page < 1){ 
-            $page = 1; 
-        }
-        if(!in_array($sortBy, ['created', 'owner', 'title'])){
-            $sortBy = 'created';
-        }
-        if(!in_array($order, ['ASC', 'DESC'])){
-            $order = 'DESC';
-        }       
         $resultsPerPage = 8;
-        $startingItem = $resultsPerPage * ($page - 1) ;
-        
         $em = $this->getDoctrine()->getManager();
         $totalRows = $em->getRepository('AppBundle:Image')->createQueryBuilder('id')->select('COUNT(id)')->getQuery()->getSingleScalarResult();
-        $lastPage = ceil($totalRows / $resultsPerPage);
-
-        $paginator = new Paginator($page, $totalRows, $resultsPerPage);
-        $pageList = $paginator->getPagesList();
-
-        $query = $em->getRepository('AppBundle:Image')->findBy(array(), array($sortBy => $order), $resultsPerPage, $startingItem);
+        $pageManager = new PageManager($request, $totalRows, $resultsPerPage);
+        $query = $em->getRepository('AppBundle:Image')->findBy(array(), array(
+            $pageManager->getSortBy() => $pageManager->getOrder()), 
+            $resultsPerPage, $pageManager->getStartingItem()
+            );
   
     	return $this->render('AppBundle:Twig:gallery.html.twig', array(
-            'title' => 'sandbox|gallery',
-            'page' => $page,
-            'pageList' => $pageList,
-            'content' => $query,
-            'sortBy' => $sortBy,
-            'order' => $order,
-            'lastPage' => $lastPage));
+            'title' => 'sandbox|gallery', 'content' => $query, 'pageManager' => $pageManager));
     }
     public function imageAction($id) //single image
     {
