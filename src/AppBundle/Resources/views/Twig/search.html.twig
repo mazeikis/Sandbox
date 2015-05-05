@@ -36,27 +36,27 @@
                         <a href="#" class="btn btn-primary btn-small">Sort By</a>
                         <a href="#" class="btn btn-primary btn-small dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                          <li><a href="{{path('_search',{ 'q' : app.request.query.get('q'), 'sortBy': 'created', 'order' : order|default('DESC'), 'page' : page|default(1) })}}">Date</a></li>
-                          <li><a href="{{path('_search',{ 'q' : app.request.query.get('q'), 'sortBy': 'owner', 'order' : order|default('DESC'), 'page' : page|default(1) })}}">User</a></li>
-                          <li><a href="{{path('_search',{ 'q' : app.request.query.get('q'), 'sortBy': 'title', 'order' : order|default('DESC'), 'page' : page|default(1) })}}">Title</a></li>
+                          <li><a href="{{path('_search',{'q': app.request.query.get('q'), 'page': pageManager.getPage, 'sortBy':'created', 'order':pageManager.getOrder})}}">Date Created</a></li>
+                          <li><a href="{{path('_search',{'q': app.request.query.get('q'), 'page': pageManager.getPage, 'sortBy':'owner', 'order':pageManager.getOrder })}}">User</a></li>
+                          <li><a href="{{path('_search',{'q': app.request.query.get('q'), 'page' : pageManager.getPage, 'sortBy':'title', 'order':pageManager.getOrder })}}">Title</a></li>
                         </ul>
                     </div>
                     <div class="btn-group">
                         <a href="#" class="btn btn-success btn-small">Order</a>
                         <a href="#" class="btn btn-success btn-small dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                          <li><a href="{{path('_search',{'q' : app.request.query.get('q'), 'page' : page|default(1), 'sortBy': sortBy|default('created'), 'order' : 'ASC' })}}">Ascending</a></li>
-                          <li><a href="{{path('_search',{'q' : app.request.query.get('q'), 'page' : page|default(1), 'sortBy': sortBy|default('created'), 'order' : 'DESC' })}}">Descending</a></li>
+                          <li><a href="{{path('_search',{'q' : app.request.query.get('q'), 'page' : pageManager.getPage, 'sortBy': pageManager.getSortBy, 'order' : 'ASC' })}}">Ascending</a></li>
+                          <li><a href="{{path('_search',{'q' : app.request.query.get('q'), 'page' : pageManager.getPage, 'sortBy': pageManager.getSortBy, 'order' : 'DESC' })}}">Descending</a></li>
                         </ul>
                     </div>
                 </div>
             {% endif %}
         </div>
-        {% if result|length > 0 %}<hr>{% endif %}
+        {% if content|length > 0 %}<hr>{% endif %}
         <!-- /.row -->
 
         <!-- Project One -->
-        {% for item in result %}
+        {% for item in content %}
             <div class="row">
                 <div class="col-md-3">
                     <a href='{{path('_image', { 'id' : item.getId })}}'>
@@ -70,21 +70,21 @@
                     <a class="btn btn-primary" href='{{path('_image', { 'id' : item.getId })}}'>View Image <span class="glyphicon glyphicon-chevron-right"></span></a>
                 </div>
             </div>
-        {% if result|length > 1 %}<hr>{% endif %}
+        {% if content|length > 1 %}<hr>{% endif %}
         {% endfor %}
                <!-- Pagination -->
-        {% if pageList is defined %}
-            {% if pageList|length > 1 %}
+        {% if pageManager is defined %}
+            {% if pageManager.getPagination|length > 1 %}
                 <div class="row text-center">
                     <div class="col-lg-12">
                         <ul class="pagination">
-                            <li><a href='{{ path('_search', { 'page': 1, 'q'  : app.request.query.get('q'), 'sortBy': sortBy|default('created'), 'order' : 'DESC' }) }}'>&laquo;</a></li>
-                            {% for x in pageList %}
-                                <li {% if x == page %}class="active"{% endif %}>
-                                    <a href='{{ path('_search', { 'page': x, 'q' : app.request.query.get('q'), 'sortBy': sortBy|default('created'), 'order' : 'DESC' }) }}'>{{ x }}</a>
+                            <li><a href='{{ path('_search', { 'q' : app.request.query.get('q'), 'page': 1, 'sortBy' : pageManager.getSortBy, 'order' : pageManager.getOrder }) }}'>&laquo;</a></li>
+                            {% for x in pageManager.getPagination %}
+                                <li {% if x == pageManager.getPage %}class="active"{% endif %}>
+                                    <a href='{{ path('_search', { 'q' : app.request.query.get('q'), 'page': x, 'sortBy' : pageManager.getSortBy, 'order' : pageManager.getOrder }) }}'>{{ x }}</a>
                                 </li>
                             {% endfor %}
-                            <li><a href='{{ path('_search', { 'page': lastPage, 'q' : app.request.query.get('q')|default(null), 'sortBy': sortBy|default('created'), 'order' : 'DESC' }) }}'>&raquo;</a></li>
+                            <li><a href='{{ path('_search', { 'q' : app.request.query.get('q'), 'page': pageManager.getLastPage, 'sortBy' : pageManager.getSortBy, 'order' : pageManager.getOrder }) }}'>&raquo;</a></li>
                         </ul>
                     </div>
                 </div>

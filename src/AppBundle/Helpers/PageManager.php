@@ -16,7 +16,7 @@ class PageManager
 	private $pagination;//
 	private $startingItem;
 
-	public function __construct(Request $request, $totalRows, $resultsPerPage)
+	public function __construct(Request $request, $totalRows = null, $resultsPerPage = null)
 	{
 		$this->setRequest($request);
 		$this->setPage();
@@ -31,10 +31,6 @@ class PageManager
 	{
 		$this->request = $request;
 	}
-	/*public function getRequest()
-	{
-		return $this->request;
-	}*/
 	public function setPage()
 	{
 		if(!$this->request->query->get('page') || $this->request->query->get('page') < 1){ 
@@ -49,7 +45,7 @@ class PageManager
 	}
 	public function setLastPage($totalRows)
 	{
-		$this->lastPage = ceil($totalRows / $this->resultsPerPage);
+		$this->lastPage = $totalRows? ceil($totalRows / $this->resultsPerPage) : null;
 
 	}
 	public function getLastPage()
@@ -59,6 +55,10 @@ class PageManager
 	public function setResultsPerPage($resultsPerPage)
 	{
 		$this->resultsPerPage = $resultsPerPage;
+	}
+	public function getResultsPerPage()
+	{
+		return $this->resultsPerPage;
 	}
 	public function setSortBy()
 	{
@@ -109,7 +109,7 @@ class PageManager
 				$i++;
 			}
 			$this->pagination = $result;
-			return $this;
+			return;
 		}
 
 		/* if current page is 3 or less, stop pagination at $pageCount or before */
@@ -122,7 +122,7 @@ class PageManager
 				$i++;
 			}
 			$this->pagination = $result;
-			return $this;
+			return;
 		}
 
 		/* current page is the last 3 pages */
@@ -133,7 +133,7 @@ class PageManager
                 $pageCount--;
             }
             $this->pagination = $result;
-            return $this;
+            return;
         }else{
         /* current page is > 3 and there's more than 5 total pages and it's not the last 3 */
             while ($pageCount >= 1)
@@ -142,7 +142,7 @@ class PageManager
                 $pageCount--;
             }
             $this->pagination = $result;
-            return $this;
+            return;
         }
 	}
 	public function getPagination()
