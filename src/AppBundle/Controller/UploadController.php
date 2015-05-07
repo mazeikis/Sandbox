@@ -4,9 +4,8 @@ namespace AppBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\UploadedFile;
 use AppBundle\Entity\Image;
-use AppBundle\Form\UploadFormType;
+use AppBundle\Form\Type\UploadFormType;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class UploadController extends Controller

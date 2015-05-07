@@ -8,8 +8,6 @@ class PageManager
 {
 	private $request;
 	private $page;//
-	private $lastPage;//
-	private $totalPages;
 	private $resultsPerPage;
 	private $sortBy;//
 	private $order;//
@@ -41,14 +39,10 @@ class PageManager
 	{
 		return $this->page;
 	}
-	public function setLastPage($totalRows)
+	public function getLastPage($totalRows)
 	{
-		$this->lastPage = $totalRows? ceil($totalRows / $this->resultsPerPage) : null;
+		return $totalRows? ceil($totalRows / $this->resultsPerPage) : null;
 
-	}
-	public function getLastPage()
-	{
-		return $this->lastPage;
 	}
 	public function setResultsPerPage($resultsPerPage)
 	{

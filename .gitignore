@@ -1,6 +1,9 @@
 /web/images/
 /web/media/
-/web/bundles/
+/web/bundles
+/web/config.php
+/web/css/bootstrap.css.map
+/web/css/bootstrap-theme.css.map
 /app/bootstrap.php.cache
 /app/cache/*
 /app/config/parameters.yml
@@ -12,3 +15,4 @@
 /vendor/
 /bin/
 /composer.phar
+*/.htaccess

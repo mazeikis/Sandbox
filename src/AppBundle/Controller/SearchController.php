@@ -6,7 +6,6 @@ use AppBundle\Helpers\PageManager;
 use Symfony\Component\HttpFoundation\Request;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use AppBundle\Entity\Image;
 
 class SearchController extends Controller
 {
@@ -17,7 +16,7 @@ class SearchController extends Controller
 		$resultsPerPage = 8;
 		if($q){
         	$em = $this->getDoctrine()->getManager();
-            $totalRows = $em->getRepository('AppBundle:Image')->CountResultRows($q);
+            $totalRows = $em->getRepository('AppBundle:Image')->countResultRows($q);
    			$pageManager = new PageManager($request, $totalRows, $resultsPerPage);
 			$query = $em->getRepository('AppBundle:Image')
 						 ->SearchForQuery($q, $pageManager->getResultsPerPage(),

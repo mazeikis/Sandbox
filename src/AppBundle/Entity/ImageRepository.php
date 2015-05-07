@@ -2,12 +2,10 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query\Expr\Join;
-
 
 class ImageRepository extends EntityRepository
 {
-    public function SearchForQuery($q, $limit = null, $offset = null, $sortBy, $order){
+    public function searchForQuery($q, $limit = null, $offset = null, $sortBy, $order){
         $query = $this->getEntityManager()->createQuery(
           'SELECT image
           FROM AppBundle:Image image 
@@ -23,7 +21,7 @@ class ImageRepository extends EntityRepository
 
         return $result;
     }
-    public function CountResultRows($q)
+    public function countResultRows($q)
     {
       $query = $this->getEntityManager()->createQuery(
           'SELECT COUNT(image)
@@ -37,9 +35,9 @@ class ImageRepository extends EntityRepository
 
         return $result;
     }
-    public function GetRecentlyUploaded($count, $slug = null)
+    public function getRecentlyUploaded($count, $slug = null)
     {
-        if ($slug != null){
+        if ($slug !== null){
             return $this->findBy(array('owner' => $slug), array('created' => 'DESC'), $count);
 
         }else {

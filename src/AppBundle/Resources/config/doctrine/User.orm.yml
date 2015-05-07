@@ -40,4 +40,4 @@ AppBundle\Entity\User:
     oneToMany:
         images:
             targetEntity: Image
-            mappedBy: User
+            mappedBy: owner

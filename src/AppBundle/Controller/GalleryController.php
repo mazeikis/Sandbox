@@ -4,12 +4,11 @@ namespace AppBundle\Controller;
 
 use AppBundle\Helpers\PageManager;
 use Symfony\Component\HttpFoundation\Request;
-
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use AppBundle\Entity\Image;
 
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 

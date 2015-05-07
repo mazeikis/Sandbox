@@ -4,7 +4,7 @@ namespace AppBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use AppBundle\Form\ContactFormType;
+use AppBundle\Form\Type\ContactFormType;
 
 
 class DefaultController extends Controller
@@ -12,7 +12,7 @@ class DefaultController extends Controller
     public function indexAction()
     {
         $em = $this->getDoctrine()->getManager();
-        $recentlyUploaded = $em->getRepository('AppBundle:Image')->GetRecentlyUploaded(4);
+        $recentlyUploaded = $em->getRepository('AppBundle:Image')->getRecentlyUploaded(4);
         
         return $this->render('AppBundle:Twig:index.html.twig', array('title' => 'sandbox|project', 'recent' => $recentlyUploaded));
     }

@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use AppBundle\Entity\User;
 use AppBundle\Security\ConfirmationTokenGenerator;
-use AppBundle\Form\RegistrationFormType;
+use AppBundle\Form\Type\RegistrationFormType;
 
 
 class RegistrationController extends Controller
