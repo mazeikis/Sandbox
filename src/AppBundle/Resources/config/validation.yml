@@ -19,3 +19,4 @@ AppBundle\Entity\Image:
         file:
             - File:
                 maxSize: 5000000
+                
