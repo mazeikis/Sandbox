@@ -36,4 +36,3 @@ AppBundle\Entity\Image:
             joinColumn:
                 name: ownerId
                 referencedColumnName: id
-                
