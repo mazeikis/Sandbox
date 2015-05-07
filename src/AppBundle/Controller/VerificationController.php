@@ -7,8 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use AppBundle\Entity\User;
 use AppBundle\Security\confirmationTokenGenerator;
-use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\Constraints\NotBlank;
+use AppBundle\Form\Type\VerificationFormType;
 
 class VerificationController extends Controller
 {
@@ -74,16 +73,7 @@ class VerificationController extends Controller
 	                ->add('success', 'Oops, no matching user found!');
 	                return $this->redirectToRoute('_home');
 		}
-		$tempData = array();
-		$form = $this->createFormBuilder($tempData)
-		    ->add('plainPassword', 'repeated', array(
-	               'first_name'  => 'password',
-	               'second_name' => 'confirm',
-	               'type'        => 'password',
-	               'constraints' => new Length(array('min' => 6, 'max' => 4096), new NotBlank)))
-		    ->add('save', 'submit', array('label' => 'Upload'))
-		    ->getForm();
-
+		$form = $this->createForm(new VerificationFormType());
         $form->handleRequest($request);
         if($form->isValid()){
         	$data = $form->getData();
