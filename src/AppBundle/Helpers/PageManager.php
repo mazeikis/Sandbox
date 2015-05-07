@@ -13,7 +13,6 @@ class PageManager
 	private $resultsPerPage;
 	private $sortBy;//
 	private $order;//
-	private $pagination;//
 	private $startingItem;
 
 	public function __construct(Request $request, $totalRows = null, $resultsPerPage = null)
@@ -24,7 +23,6 @@ class PageManager
 		$this->setLastPage($totalRows);
 		$this->setSortBy();
 		$this->setOrder();
-		$this->setPagination();
 		$this->setStartingItem();
 	}
 	public function setRequest($request)
@@ -92,7 +90,7 @@ class PageManager
 	{
 		return $this->startingItem;
 	}
-	public function setPagination()
+	public function getPagination()
 	{
 		/* 5 numbers in pagination links, like [1] [2] [3] [4] [5] */
 		$pageCount = 5;
@@ -108,8 +106,7 @@ class PageManager
 				$result[] = $i;
 				$i++;
 			}
-			$this->pagination = $result;
-			return;
+			return $result;
 		}
 
 		/* if current page is 3 or less, stop pagination at $pageCount or before */
@@ -121,8 +118,7 @@ class PageManager
 				$result[] = $i;
 				$i++;
 			}
-			$this->pagination = $result;
-			return;
+			return $result;
 		}
 
 		/* current page is the last 3 pages */
@@ -132,8 +128,7 @@ class PageManager
                 $result[] = $this->lastPage - $pageCount + 1;
                 $pageCount--;
             }
-            $this->pagination = $result;
-            return;
+            return $result;
         }else{
         /* current page is > 3 and there's more than 5 total pages and it's not the last 3 */
             while ($pageCount >= 1)
@@ -141,12 +136,7 @@ class PageManager
                 $result[] = $this->page - $pageCount + $half + 1;
                 $pageCount--;
             }
-            $this->pagination = $result;
-            return;
+            return $result;
         }
-	}
-	public function getPagination()
-	{
-		return $this->pagination;
 	}
 }

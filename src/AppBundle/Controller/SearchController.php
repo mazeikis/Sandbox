@@ -30,7 +30,7 @@ class SearchController extends Controller
 			$pageManager = new PageManager($request);
 		}
         return $this->render('AppBundle:Twig:search.html.twig', array(
-        	'title' => 'sandbox|project',
+        	'title' => 'sandbox|search',
         	'content' => $query, 
         	'pageManager' => $pageManager));
 	}
