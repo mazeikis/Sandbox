@@ -6,7 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use AppBundle\Entity\User;
-use AppBundle\Security\confirmationTokenGenerator;
+use AppBundle\Security\ConfirmationTokenGenerator;
 use AppBundle\Form\Type\VerificationFormType;
 
 class VerificationController extends Controller

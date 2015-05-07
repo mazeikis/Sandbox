@@ -19,10 +19,6 @@ class RegistrationController extends Controller
 		$form->handleRequest($request);
 
         if($form->isValid()){
-            $encoder = $this->container->get('security.password_encoder');
-			$encoded = $encoder->encodePassword($user, $user->getPlainPassword());
-			$user->setPassword($encoded);
-
             $confirmationTokenManager = new ConfirmationTokenGenerator();
             $user->setConfirmationToken($confirmationTokenManager->generateConfirmationToken());
 

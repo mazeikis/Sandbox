@@ -9,3 +9,14 @@ services:
         public:     false
         tags:
            - { name: security.voter }
+    doctrine.image_listener:
+        class: AppBundle\Doctrine\ImageListener
+        arguments: []
+        tags:
+            - { name: doctrine.event_listener, event: prePersist }
+    doctrine.user_listener:
+        class: AppBundle\Doctrine\UserListener
+        arguments: ["@security.password_encoder"]
+        tags:
+            - { name: doctrine.event_listener, event: prePersist }
+            - { name: doctrine.event_listener, event: preUpdate }

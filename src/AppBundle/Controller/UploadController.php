@@ -11,8 +11,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 class UploadController extends Controller
 {
     public function indexAction(Request $request)
-    {
-    
+    {    
         $image = new Image();       
         $form = $this->createForm(new UploadFormType());
         $user = $this->getUser();
@@ -31,7 +30,6 @@ class UploadController extends Controller
                   ->setExtension($data['file']->getClientOriginalExtension())
                   ->setTitle($data['title'])
                   ->setDescription($data['description'])
-                  ->setCreated(new \Datetime())
                   ->setUpdated(new \Datetime())
                   ->setOwner($user);
             $data['file']->move(__DIR__.'/../../../web/images', $randomName.'.'.$data['file']->getClientOriginalExtension());
@@ -43,9 +41,10 @@ class UploadController extends Controller
                 ->add('success', 'Image uploaded!');
             return $this->redirectToRoute('_gallery');
         } else {
-          //empty
+          $request->getSession()
+                ->getFlashBag()
+                ->add('warnin', 'Image upload error!');
         }
-
         return $this->render('AppBundle:Twig:upload.html.twig', array('title' => 'sandbox|project', 'form' => $form->createView()));
     }
 }

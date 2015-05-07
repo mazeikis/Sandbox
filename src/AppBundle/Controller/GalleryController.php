@@ -60,8 +60,8 @@ class GalleryController extends Controller
             $data = $form->getData();
             $image->setTitle($data['title'])->setDescription($data['description'])->setUpdated(new \Datetime());
             $em->flush();
-            return $this->render('AppBundle:Twig:image.html.twig', array('title' => 'sandbox|image', 'image' => $image));
-            }
+            return $this->redirectToRoute('_image', array('id' => $id));
+        }
 
         return $this->render('AppBundle:Twig:image.html.twig', array('title' => 'sandbox|image', 'image' => $image, 'form' => $form->createView()));
     }

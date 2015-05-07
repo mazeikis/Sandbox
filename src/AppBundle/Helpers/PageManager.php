@@ -134,7 +134,7 @@ class PageManager
             return $result;
         }
 	}
-	public function getLastPaget()
+	public function getLastPage()
 	{
 		return $this->lastPage;
 	}
