@@ -15,4 +15,9 @@
 /vendor/
 /bin/
 /composer.phar
-*.htaccess
+.htaccess
+/web/.htaccess
+/src/.htaccess
+/vendor/.htaccess
+/bin/.htaccess
+/app/.htaccess
