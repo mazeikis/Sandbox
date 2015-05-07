@@ -78,10 +78,7 @@ class VerificationController extends Controller
         if($form->isValid()){
         	$data = $form->getData();
         	$user->setPlainPassword($data['plainPassword']);
-        	$encoder = $this->container->get('security.password_encoder');
-			$encoded = $encoder->encodePassword($user, $user->getPlainPassword());
-			$user->setPassword($encoded);
-			$user->setConfirmationToken(null);
+        	$user->setConfirmationToken(null);
 			$em->flush();
 			$request->getSession()
 	                ->getFlashBag()

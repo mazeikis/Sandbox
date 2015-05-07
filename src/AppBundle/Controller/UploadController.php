@@ -17,15 +17,14 @@ class UploadController extends Controller
         $user = $this->getUser();
         $form->handleRequest($request);
         if($form->isValid()){ 
-            if (false === $this->get('security.authorization_checker')->isGranted('create', $image, $user)) {
+            if ($this->get('security.authorization_checker')->isGranted('create', $image, $user) === false) {
                 throw new AccessDeniedException('Unauthorised access!');
             }          
             $data = $form->getData();
             $imageSizeDetails = getimagesize($data['file']->getPathName());
-            $randomName =  sha1(uniqid(mt_rand(), true));
-            $image->setFileName($randomName)
+            $image->setFileName($sha1(uniqid(mt_rand(), true))) //New Random File Name
                   ->setSize($data['file']->getSize())
-                  ->setResolution(strval($imageSizeDetails[0]).' x '.strval($imageSizeDetails[1]))
+                  ->setResolution(strval($imageSizeDetails[0]).' x '.strval($imageSizeDetails[1])) //Image resolution in format "width x height"
                   ->setExtension($data['file']->getClientOriginalExtension())
                   ->setTitle($data['title'])
                   ->setDescription($data['description'])
