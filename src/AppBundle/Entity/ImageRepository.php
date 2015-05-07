@@ -12,9 +12,9 @@ class ImageRepository extends EntityRepository
           LEFT JOIN image.owner user
           WHERE image.title LIKE :key
           OR image.description LIKE :key 
-          OR user.username LIKE :key 
-          ORDER BY image.'.$sortBy.' '.$order
+          OR user.username LIKE :key'
           )->setParameter('key', '%'.$q.'%')
+          ->addOrderBy($sortBy, $order)
           ->setFirstResult($offset)
           ->setMaxResults($limit);
         $result = $query->getResult();
