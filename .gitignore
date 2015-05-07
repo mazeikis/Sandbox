@@ -15,4 +15,4 @@
 /vendor/
 /bin/
 /composer.phar
-*/.htaccess
+*.htaccess
