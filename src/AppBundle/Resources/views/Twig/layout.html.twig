@@ -36,7 +36,7 @@
 			<li><a href="{{path('_about')}}">About</a></li>
 		</ul>
 		<div class="col-sm-3 col-md-7">
-		<form class="navbar-form" role="search" action="{{path('_search')}}" method="get">
+		<form class="navbar-form" role="search" method="get" action="{{path('_search')}}" method="get">
 		<div class="input-group  navbar-right">
 			<input type="text" class="form-control" placeholder="{{app.request.query.get('q')|default('Search')}}" name="q">
 			<div class="input-group-btn">

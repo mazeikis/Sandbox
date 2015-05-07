@@ -22,15 +22,13 @@ class UploadController extends Controller
             }          
             $data = $form->getData();
             $imageSizeDetails = getimagesize($data['file']->getPathName());
-            $resolution = strval($imageSizeDetails[0]).' x '.strval($imageSizeDetails[1]);
             $randomName =  sha1(uniqid(mt_rand(), true));
             $image->setFileName($randomName)
                   ->setSize($data['file']->getSize())
-                  ->setResolution($resolution)
+                  ->setResolution(strval($imageSizeDetails[0]).' x '.strval($imageSizeDetails[1]))
                   ->setExtension($data['file']->getClientOriginalExtension())
                   ->setTitle($data['title'])
                   ->setDescription($data['description'])
-                  ->setUpdated(new \Datetime())
                   ->setOwner($user);
             $data['file']->move(__DIR__.'/../../../web/images', $randomName.'.'.$data['file']->getClientOriginalExtension());
             $em = $this->getDoctrine()->getManager();
@@ -43,7 +41,7 @@ class UploadController extends Controller
         } else {
           $request->getSession()
                 ->getFlashBag()
-                ->add('warnin', 'Image upload error!');
+                ->add('warning', 'Image upload error!');
         }
         return $this->render('AppBundle:Twig:upload.html.twig', array('title' => 'sandbox|project', 'form' => $form->createView()));
     }

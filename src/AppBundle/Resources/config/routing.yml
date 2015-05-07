@@ -1,57 +1,72 @@
 _home:
     path:    /
     defaults:  { _controller: AppBundle:Default:index }
+    methods:  [GET]
 _about:
     path:    /about/
     defaults: { _controller: AppBundle:Default:about }
+    methods:  [GET]
 _gallery:
     path:    /gallery/
     defaults: { _controller: AppBundle:Gallery:index }
+    methods:  [GET]
 _image:
     path:    /gallery/image/{id}
     defaults: { _controller: AppBundle:Gallery:Image }
     requirements:
         id: \d+
+    methods:  [GET]
 _image_edit:
     path:    /gallery/image/edit/{id}
     defaults: { _controller: AppBundle:Gallery:ImageEdit }
     requirements:
         id: \d+
+    methods:  [GET]
 _image_delete:
     path:    /gallery/image/delete/{id}
     defaults: { _controller: AppBundle:Gallery:ImageDelete }
     requirements:
         id: \d+
+    methods:  [GET]
 _upload:
     path:    /upload/
     defaults: { _controller: AppBundle:Upload:index }
+    methods:  [GET, POST]
 _registration:
     path:    /registration/
     defaults: { _controller: AppBundle:Registration:index }
+    methods:  [GET, POST]
 _verification:
     path:    /verify/{confirmationToken}
     defaults: { _controller: AppBundle:Verification:email }
-    methods: [GET]
+    methods: [GET, POST]
 _user:
     path: /user/{slug}
     defaults: { _controller: AppBundle:User:index }
     requirements:
         slug: \d+
+    methods:  [GET]
 _reset:
     path: /reset/
     defaults: { _controller: AppBundle:Verification:reset }
     requirements:
         slug: \d+
+    methods:  [GET, POST]
 _password_verify_reset:
     path: /reset/{confirmationToken}
     defaults: { _controller: AppBundle:Verification:verifyReset }
+    methods:  [GET, POST]
 _search:
     path: /search/
     defaults: { _controller: AppBundle:Search:index }
+    methods:  [GET]
 login_route:
     path:     /login
     defaults: { _controller: AppBundle:Security:login }
+    methods:  [GET, POST]
 login_check:
     path: /login_check
+    methods:  [GET]
 logout:
     pattern: /logout
+    methods:  [GET, POST]

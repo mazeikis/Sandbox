@@ -16,5 +16,6 @@ class ImageListener
 	private function handleEvent(Image $image)
 	{
 		$image->setCreated(new \Datetime());
+	    $image->setUpdated(new \Datetime());
 	}
 }
