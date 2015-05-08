@@ -22,7 +22,8 @@ class UploadController extends Controller
             }          
             $data = $form->getData();
             $imageSizeDetails = getimagesize($data['file']->getPathName());
-            $image->setFileName($sha1(uniqid(mt_rand(), true))) //New Random File Name
+            $randomFileName = $sha1(uniqid(mt_rand(), true));
+            $image->setFileName($randomFileName) //New Random File Name
                   ->setSize($data['file']->getSize())
                   ->setResolution(strval($imageSizeDetails[0]).' x '.strval($imageSizeDetails[1])) //Image resolution in format "width x height"
                   ->setExtension($data['file']->getClientOriginalExtension())
