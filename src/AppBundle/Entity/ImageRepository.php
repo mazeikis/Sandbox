@@ -2,23 +2,24 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 
 class ImageRepository extends EntityRepository
 {
     public function searchForQuery($q, $limit = null, $offset = null, $sortBy, $order){
-        $query = $this->getEntityManager()->createQuery(
-          'SELECT image
-          FROM AppBundle:Image image 
-          LEFT JOIN image.owner user
-          WHERE image.title LIKE :key
-          OR image.description LIKE :key 
-          OR user.username LIKE :key'
-          )->setParameter('key', '%'.$q.'%')
-          ->addOrderBy($sortBy, $order)
-          ->setFirstResult($offset)
-          ->setMaxResults($limit);
-        $result = $query->getResult();
-
+        $query = $this->createQueryBuilder('image');
+        $query->select('image')
+              ->leftJoin('image.owner', 'users', Join::WITH)
+              ->where($query->expr()->orX(
+                  $query->expr()->like('image.title', ':key'),
+                  $query->expr()->like('image.description', ':key'),
+                  $query->expr()->like('users.username', ':key')
+                  ))
+              ->orderBy('image.'.$sortBy, $order)
+              ->setParameter('key', '%'.$q.'%')
+              ->setFirstResult($offset)
+              ->setMaxResults($limit);
+            $result = $query->getQuery()->getResult();
         return $result;
     }
     public function countResultRows($q)

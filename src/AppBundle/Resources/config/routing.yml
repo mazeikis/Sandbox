@@ -56,10 +56,6 @@ _password_verify_reset:
     path: /reset/{confirmationToken}
     defaults: { _controller: AppBundle:Verification:verifyReset }
     methods:  [GET, POST]
-_search:
-    path: /search/
-    defaults: { _controller: AppBundle:Search:index }
-    methods:  [GET]
 login_route:
     path:     /login
     defaults: { _controller: AppBundle:Security:login }

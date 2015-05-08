@@ -16,15 +16,28 @@ class GalleryController extends Controller
 {
     public function indexAction(Request $request)
     {
+        $q = $request->query->get('q');
         $resultsPerPage = 8;
         $em = $this->getDoctrine()->getManager();
-        $totalRows = $em->getRepository('AppBundle:Image')->createQueryBuilder('id')->select('COUNT(id)')->getQuery()->getSingleScalarResult();
-        $pageManager = new PageManager($request, $totalRows, $resultsPerPage);
-        $query = $em->getRepository('AppBundle:Image')->findBy(array(), array(
-            $pageManager->getSortBy() => $pageManager->getOrder()), 
-            $resultsPerPage, $pageManager->getStartingItem()
-            );
-  
+        if($q){
+            $totalRows = $em->getRepository('AppBundle:Image')->countResultRows($q);
+            $pageManager = new PageManager($request, $totalRows, $resultsPerPage);
+            $query = $em->getRepository('AppBundle:Image')
+                         ->SearchForQuery($q, $pageManager->getResultsPerPage(),
+                                              $pageManager->getStartingItem(), 
+                                              $pageManager->getSortBy(), 
+                                              $pageManager->getOrder()
+                                              );
+        }else{
+            $query = null;
+            $totalRows = $em->getRepository('AppBundle:Image')->createQueryBuilder('id')->select('COUNT(id)')->getQuery()->getSingleScalarResult();
+            $pageManager = new PageManager($request, $totalRows, $resultsPerPage);
+            $query = $em->getRepository('AppBundle:Image')
+                        ->findBy(array(), array(
+                            $pageManager->getSortBy() => $pageManager->getOrder()), 
+                            $resultsPerPage, $pageManager->getStartingItem()
+                            );
+        }     
     	return $this->render('AppBundle:Twig:gallery.html.twig', array(
             'title' => 'sandbox|gallery', 'content' => $query, 'pageManager' => $pageManager));
     }
