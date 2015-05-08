@@ -4,7 +4,6 @@ namespace AppBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use AppBundle\Entity\User;
 use AppBundle\Security\ConfirmationTokenGenerator;
 use AppBundle\Form\Type\VerificationFormType;
@@ -83,16 +82,8 @@ class VerificationController extends Controller
 			$request->getSession()
 	                ->getFlashBag()
 	                ->add('success', 'Users '.$user->getUsername().' password changed successfuly!');
-	        $this->authenticateUser($user);
 		    return $this->redirectToRoute('_user', array('slug' => $user->getId()));
 	        }
     		return $this->render('AppBundle:Twig:reset.html.twig', array('title' => 'sandbox|project', 'submitForm' => $form->createView()));
-    }
-    private function authenticateUser(User $user)
-    {
-        $providerKey = 'secured_area'; // your firewall name
-        $token = new UsernamePasswordToken($user, null, $providerKey, $user->getRoles());
-
-        $this->container->get('security.context')->setToken($token);
     }
 }

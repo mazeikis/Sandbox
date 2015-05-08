@@ -4,7 +4,6 @@ namespace AppBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use AppBundle\Entity\User;
 use AppBundle\Security\ConfirmationTokenGenerator;
 use AppBundle\Form\Type\RegistrationFormType;
@@ -40,21 +39,10 @@ class RegistrationController extends Controller
             $request->getSession()
                 ->getFlashBag()
                 ->add('success', 'Rergistration almost complete, please check Your email for verification link to finish registration process!');
-
-             $this->authenticateUser($user);
-
             return $this->redirectToRoute('_home');
         }else{
             $message = NULL;
         }
-
         return $this->render('AppBundle:Twig:registration.html.twig', array('title' => 'sandbox|project', 'message' => $message, 'form' => $form->createView()));
-    }
-    private function authenticateUser(User $user)
-    {
-        $providerKey = 'secured_area';
-        $token = new UsernamePasswordToken($user, null, $providerKey, $user->getRoles());
-
-        $this->container->get('security.context')->setToken($token);
     }
 }

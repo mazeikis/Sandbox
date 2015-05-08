@@ -16,7 +16,10 @@ services:
             - { name: doctrine.event_listener, event: prePersist }
     doctrine.user_listener:
         class: AppBundle\Doctrine\UserListener
-        arguments: ["@security.password_encoder"]
+        arguments: ["@security.password_encoder", "@security.token_storage"]
         tags:
             - { name: doctrine.event_listener, event: prePersist }
             - { name: doctrine.event_listener, event: preUpdate }
+            - { name: doctrine.event_listener, event: postUpdate }
+            - { name: doctrine.event_listener, event: postPersist }
+
