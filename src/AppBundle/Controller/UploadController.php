@@ -22,7 +22,7 @@ class UploadController extends Controller
             }          
             $data = $form->getData();
             $imageSizeDetails = getimagesize($data['file']->getPathName());
-            $randomFileName = $sha1(uniqid(mt_rand(), true));
+            $randomFileName = sha1(uniqid(mt_rand(), true));
             $image->setFileName($randomFileName) //New Random File Name
                   ->setSize($data['file']->getSize())
                   ->setResolution(strval($imageSizeDetails[0]).' x '.strval($imageSizeDetails[1])) //Image resolution in format "width x height"
@@ -30,7 +30,7 @@ class UploadController extends Controller
                   ->setTitle($data['title'])
                   ->setDescription($data['description'])
                   ->setOwner($user);
-            $data['file']->move(__DIR__.'/../../../web/images', $randomName.'.'.$data['file']->getClientOriginalExtension());
+            $data['file']->move(__DIR__.'/../../../web/images', $randomFileName.'.'.$data['file']->getClientOriginalExtension());
             $em = $this->getDoctrine()->getManager();
             $em->persist($image);
             $em->flush();

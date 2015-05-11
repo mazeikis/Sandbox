@@ -38,11 +38,16 @@ class RegistrationController extends Controller
             $this->get('mailer')->send($message);
             $request->getSession()
                 ->getFlashBag()
-                ->add('success', 'Rergistration almost complete, please check Your email for verification link to finish registration process!');
+                ->add('success', 'Rergistration almost complete, please check Your email
+                for verification link to finish registration process!');
             return $this->redirectToRoute('_home');
         }else{
             $message = NULL;
         }
-        return $this->render('AppBundle:Twig:registration.html.twig', array('title' => 'sandbox|project', 'message' => $message, 'form' => $form->createView()));
+        return $this->render('AppBundle:Twig:registration.html.twig', array(
+            'title' => 'sandbox|project',
+            'message' => $message,
+            'form' => $form->createView()
+        ));
     }
 }

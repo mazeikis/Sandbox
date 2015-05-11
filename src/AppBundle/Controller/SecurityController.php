@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class SecurityController extends Controller
 {
-    public function loginAction(Request $request)
+    public function loginAction()
     {
  		$authenticationUtils = $this->get('security.authentication_utils');
 	    $error = $authenticationUtils->getLastAuthenticationError();

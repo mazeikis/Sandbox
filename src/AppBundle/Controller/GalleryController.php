@@ -44,7 +44,7 @@ class GalleryController extends Controller
     public function imageAction($id) //single image
     {
         $em = $this->getDoctrine()->getManager();
-        $image = $em->getRepository('AppBundle:Image')->findOneBy(['id' => $id]);
+        $image = $em->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
         if(!$image){
             throw $this->createNotFoundException('No image with id '.$id);
             }
@@ -54,7 +54,7 @@ class GalleryController extends Controller
     public function imageEditAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
-        $image = $em->getRepository('AppBundle:Image')->findOneBy(['id' => $id]);
+        $image = $em->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
 
         if (false === $this->get('security.authorization_checker')->isGranted('edit', $image)) {
             throw new AccessDeniedException('Unauthorised access!');
@@ -81,7 +81,7 @@ class GalleryController extends Controller
     public function imageDeleteAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
-        $image = $em->getRepository('AppBundle:Image')->findOneBy(['id' => $id]);
+        $image = $em->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
         
         if ($this->get('security.authorization_checker')->isGranted('delete', $image) === false) {
             throw new AccessDeniedException('Unauthorised access!');

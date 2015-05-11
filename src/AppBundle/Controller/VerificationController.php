@@ -24,7 +24,7 @@ class VerificationController extends Controller
 			$em->flush();
 			$request->getSession()
 	                ->getFlashBag()
-	                ->add('success', 'User '.$user->getUsername().' verified successfuly!');
+	                ->add('success', 'User '.$user->getUsername().' verified successfully!');
 		           	return $this->redirectToRoute('_home');
 	        }
     }
@@ -60,7 +60,10 @@ class VerificationController extends Controller
 		                ->add('success', 'User '.$user->getUsername().' reset email sent successfuly!');
 			return $this->redirectToRoute('_home');
 			}
-		return $this->render('AppBundle:Twig:reset.html.twig', array('title' => 'sandbox|project', 'requestForm' => $form->createView()));
+		return $this->render('AppBundle:Twig:reset.html.twig', array(
+            'title' => 'sandbox|project',
+            'requestForm' => $form->createView()
+        ));
     }
     public function verifyResetAction(Request $request, $confirmationToken)
     {
@@ -81,9 +84,10 @@ class VerificationController extends Controller
 			$em->flush();
 			$request->getSession()
 	                ->getFlashBag()
-	                ->add('success', 'Users '.$user->getUsername().' password changed successfuly!');
+	                ->add('success', 'Users '.$user->getUsername().' password changed successfully!');
 		    return $this->redirectToRoute('_user', array('slug' => $user->getId()));
 	        }
-    		return $this->render('AppBundle:Twig:reset.html.twig', array('title' => 'sandbox|project', 'submitForm' => $form->createView()));
+    		return $this->render('AppBundle:Twig:reset.html.twig', array(
+                'title' => 'sandbox|project', 'submitForm' => $form->createView()));
     }
 }

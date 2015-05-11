@@ -31,7 +31,7 @@ class UserListener
 	{
 		$entity = $args->getEntity();
 		if($entity instanceof User){
-			authenticateUser($entity);
+			$this->authenticateUser($entity);
 		}
 	}
 	public function postPersist(LifecycleEventArgs $args)

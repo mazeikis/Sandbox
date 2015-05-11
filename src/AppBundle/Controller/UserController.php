@@ -13,7 +13,9 @@ class UserController extends Controller
         $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $slug));
         $recentlyUploaded = $em->getRepository('AppBundle:Image')->getRecentlyUploaded(5, $user);
 
-		return $this->render('AppBundle:Twig:user.html.twig', array('title' => 'sandbox|user profile', 'recent' => $recentlyUploaded, 'user' => $user));
-
+		return $this->render('AppBundle:Twig:user.html.twig', array(
+            'title' => 'sandbox|user profile',
+            'recent' => $recentlyUploaded, 'user' => $user
+        ));
 	}
 }
