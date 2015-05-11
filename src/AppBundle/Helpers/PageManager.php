@@ -30,8 +30,8 @@ class PageManager
 	}
 	public function setPage()
 	{
-		if(!$this->request->query->get('page') || $this->request->query->get('page') < 1){ 
-            $this->page = 1; 
+		if(!$this->request->query->get('page') || $this->request->query->get('page') < 1){
+            $this->page = 1;
         }else{
         	$this->page = $this->request->query->get('page');
         }
@@ -96,41 +96,16 @@ class PageManager
 		if($this->lastPage <= $pageCount)
 		{
 			$i = 1;
-			while($i <= $this->lastPage)
-			{
-				$result[] = $i;
-				$i++;
-			}
+			$result = range(1, $this->lastPage);
 			return $result;
 		}
-
-		/* if current page is 3 or less, stop pagination at $pageCount or before */
-		if($this->page <=3)
-		{
-			$i = 1;
-			while($i <= $this->lastPage && $i < $pageCount)
-			{
-				$result[] = $i;
-				$i++;
-			}
-			return $result;
-		}
-
 		/* current page is the last 3 pages */
 		if ($this->page + $half > $this->lastPage){
-            while ($pageCount >= 1)
-            {
-                $result[] = $this->lastPage - $pageCount + 1;
-                $pageCount--;
-            }
+            $result = range($lastPage - $pageCount + 1, $lastPage);
             return $result;
         }else{
-        /* current page is > 3 and there's more than 5 total pages and it's not the last 3 */
-            while ($pageCount >= 1)
-            {
-                $result[] = $this->page - $pageCount + $half + 1;
-                $pageCount--;
-            }
+        /* last page is > 5 and it's not in the last 3 */
+            $result = range($this->page - $half, $this->page + $half);
             return $result;
         }
 	}
