@@ -95,7 +95,6 @@ class PageManager
 		/* if total amount of pages less than 5 */
 		if($this->lastPage <= $pageCount)
 		{
-			$i = 1;
 			$result = range(1, $this->lastPage);
 			return $result;
 		}
