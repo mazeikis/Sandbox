@@ -2,11 +2,11 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Helpers\PageManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Doctrine\ORM\Query\Expr\Join;
 
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -17,29 +17,56 @@ class GalleryController extends Controller
     public function indexAction(Request $request)
     {
         $q = $request->query->get('q');
+        $page = $request->query->get('page', 1);
+        if(!in_array($request->query->get('sortBy'), ['created', 'owner', 'title'])){
+                $request->query->set('sortBy', 'created');
+            }else{
+                $sortBy = $request->query->get('sortBy');
+        }
+        if(!in_array($request->query->get('order'), ['asc', 'desc'])){
+            $request->query->set( 'order', 'DESC');
+        }else{
+            $order = $request->query->get('order');
+        }
         $resultsPerPage = 8;
+        $startingRow = $resultsPerPage * ($page -1);
         $em = $this->getDoctrine()->getManager();
         if($q){
-            $totalRows = $em->getRepository('AppBundle:Image')->countResultRows($q);
-            $pageManager = new PageManager($request, $totalRows, $resultsPerPage);
-            $query = $em->getRepository('AppBundle:Image')
-                         ->SearchForQuery($q, $pageManager->getResultsPerPage(),
-                                              $pageManager->getStartingItem(), 
-                                              $pageManager->getSortBy(), 
-                                              $pageManager->getOrder()
-                                              );
+            //$totalRows = $em->getRepository('AppBundle:Image')->countResultRows($q);
+            /*$query = $em->getRepository('AppBundle:Image')
+                         ->SearchForQuery($q, $resultsPerPage,
+                                              $startingRow,
+                                              $sortBy,
+                                              $order
+                                            );*/
+            $query = $em->getRepository('AppBundle:Image')->createQueryBuilder('image');
+            $query->select('image')
+            ->leftJoin('image.owner', 'users', Join::WITH)
+            ->where($query->expr()->orX(
+                        $query->expr()->like('image.title', ':key'),
+                        $query->expr()->like('image.description', ':key'),
+                        $query->expr()->like('users.username', ':key')
+                        ))
+            ->setParameter('key', '%'.$q.'%');
+            //$result = $query->getQuery();
+            $paginator = $this->get('knp_paginator');
+            $pagination = $paginator->paginate($query->getQuery(), $page, $resultsPerPage);
+            //$pagination->setTotalItemCount($totalRows);
         }else{
-            $query = null;
-            $totalRows = $em->getRepository('AppBundle:Image')->createQueryBuilder('id')->select('COUNT(id)')->getQuery()->getSingleScalarResult();
-            $pageManager = new PageManager($request, $totalRows, $resultsPerPage);
-            $query = $em->getRepository('AppBundle:Image')
-                        ->findBy(array(), array(
-                            $pageManager->getSortBy() => $pageManager->getOrder()), 
-                            $resultsPerPage, $pageManager->getStartingItem()
-                            );
-        }     
+            /*$totalRows = $em->getRepository('AppBundle:Image')
+            ->createQueryBuilder('id')
+            ->select('COUNT(id)')
+            ->getQuery()
+            ->getSingleScalarResult();*/
+            //$dql = "SELECT image FROM AppBundle:Image image";
+            //$query = $em->createQuery($dql);
+            $query = $em->getRepository('AppBundle:Image');
+            $query->createQueryBuilder();
+            $paginator = $this->get('knp_paginator');
+            $pagination = $paginator->paginate($query, $page, $resultsPerPage);
+                    }
     	return $this->render('AppBundle:Twig:gallery.html.twig', array(
-            'title' => 'sandbox|gallery', 'content' => $query, 'pageManager' => $pageManager));
+            'title' => 'sandbox|gallery', 'content' => $query, 'pagination' => $pagination));
     }
     public function imageAction($id) //single image
     {
@@ -59,7 +86,7 @@ class GalleryController extends Controller
         if (false === $this->get('security.authorization_checker')->isGranted('edit', $image)) {
             throw new AccessDeniedException('Unauthorised access!');
             }
-            
+
         $defaultData = array('message' => 'Type your message here');
         $form = $this->createFormBuilder($defaultData)
             ->add('title', 'text', array('data' => $image->getTitle(), 'constraints' => new Length(array('min' => 3), new NotBlank)))
@@ -82,11 +109,11 @@ class GalleryController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $image = $em->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
-        
+
         if ($this->get('security.authorization_checker')->isGranted('delete', $image) === false) {
             throw new AccessDeniedException('Unauthorised access!');
         }
-       
+
         if (!$image) {
                 throw $this->createNotFoundException('No image with id '.$id);
             }else {
@@ -98,7 +125,7 @@ class GalleryController extends Controller
                 $request->getSession()
                     ->getFlashBag()
                     ->add('success', 'Image deleted!');
-                return $this->redirectToRoute('_gallery');            
+                return $this->redirectToRoute('_gallery');
             }
     }
 }
