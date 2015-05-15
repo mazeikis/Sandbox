@@ -4,7 +4,6 @@ namespace AppBundle\Twig;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SortableExtension extends \Twig_Extension
 {
@@ -24,25 +23,22 @@ class SortableExtension extends \Twig_Extension
     $this->request = $container->get('request');
     $this->router = $container->get('router');
   }
-  public function isSorted($key){
+  public function isSorted($key)
+  {
     return ($this->request->query->get('sortBy') != null) && $this->request->query->get('sortBy') === $key;
 
   }
   public function sortable($newSortBy)
   {
-    $sortBy = null;
-    if($this->request->query->get('sortBy') != null){
-      if(in_array($this->request->query->get('sortBy'), array('created', 'owner', 'title'))){
-        $sortBy = $this->request->query->get('sortBy');
-      }else{
+    $sortBy = $this->request->query->get('sortBy', 'created');
+    $order = $this->request->query->get('order', 'asc');
+    if(!in_array($sortBy, array('created', 'owner', 'title'))){
         $sortBy = $newSortBy;
-      }
     }
     if($this->isSorted($newSortBy)){
       $order = ($this->request->query->get('order') == 'asc') ? 'desc' : 'asc';
     }else{
-      $sortBy = $newSortBy;
-      $order = !$this->request->query->get('order') ? 'asc' : $this->request->query->get('order');
+      $sortBy = $newSortBp..
     }
     return $this->router->generate('_gallery', array(
       'page' => $this->request->query->get('page', 1),
