@@ -50,11 +50,11 @@
             </div><br>
         <!-- /.row -->
         <!-- Gallery Grid -->
-    {% if pagination is defined %}
+    {% if content is defined %}
     <div class="row">
-    {% for image in pagination %}
+    {% for image in content %}
     <div class="col-md-3 portfolio-item">
-      <a href='{{path('_image', { 'id' : image.getId })}}'>
+      <a href='{{path('_image', { 'id' : image.id })}}'>
         <img src='{{ (image.fileName~'.'~image.extension) | imagine_filter('thumb')}}' class="img-responsive">
       </a>
     </div>
@@ -63,16 +63,17 @@
     {% endif %}
     <!-- End of Grid -->
 
-{% if pagination is defined %}
-{% if pagination.isSorted('title') %}<h1>Sorted!</h1>{% else %}{{ knp_pagination_sortable(pagination, 'Title', 'title') }}{% endif %}
-
-{{ knp_pagination_sortable(pagination, 'Date', 'created')|raw }}
-{{ knp_pagination_sortable(pagination, 'Owner', 'owner.id') }}
+{% if pager is defined %}
+<a href={{sortable('title')}}>title</a>
+{{isSorted('created')}}<br>
+<a href={{sortable('created')}}>created</a>
 
 
 <div class="row text-center">
   <div class="col-lg-12">
-    {{ knp_pagination_render(pagination, 'KnpPaginatorBundle:Pagination:twitter_bootstrap_v3_pagination.html.twig') }}
+    <div class="pagerfanta">
+        {{ pagerfanta(pager, 'twitter_bootstrap3') }}
+    </div>
   </div>
 </div>
 {% endif %}

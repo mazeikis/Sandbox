@@ -93,12 +93,3 @@ liip_imagine:
             quality: 75
             filters:
                 thumbnail: { size: [750, 450], mode: outbound }
-knp_paginator:
-    page_range: 5                      # default page range used in pagination control
-    default_options:
-        page_name: page                # page query parameter name
-        sort_field_name: sortBy          # sort field query parameter name
-        sort_direction_name: order     # sort direction query parameter name
-    template:
-        pagination: KnpPaginatorBundle:Pagination:sliding.html.twig     # sliding pagination controls template
-        sortable: KnpPaginatorBundle:Pagination:sortable_link.html.twig # sort link template

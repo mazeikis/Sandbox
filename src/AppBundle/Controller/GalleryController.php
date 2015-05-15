@@ -7,6 +7,8 @@ use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Doctrine\ORM\Query\Expr\Join;
+use Pagerfanta\Adapter\DoctrineORMAdapter;
+use Pagerfanta\Pagerfanta;
 
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -17,28 +19,22 @@ class GalleryController extends Controller
     public function indexAction(Request $request)
     {
         $q = $request->query->get('q');
-        $page = $request->query->get('page', 1);
+        $currentPage = $request->query->get('page', 1);
         if(!in_array($request->query->get('sortBy'), ['created', 'owner', 'title'])){
                 $request->query->set('sortBy', 'created');
+                $sortBy = $request->query->get('sortBy');
             }else{
                 $sortBy = $request->query->get('sortBy');
         }
         if(!in_array($request->query->get('order'), ['asc', 'desc'])){
-            $request->query->set( 'order', 'DESC');
+            $request->query->set( 'order', 'desc');
+            $order = $request->query->get('order');
         }else{
             $order = $request->query->get('order');
         }
-        $resultsPerPage = 8;
-        $startingRow = $resultsPerPage * ($page -1);
+        $maxPerPage = 8;
         $em = $this->getDoctrine()->getManager();
         if($q){
-            //$totalRows = $em->getRepository('AppBundle:Image')->countResultRows($q);
-            /*$query = $em->getRepository('AppBundle:Image')
-                         ->SearchForQuery($q, $resultsPerPage,
-                                              $startingRow,
-                                              $sortBy,
-                                              $order
-                                            );*/
             $query = $em->getRepository('AppBundle:Image')->createQueryBuilder('image');
             $query->select('image')
             ->leftJoin('image.owner', 'users', Join::WITH)
@@ -47,26 +43,34 @@ class GalleryController extends Controller
                         $query->expr()->like('image.description', ':key'),
                         $query->expr()->like('users.username', ':key')
                         ))
+            ->orderBy('image.'.$sortBy, $order)
             ->setParameter('key', '%'.$q.'%');
-            //$result = $query->getQuery();
-            $paginator = $this->get('knp_paginator');
-            $pagination = $paginator->paginate($query->getQuery(), $page, $resultsPerPage);
-            //$pagination->setTotalItemCount($totalRows);
+            $adapter = new DoctrineORMAdapter($query);
+            $pagerfanta = new Pagerfanta($adapter);
+
+            $pagerfanta->setMaxPerPage($maxPerPage);
+            $pagerfanta->setCurrentPage($currentPage);
+
+            //$nbResults = $pagerfanta->getNbResults();
+            $currentPageResults = $pagerfanta->getCurrentPageResults();
+
         }else{
-            /*$totalRows = $em->getRepository('AppBundle:Image')
-            ->createQueryBuilder('id')
-            ->select('COUNT(id)')
-            ->getQuery()
-            ->getSingleScalarResult();*/
-            //$dql = "SELECT image FROM AppBundle:Image image";
-            //$query = $em->createQuery($dql);
-            $query = $em->getRepository('AppBundle:Image');
-            $query->createQueryBuilder();
-            $paginator = $this->get('knp_paginator');
-            $pagination = $paginator->paginate($query, $page, $resultsPerPage);
+            $queryBuilder = $em->createQueryBuilder()
+              ->select('image')
+              ->from('AppBundle:Image', 'image')
+              ->orderBy('image.'.$sortBy, $order);
+            $adapter = new DoctrineORMAdapter($queryBuilder);
+            $pagerfanta = new Pagerfanta($adapter);
+
+            $pagerfanta->setMaxPerPage($maxPerPage);
+            $pagerfanta->setCurrentPage($currentPage);
+
+            //$nbResults = $pagerfanta->getNbResults();
+            $currentPageResults = $pagerfanta->getCurrentPageResults();
+
                     }
     	return $this->render('AppBundle:Twig:gallery.html.twig', array(
-            'title' => 'sandbox|gallery', 'content' => $query, 'pagination' => $pagination));
+            'title' => 'sandbox|gallery', 'content' => $currentPageResults, 'pager' => $pagerfanta));
     }
     public function imageAction($id) //single image
     {
