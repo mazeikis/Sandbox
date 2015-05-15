@@ -4,12 +4,12 @@
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>{% block title %}{% if title is defined %}{{ title }}{% else %}sandbox|project{% endif %}{% endblock %}</title>
+		<title>{% block title %}{{ title|default('sandbox|project')}}{% endblock %}</title>
 		{% block style %}
 		{% spaceless %}
 		<link rel="stylesheet" href="{{ asset('css/normalize.css') }}"/>
 		<link rel="stylesheet" href="{{ asset('css/bootstrap.css') }}"/>
-	    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+	       <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 		<script  type="text/javascript" src="{{ asset('js/bootstrap.min.js') }}"></script>
 		{% endspaceless %}
 		{% endblock %}
@@ -43,7 +43,7 @@
 				<a class="dropdown-toggle" href="#" data-toggle="dropdown">Sign In <strong class="caret"></strong></a>
 				<div class="dropdown-menu pull-right" style="padding: 15px; padding-bottom: 0px;">
 					<form action="{{ path('login_check')}}" method="post">
-						<input style="margin-bottom: 15px;" type="text" id="username" placeholder="Username" {% if last_username is defined %} value="{{ last_username }}" {% endif %} name="_username">
+						<input style="margin-bottom: 15px;" type="text" id="username" placeholder="Username" value="{{ last_username|default('Username') }}" name="_username">
 						<input style="margin-bottom: 15px;" type="password" placeholder="Password" id="password" name="_password">
 						<input style="float: left; margin-right: 10px;" type="checkbox" name="remember-me" id="remember-me" value="1">
 						<label class="string optional" for="user_remember_me"> Remember me</label>
