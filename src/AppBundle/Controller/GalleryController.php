@@ -51,7 +51,6 @@ class GalleryController extends Controller
             $pagerfanta->setMaxPerPage($maxPerPage);
             $pagerfanta->setCurrentPage($currentPage);
 
-            //$nbResults = $pagerfanta->getNbResults();
             $currentPageResults = $pagerfanta->getCurrentPageResults();
 
         }else{
@@ -65,7 +64,7 @@ class GalleryController extends Controller
             $pagerfanta->setMaxPerPage($maxPerPage);
             $pagerfanta->setCurrentPage($currentPage);
 
-            //$nbResults = $pagerfanta->getNbResults();
+I
             $currentPageResults = $pagerfanta->getCurrentPageResults();
 
                     }
@@ -91,7 +90,7 @@ class GalleryController extends Controller
             throw new AccessDeniedException('Unauthorised access!');
             }
 
-        $defaultData = array('message' => 'Type your message here');
+        $defaultData = array('message' => 'Enter image description.');
         $form = $this->createFormBuilder($defaultData)
             ->add('title', 'text', array('data' => $image->getTitle(), 'constraints' => new Length(array('min' => 3), new NotBlank)))
             ->add('description', 'textarea', array( 'data' => $image->getDescription(), 'required' => true))
