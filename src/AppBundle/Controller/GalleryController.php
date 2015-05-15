@@ -60,13 +60,9 @@ class GalleryController extends Controller
               ->orderBy('image.'.$sortBy, $order);
             $adapter = new DoctrineORMAdapter($queryBuilder);
             $pagerfanta = new Pagerfanta($adapter);
-
             $pagerfanta->setMaxPerPage($maxPerPage);
             $pagerfanta->setCurrentPage($currentPage);
-
-I
             $currentPageResults = $pagerfanta->getCurrentPageResults();
-
                     }
     	return $this->render('AppBundle:Twig:gallery.html.twig', array(
             'title' => 'sandbox|gallery', 'content' => $currentPageResults, 'pager' => $pagerfanta));
