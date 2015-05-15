@@ -36,9 +36,9 @@ class SortableExtension extends \Twig_Extension
         $sortBy = $newSortBy;
     }
     if($this->isSorted($newSortBy)){
-      $order = ($this->request->query->get('order') == 'asc') ? 'desc' : 'asc';
+      $order = ($order == 'asc') ? 'desc' : 'asc';
     }else{
-      $sortBy = $newSortBp..
+      $sortBy = $newSortBy;
     }
     return $this->router->generate('_gallery', array(
       'page' => $this->request->query->get('page', 1),
