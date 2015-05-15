@@ -31,12 +31,10 @@ class SortableExtension extends \Twig_Extension
   public function sortable($newSortBy)
   {
     $sortBy = $this->request->query->get('sortBy', 'created');
-    $order = $this->request->query->get('order', 'asc');
-    if(!in_array($sortBy, array('created', 'owner', 'title'))){
-        $sortBy = $newSortBy;
-    }
+    $order = $this->request->query->get('order', 'desc');
+    
     if($this->isSorted($newSortBy)){
-      $order = ($order == 'asc') ? 'desc' : 'asc';
+      $order = ($order == 'desc') ? 'asc' : 'desc';
     }else{
       $sortBy = $newSortBy;
     }
