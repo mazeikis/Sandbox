@@ -6,7 +6,7 @@ use Doctrine\ORM\Query\Expr\Join;
 
 class ImageRepository extends EntityRepository
 {
-    public function searchForQuery($q, $limit = null, $offset = null, $sortBy, $order){
+    public function searchForQuery($q, $sortBy, $order){
         $query = $this->createQueryBuilder('image');
         $query->select('image')
               ->leftJoin('image.owner', 'users', Join::WITH)
@@ -16,25 +16,8 @@ class ImageRepository extends EntityRepository
                   $query->expr()->like('users.username', ':key')
                   ))
               ->orderBy('image.'.$sortBy, $order)
-              ->setParameter('key', '%'.$q.'%')
-              ->setFirstResult($offset)
-              ->setMaxResults($limit);
-            $result = $query->getQuery();
-        return $result;
-    }
-    public function countResultRows($q)
-    {
-      $query = $this->getEntityManager()->createQuery(
-          'SELECT COUNT(image)
-          FROM AppBundle:Image image
-          LEFT JOIN image.owner user
-          WHERE image.title LIKE :key
-          OR image.description LIKE :key
-          OR user.username LIKE :key'
-          )->setParameter('key', '%'.$q.'%');
-      $result = $query->getSingleScalarResult();
-
-        return $result;
+              ->setParameter('key', '%'.$q.'%');
+        return $query;
     }
     public function getRecentlyUploaded($count, $slug = null)
     {

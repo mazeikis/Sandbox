@@ -3,7 +3,6 @@
 namespace AppBundle\Twig;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\Request;
 
 class SortableExtension extends \Twig_Extension
 {
@@ -25,7 +24,7 @@ class SortableExtension extends \Twig_Extension
   }
   public function isSorted($key)
   {
-    return ($this->request->query->get('sortBy') != null) && $this->request->query->get('sortBy') === $key;
+    return ($this->request->query->get('sortBy') !== null) && $this->request->query->get('sortBy') === $key;
 
   }
   public function sortable($newSortBy)

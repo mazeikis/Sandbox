@@ -35,16 +35,9 @@ class GalleryController extends Controller
         $maxPerPage = 8;
         $em = $this->getDoctrine()->getManager();
         if($q){
-            $query = $em->getRepository('AppBundle:Image')->createQueryBuilder('image');
-            $query->select('image')
-            ->leftJoin('image.owner', 'users', Join::WITH)
-            ->where($query->expr()->orX(
-                        $query->expr()->like('image.title', ':key'),
-                        $query->expr()->like('image.description', ':key'),
-                        $query->expr()->like('users.username', ':key')
-                        ))
-            ->orderBy('image.'.$sortBy, $order)
-            ->setParameter('key', '%'.$q.'%');
+            $query = $em->getRepository('AppBundle:Image')
+            ->searchForQuery($q, $sortBy, $order);
+
             $adapter = new DoctrineORMAdapter($query);
             $pagerfanta = new Pagerfanta($adapter);
 

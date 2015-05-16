@@ -20,7 +20,7 @@
                   <div class="form-group">
                     <form name="form-inline" method="get" action="{{path('_gallery')}}" class="form-inline pull-left">
                             <label for="search">Filter: </label>
-                            <input type="search" name="q" id="search" required="required" class="form-control input" placeholder="{{app.request.query.get('q')|default('Search')}}">
+                            <input type="search" name="q" id="search" required="required" class="form-control input" placeholder="{{app.request.query.get('q', 'Search')}}">
                             <button type="submit" class="btn"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
                     </form>
                   </div>
@@ -58,9 +58,9 @@
     <!-- End of Grid -->
 
 {% if pager is defined %}
-<a href={{sortable('title')}}>title</a>
 {{isSorted('created')}}<br>
 <a href={{sortable('created')}}>created</a>
+<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
 
 
 <div class="row text-center">
