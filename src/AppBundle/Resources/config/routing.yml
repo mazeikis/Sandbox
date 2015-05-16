@@ -30,7 +30,7 @@ _image_delete:
     methods:  [GET]
 _upload:
     path:    /upload/
-    defaults: { _controller: AppBundle:Upload:index }
+    defaults: { _controller: AppBundle:Gallery:upload }
     methods:  [GET, POST]
 _registration:
     path:    /registration/

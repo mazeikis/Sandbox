@@ -16,26 +16,20 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-3">
-                    <form name="form" method="get" action="{{path('_gallery')}}" class="form-inline pull-left">
-                        <fieldset>
-                            <div id="form">
-                                <div class="form-group">
-                                    <label for="search">Filter: </label>
-                                    <input type="search" name="q" id="search" required="required" class="form-control input-sm" placeholder="{{app.request.query.get('q')|default('Search')}}" />
-                                </div>
-                                <div class="form-group">
-                                    <button type="submit" class="btn-small"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
-                                </div>
-                            </div>
-                        </fieldset>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <form name="form-inline" method="get" action="{{path('_gallery')}}" class="form-inline pull-left">
+                            <label for="search">Filter: </label>
+                            <input type="search" name="q" id="search" required="required" class="form-control input" placeholder="{{app.request.query.get('q')|default('Search')}}">
+                            <button type="submit" class="btn"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
                     </form>
+                  </div>
                 </div>
                 <div class="col-md-4 pull-right">
                     {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-                        <a class="btn btn-info btn-sm pull-right" href="{{path('_upload')}}">upload image</a><br><br>
+                        <a class="btn btn-success btn-sm pull-right" href="{{path('_upload')}}">upload image</a><br><br>
                     {% else %}
-                        <a class="btn btn-info btn-sm pull-right" disabled="disabled">upload image</a><br><br>
+                        <a class="btn btn-success btn-sm pull-right" disabled="disabled">upload image</a><br><br>
                     {% endif %}
                 </div>
                 {% if app.session.flashBag.has('success') %}
