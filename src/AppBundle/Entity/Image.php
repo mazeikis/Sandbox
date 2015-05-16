@@ -12,7 +12,7 @@ class Image
 	protected $extension;
 	protected $created;
 	protected $updated;
-    protected $owner;
+  protected $owner;
 
     /**
      * Set id
@@ -30,7 +30,7 @@ class Image
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -53,7 +53,7 @@ class Image
     /**
      * Get originalName
      *
-     * @return string 
+     * @return string
      */
     public function getFileName()
     {
@@ -75,7 +75,7 @@ class Image
     /**
      * Get resolution
      *
-     * @return string 
+     * @return string
      */
     public function getResolution()
     {
@@ -98,7 +98,7 @@ class Image
     /**
      * Get size
      *
-     * @return integer 
+     * @return integer
      */
     public function getSize()
     {
@@ -121,7 +121,7 @@ class Image
     /**
      * Get title
      *
-     * @return string 
+     * @return string
      */
     public function getTitle()
     {
@@ -144,7 +144,7 @@ class Image
     /**
      * Get description
      *
-     * @return string 
+     * @return string
      */
     public function getDescription()
     {
@@ -167,7 +167,7 @@ class Image
     /**
      * Get extension
      *
-     * @return string 
+     * @return string
      */
     public function getExtension()
     {
@@ -190,7 +190,7 @@ class Image
     /**
      * Get created
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCreated()
     {
@@ -213,7 +213,7 @@ class Image
     /**
      * Get updated
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getUpdated()
     {
@@ -238,7 +238,7 @@ class Image
     /**
      * Get owner
      *
-     * @return \AppBundle\Entity\User 
+     * @return \AppBundle\Entity\User
      */
     public function getOwner()
     {

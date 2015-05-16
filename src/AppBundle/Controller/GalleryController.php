@@ -2,44 +2,70 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Helpers\PageManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-
-use Symfony\Component\Filesystem\Filesystem;
-
+use Doctrine\ORM\Query\Expr\Join;
+use Pagerfanta\Adapter\DoctrineORMAdapter;
+use Pagerfanta\Pagerfanta;
+use AppBundle\Entity\Image;
+use AppBundle\Form\Type\UploadFormType;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Filesystem\Filesystem;
 
 class GalleryController extends Controller
 {
     public function indexAction(Request $request)
     {
         $q = $request->query->get('q');
-        $resultsPerPage = 8;
+        $currentPage = $request->query->get('page', 1);
+        if(!in_array($request->query->get('sortBy'), ['created', 'owner', 'title'])){
+                $request->query->set('sortBy', 'created');
+                $sortBy = $request->query->get('sortBy');
+            }else{
+                $sortBy = $request->query->get('sortBy');
+        }
+        if(!in_array($request->query->get('order'), ['asc', 'desc'])){
+            $request->query->set( 'order', 'desc');
+            $order = $request->query->get('order');
+        }else{
+            $order = $request->query->get('order');
+        }
+        $maxPerPage = 8;
         $em = $this->getDoctrine()->getManager();
         if($q){
-            $totalRows = $em->getRepository('AppBundle:Image')->countResultRows($q);
-            $pageManager = new PageManager($request, $totalRows, $resultsPerPage);
-            $query = $em->getRepository('AppBundle:Image')
-                         ->SearchForQuery($q, $pageManager->getResultsPerPage(),
-                                              $pageManager->getStartingItem(), 
-                                              $pageManager->getSortBy(), 
-                                              $pageManager->getOrder()
-                                              );
+            $query = $em->getRepository('AppBundle:Image')->createQueryBuilder('image');
+            $query->select('image')
+            ->leftJoin('image.owner', 'users', Join::WITH)
+            ->where($query->expr()->orX(
+                        $query->expr()->like('image.title', ':key'),
+                        $query->expr()->like('image.description', ':key'),
+                        $query->expr()->like('users.username', ':key')
+                        ))
+            ->orderBy('image.'.$sortBy, $order)
+            ->setParameter('key', '%'.$q.'%');
+            $adapter = new DoctrineORMAdapter($query);
+            $pagerfanta = new Pagerfanta($adapter);
+
+            $pagerfanta->setMaxPerPage($maxPerPage);
+            $pagerfanta->setCurrentPage($currentPage);
+
+            $currentPageResults = $pagerfanta->getCurrentPageResults();
+
         }else{
-            $query = null;
-            $totalRows = $em->getRepository('AppBundle:Image')->createQueryBuilder('id')->select('COUNT(id)')->getQuery()->getSingleScalarResult();
-            $pageManager = new PageManager($request, $totalRows, $resultsPerPage);
-            $query = $em->getRepository('AppBundle:Image')
-                        ->findBy(array(), array(
-                            $pageManager->getSortBy() => $pageManager->getOrder()), 
-                            $resultsPerPage, $pageManager->getStartingItem()
-                            );
-        }     
+            $queryBuilder = $em->createQueryBuilder()
+              ->select('image')
+              ->from('AppBundle:Image', 'image')
+              ->orderBy('image.'.$sortBy, $order);
+            $adapter = new DoctrineORMAdapter($queryBuilder);
+            $pagerfanta = new Pagerfanta($adapter);
+            $pagerfanta->setMaxPerPage($maxPerPage);
+            $pagerfanta->setCurrentPage($currentPage);
+            $currentPageResults = $pagerfanta->getCurrentPageResults();
+                    }
     	return $this->render('AppBundle:Twig:gallery.html.twig', array(
-            'title' => 'sandbox|gallery', 'content' => $query, 'pageManager' => $pageManager));
+            'title' => 'sandbox|gallery', 'content' => $currentPageResults, 'pager' => $pagerfanta));
     }
     public function imageAction($id) //single image
     {
@@ -51,6 +77,41 @@ class GalleryController extends Controller
         return $this->render('AppBundle:Twig:image.html.twig', array('title' => 'sandbox|image', 'image' => $image));
 
     }
+    public function uploadAction(Request $request)
+    {
+        $image = new Image();
+        $form = $this->createForm(new UploadFormType());
+        $user = $this->getUser();
+        $form->handleRequest($request);
+        if($form->isValid()){
+            if ($this->get('security.authorization_checker')->isGranted('create', $image, $user) === false) {
+                throw new AccessDeniedException('Unauthorised access!');
+            }
+            $data = $form->getData();
+            $imageSizeDetails = getimagesize($data['file']->getPathName());
+            $randomFileName = sha1(uniqid(mt_rand(), true));
+            $image->setFileName($randomFileName) //New Random File Name
+                  ->setSize($data['file']->getSize())
+                  ->setResolution(strval($imageSizeDetails[0]).' x '.strval($imageSizeDetails[1])) //Image resolution in format "width x height"
+                  ->setExtension($data['file']->getClientOriginalExtension())
+                  ->setTitle($data['title'])
+                  ->setDescription($data['description'])
+                  ->setOwner($user);
+            $data['file']->move(__DIR__.'/../../../web/images', $randomFileName.'.'.$data['file']->getClientOriginalExtension());
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($image);
+            $em->flush();
+            $request->getSession()
+                ->getFlashBag()
+                ->add('success', 'Image uploaded!');
+            return $this->redirectToRoute('_gallery');
+        } else {
+          $request->getSession()
+                ->getFlashBag()
+                ->add('warning', 'Image upload error!');
+        }
+        return $this->render('AppBundle:Twig:upload.html.twig', array('title' => 'sandbox|project', 'form' => $form->createView()));
+    }
     public function imageEditAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
@@ -59,8 +120,8 @@ class GalleryController extends Controller
         if (false === $this->get('security.authorization_checker')->isGranted('edit', $image)) {
             throw new AccessDeniedException('Unauthorised access!');
             }
-            
-        $defaultData = array('message' => 'Type your message here');
+
+        $defaultData = array('message' => 'Enter image description.');
         $form = $this->createFormBuilder($defaultData)
             ->add('title', 'text', array('data' => $image->getTitle(), 'constraints' => new Length(array('min' => 3), new NotBlank)))
             ->add('description', 'textarea', array( 'data' => $image->getDescription(), 'required' => true))
@@ -82,11 +143,11 @@ class GalleryController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $image = $em->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
-        
+
         if ($this->get('security.authorization_checker')->isGranted('delete', $image) === false) {
             throw new AccessDeniedException('Unauthorised access!');
         }
-       
+
         if (!$image) {
                 throw $this->createNotFoundException('No image with id '.$id);
             }else {
@@ -98,7 +159,7 @@ class GalleryController extends Controller
                 $request->getSession()
                     ->getFlashBag()
                     ->add('success', 'Image deleted!');
-                return $this->redirectToRoute('_gallery');            
+                return $this->redirectToRoute('_gallery');
             }
     }
 }

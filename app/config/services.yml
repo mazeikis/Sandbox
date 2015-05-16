@@ -22,4 +22,9 @@ services:
             - { name: doctrine.event_listener, event: preUpdate }
             - { name: doctrine.event_listener, event: postUpdate }
             - { name: doctrine.event_listener, event: postPersist }
-
+    sortable.twig.event_extension:
+        class: AppBundle\Twig\SortableExtension
+        calls:
+          - [ setRequest, ["@service_container"]]
+        tags:
+          - { name: twig.extension }
