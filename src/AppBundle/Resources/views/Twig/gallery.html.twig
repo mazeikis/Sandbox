@@ -44,7 +44,6 @@
             </div><br>
         <!-- /.row -->
         <!-- Gallery Grid -->
-    {% if content is defined %}
     <div class="row">
     {% for image in content %}
     <div class="col-md-3 portfolio-item">
@@ -52,12 +51,12 @@
         <img src='{{ (image.fileName~'.'~image.extension) | imagine_filter('thumb')}}' class="img-responsive">
       </a>
     </div>
+    {% else %}
+    <div class="col-lg-12"><h3>No images were found, database is empty?</h3></div>
     {% endfor %}
     </div>
-    {% endif %}
     <!-- End of Grid -->
 
-{% if pager is defined %}
 {{isSorted('created')}}<br>
 <a href={{sortable('created')}}>created</a>
 <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
@@ -70,6 +69,5 @@
     </div>
   </div>
 </div>
-{% endif %}
 </div>
 {% endblock %}
