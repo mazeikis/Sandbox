@@ -24,7 +24,7 @@ services:
             - { name: doctrine.event_listener, event: postPersist }
     sortable.twig.event_extension:
         class: AppBundle\Twig\SortableExtension
-        calls:
-          - [ setRequest, ["@service_container"]]
+        public: false
+        arguments: [ "@router", "@request_stack" ]
         tags:
           - { name: twig.extension }

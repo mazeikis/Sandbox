@@ -2,25 +2,28 @@
 
 namespace AppBundle\Twig;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Bundle\FrameworkBundle\Routing\Router;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class SortableExtension extends \Twig_Extension
 {
-  private $request;
   private $router;
+  private $request;
+
   public function getName()
   {
     return 'sortable';
   }
   public function getFunctions()
   {
-    return array('sortable' => new \Twig_Function_Method($this, 'sortable'),
-                 'isSorted' => new \Twig_Function_Method($this, 'isSorted'));
+    return array('sortable' => new \Twig_SimpleFunction('sortable', array($this, 'sortable')),
+                 'isSorted' => new \Twig_SimpleFunction('isSorted', array($this, 'isSorted')));
   }
-  public function setRequest(ContainerInterface $container)
+  public function __construct(Router $router, RequestStack $requestStack)
   {
-    $this->request = $container->get('request');
-    $this->router = $container->get('router');
+    $this->router = $router;
+    $this->request = $requestStack->getCurrentRequest();
+
   }
   public function isSorted($key)
   {
