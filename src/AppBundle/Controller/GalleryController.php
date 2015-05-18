@@ -21,17 +21,13 @@ class GalleryController extends Controller
         $currentPage = $request->query->get('page', 1) < 1 ? 1 : $request->query->get('page', 1);
         if(!in_array($request->query->get('sortBy'), ['created', 'owner', 'title'])){
                 $request->query->set('sortBy', 'created');
-                $sortBy = $request->query->get('sortBy');
-            }else{
-                $sortBy = $request->query->get('sortBy');
-        }
+            }
+        $sortBy = $request->query->get('sortBy');
+        
         if(!in_array($request->query->get('order'), ['asc', 'desc'])){
             $request->query->set( 'order', 'desc');
-            $order = $request->query->get('order');
-        }else{
-            $order = $request->query->get('order');
         }
-        $maxPerPage = 8;
+        $order = $request->query->get('order');
         if($q){
             $query = $this->getDoctrine()->getManager()->getRepository('AppBundle:Image')
             ->searchForQuery($q, $sortBy, $order);
@@ -43,7 +39,7 @@ class GalleryController extends Controller
         }
         $adapter = new DoctrineORMAdapter($query);
         $pagerfanta = new Pagerfanta($adapter);
-        $pagerfanta->setMaxPerPage($maxPerPage)->setCurrentPage($currentPage);
+        $pagerfanta->setMaxPerPage(8)->setCurrentPage($currentPage);
         $currentPageResults = $pagerfanta->getCurrentPageResults();
     	return $this->render('AppBundle:Twig:gallery.html.twig', array(
             'title' => 'sandbox|gallery', 'content' => $currentPageResults, 'pager' => $pagerfanta));
