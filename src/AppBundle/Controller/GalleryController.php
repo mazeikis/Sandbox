@@ -89,7 +89,8 @@ class GalleryController extends Controller
                   ->setTitle($data['title'])
                   ->setDescription($data['description'])
                   ->setOwner($user);
-            $data['file']->move(__DIR__.'/../../../web/images', $randomFileName.'.'.$data['file']->getClientOriginalExtension());
+            $imageDir = $this->get('kernel')->getRootDir() . '/../web/images' . $this->getRequest()->getBasePath();
+            $data['file']->move($imageDir, $randomFileName.'.'.$data['file']->getClientOriginalExtension());
             $em = $this->getDoctrine()->getManager();
             $em->persist($image);
             $em->flush();
@@ -146,8 +147,9 @@ class GalleryController extends Controller
                 $em->remove($image);
                 $em->flush();
                 $fs = new Filesystem();
-                $fs->remove( __DIR__.'/../../../web/images/'.$image->getFileName().'.'.$image->getExtension());
-                $fs->remove( __DIR__.'/../../../web/media/cache/thumb/'.$image->getFileName().'.'.$image->getExtension());
+                $imageDir = $this->get('kernel')->getRootDir() . '/../web/images' . $this->getRequest()->getBasePath();
+                $fs->remove( $imageDir.$image->getFileName().'.'.$image->getExtension());
+                $fs->remove( $imageDir.'/cache/thumb/'.$image->getFileName().'.'.$image->getExtension());
                 $request->getSession()
                     ->getFlashBag()
                     ->add('success', 'Image deleted!');
