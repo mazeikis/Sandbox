@@ -43,7 +43,8 @@ class SortableExtension extends \Twig_Extension
     return $this->router->generate('_gallery', array(
       'page' => $this->request->query->get('page', 1),
       'sortBy' => $sortBy,
-      'order' => $order
+      'order' => $order,
+      'q' => $this->request->query->get('q', null)
     ), true);
   }
 }

@@ -18,7 +18,7 @@ class GalleryController extends Controller
     public function indexAction(Request $request)
     {
         $q = $request->query->get('q');
-        $currentPage = $request->query->get('page', 1);
+        $currentPage = $request->query->get('page', 1) < 1 ? 1 : $request->query->get('page', 1);
         if(!in_array($request->query->get('sortBy'), ['created', 'owner', 'title'])){
                 $request->query->set('sortBy', 'created');
                 $sortBy = $request->query->get('sortBy');
@@ -32,30 +32,19 @@ class GalleryController extends Controller
             $order = $request->query->get('order');
         }
         $maxPerPage = 8;
-        $em = $this->getDoctrine()->getManager();
         if($q){
-            $query = $em->getRepository('AppBundle:Image')
+            $query = $this->getDoctrine()->getManager()->getRepository('AppBundle:Image')
             ->searchForQuery($q, $sortBy, $order);
-
-            $adapter = new DoctrineORMAdapter($query);
-            $pagerfanta = new Pagerfanta($adapter);
-
-            $pagerfanta->setMaxPerPage($maxPerPage);
-            $pagerfanta->setCurrentPage($currentPage);
-
-            $currentPageResults = $pagerfanta->getCurrentPageResults();
-
         }else{
-            $queryBuilder = $em->createQueryBuilder()
+            $query = $this->getDoctrine()->getManager()->createQueryBuilder()
               ->select('image')
               ->from('AppBundle:Image', 'image')
               ->orderBy('image.'.$sortBy, $order);
-            $adapter = new DoctrineORMAdapter($queryBuilder);
-            $pagerfanta = new Pagerfanta($adapter);
-            $pagerfanta->setMaxPerPage($maxPerPage);
-            $pagerfanta->setCurrentPage($currentPage);
-            $currentPageResults = $pagerfanta->getCurrentPageResults();
-                    }
+        }
+        $adapter = new DoctrineORMAdapter($query);
+        $pagerfanta = new Pagerfanta($adapter);
+        $pagerfanta->setMaxPerPage($maxPerPage)->setCurrentPage($currentPage);
+        $currentPageResults = $pagerfanta->getCurrentPageResults();
     	return $this->render('AppBundle:Twig:gallery.html.twig', array(
             'title' => 'sandbox|gallery', 'content' => $currentPageResults, 'pager' => $pagerfanta));
     }
