@@ -25,7 +25,7 @@ class GalleryController extends Controller
         $sortBy = $request->query->get('sortBy');
         
         if(!in_array($request->query->get('order'), ['asc', 'desc'])){
-            $request->query->set( 'order', 'desc');
+            $request->query->set('order', 'desc');
         }
         $order = $request->query->get('order');
         if($q){
@@ -35,7 +35,7 @@ class GalleryController extends Controller
             $query = $this->getDoctrine()->getManager()->createQueryBuilder()
               ->select('image')
               ->from('AppBundle:Image', 'image')
-              ->orderBy('image.'.$sortBy, $order);
+              ->orderBy('image.' .$sortBy, $order);
         }
         $adapter = new DoctrineORMAdapter($query);
         $pagerfanta = new Pagerfanta($adapter);

@@ -25,6 +25,6 @@ services:
     sortable.twig.event_extension:
         class: AppBundle\Twig\SortableExtension
         public: false
-        arguments: [ "@router", "@request_stack" ]
+        arguments: [ "@router", "@request_stack", "@twig" ]
         tags:
           - { name: twig.extension }
