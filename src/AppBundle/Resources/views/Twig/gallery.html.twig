@@ -11,12 +11,19 @@
         <!-- Page Heading -->
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">Image Gallery
+                <div class="page-header">
+                        {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                            <a class="btn btn-success btn-sm pull-right" href="{{path('_upload')}}">+ upload image</a>
+                        {% else %}
+                            <a class="btn btn-success btn-sm pull-right disabled">+ upload image</a>
+                        {% endif %}
+                    <h1 >Image Gallery
                     <small>8 Images at a time</small></h1>
                 </div>
             </div>
+            </div>
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-lg-8">
                   <div class="form-group">
                     <form name="form-inline" method="get" action="{{path('_gallery')}}" class="form-inline pull-left">
                             <label for="search">Filter: </label>
@@ -25,12 +32,13 @@
                     </form>
                   </div>
                 </div>
-                <div class="col-md-4 pull-right">
-                    {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-                        <a class="btn btn-success btn-sm pull-right" href="{{path('_upload')}}">upload image</a><br><br>
-                    {% else %}
-                        <a class="btn btn-success btn-sm pull-right" disabled="disabled">upload image</a><br><br>
-                    {% endif %}
+                <div class="col-lg-4">
+                    <div class="pull-right">
+                    <label>Sort By:</label>
+                    {{sortable('title', 'Title')}}
+                    {{sortable('created', 'Date')}}
+                    {{sortable('owner', 'User')}}
+                </div>
                 </div>
                 {% if app.session.flashBag.has('success') %}
                 <div class="col-lg-12">
@@ -56,12 +64,6 @@
     {% endfor %}
     </div>
     <!-- End of Grid -->
-
-{{isSorted('created')}}<br>
-{{sortable('title', 'title')}}
-<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-
-
 <div class="row text-center">
   <div class="col-lg-12">
     <div class="pagerfanta">

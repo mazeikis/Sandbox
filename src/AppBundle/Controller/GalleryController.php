@@ -19,7 +19,7 @@ class GalleryController extends Controller
     {
         $q = $request->query->get('q');
         $currentPage = $request->query->get('page', 1) < 1 ? 1 : $request->query->get('page', 1);
-        if(!in_array($request->query->get('sortBy'), ['created', 'owner', 'title'])){
+        if(!in_array($request->query->get('sortBy'), ['created', 'owner', 'title'], true)){
                 $request->query->set('sortBy', 'created');
             }
         $sortBy = $request->query->get('sortBy');

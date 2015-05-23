@@ -8,8 +8,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class SortableExtension extends \Twig_Extension
 {
   private $router;
-  private $request;
-  private $twig;
+  private $requestStack;
 
   public function getName()
   {
@@ -20,32 +19,32 @@ class SortableExtension extends \Twig_Extension
     return array('sortable' => new \Twig_SimpleFunction('sortable', array($this, 'sortable'), array('is_safe' => array('html'), 'needs_environment' => 'true')),
                  'isSorted' => new \Twig_SimpleFunction('isSorted', array($this, 'isSorted')));
   }
-  public function __construct(Router $router, RequestStack $requestStack, \Twig_Environment $twig)
+  public function __construct(Router $router, RequestStack $requestStack)
   {
     $this->router = $router;
-    $this->request = $requestStack->getCurrentRequest();
-    $this->twig = $twig;
+    $this->requestStack = $requestStack;
   }
   public function isSorted($key)
   {
-    return ($this->request->query->get('sortBy') !== null) && $this->request->query->get('sortBy') === $key;
+    return $this->requestStack->getCurrentRequest()->query->get('sortBy') === $key;
 
   }
-  public function sortable($newSortBy, $buttonValue)
+  public function sortable($twig, $newSortBy, $buttonValue)
   {
-    $sortBy = $this->request->query->get('sortBy', 'created');
-    $order = $this->request->query->get('order', 'desc');
+    $request = $this->requestStack->getCurrentRequest();
+    $sortBy = $request->query->get('sortBy', 'created');
+    $order = $request->query->get('order', 'desc');
     if($this->isSorted($newSortBy)){
-      $order = $order == 'desc' ? 'asc' : 'desc';
+      $order = $order === 'desc' ? 'asc' : 'desc';
     }else{
       $sortBy = $newSortBy;
     }
-    $iconKey = $order == 'desc' ? '-alt' : null;
-    return $this->twig->render('AppBundle:Twig:sortButtons.html.twig', array('link' => $this->router->generate('_gallery', array(
-      'page' => $this->request->query->get('page', 1),
-      'sortBy' => $sortBy,
+    $link = $this->router->generate('_gallery', array(
+      'page' => $request->query->get('page', 1), 
       'order' => $order,
-      'q' => $this->request->query->get('q', null)
-    ), true), 'iconKey' => $iconKey, 'buttonValue' => $buttonValue));
+      'sortBy' => $sortBy,
+      ), true);
+    $iconKey = $order == 'desc' ? '-alt' : null;
+    return $twig->render('AppBundle:Twig:sortButtons.html.twig', array('test' => $newSortBy, 'link' => $link, 'iconKey' => $iconKey, 'buttonValue' => $buttonValue));
   }
 }

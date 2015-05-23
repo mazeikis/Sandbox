@@ -51,13 +51,13 @@
             {% endif %}
             </div>
         </div>
-        {% if recent is defined %}
         <hr>
         <div class="row text-center">
+            <h3>Last Uploaded items:</h3>
             {% for item in recent %}
             <div class="col-sm-3 col-sm-4 hero-feature">
                 <div class="thumbnail">
-                    <img src='{{ (item.getFileName~'.'~item.getExtension) | imagine_filter('thumb')}}' class="img-thumbnail">
+                    <img src='{{ (item.getFileName~'.'~item.getExtension) | imagine_filter('thumb')}}' class="img-responsive">
                     <div class="caption">
                         <h3>{{item.getTitle|slice(0,10)}}</h3>
                         <p>{{item.getDescription|slice(0,20)}}</p>
@@ -67,8 +67,9 @@
                     </div>
                 </div>
             </div>
-        {% endfor %}
+            {% else %}
+            <h3>No images uploaded yet.</h3>
+            {% endfor %}
         </div>
-    {% endif %}
     </div>
 {% endblock %}
