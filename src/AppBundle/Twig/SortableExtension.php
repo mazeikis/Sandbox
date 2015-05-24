@@ -24,9 +24,8 @@ class SortableExtension extends \Twig_Extension
     $this->router = $router;
     $this->requestStack = $requestStack;
   }
-  public function isSorted($key)
-  {
-    return $this->requestStack->getCurrentRequest()->query->get('sortBy') === $key;
+  public function isSorted($key){
+     return $this->requestStack->getCurrentRequest()->query->get('sortBy') === $key;
 
   }
   public function sortable($twig, $newSortBy, $buttonValue)

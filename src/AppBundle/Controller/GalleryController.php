@@ -18,7 +18,8 @@ class GalleryController extends Controller
     public function indexAction(Request $request)
     {
         $q = $request->query->get('q');
-        $currentPage = $request->query->get('page', 1) < 1 ? 1 : $request->query->get('page', 1);
+        $currentPage = $request->query->get('page') < 1 ? 1 : $request->query->get('page');
+        
         if(!in_array($request->query->get('sortBy'), ['created', 'owner', 'title'], true)){
                 $request->query->set('sortBy', 'created');
             }
