@@ -3,21 +3,32 @@ namespace AppBundle\Entity;
 
 class Image
 {
-	protected $id;
-	protected $fileName;
-	protected $resolution;
-	protected $size;
-	protected $title;
-	protected $description;
-	protected $extension;
-	protected $created;
-	protected $updated;
-  protected $owner;
+
+    protected $id;
+
+    protected $fileName;
+
+    protected $resolution;
+
+    protected $size;
+
+    protected $title;
+
+    protected $description;
+
+    protected $extension;
+
+    protected $created;
+
+    protected $updated;
+
+    protected $owner;
+
 
     /**
      * Set id
      *
-     * @param integer $id
+     * @param  integer $id
      * @return Images
      */
     public function setId($id)
@@ -25,7 +36,9 @@ class Image
         $this->id = $id;
 
         return $this;
-    }
+
+    }//end setId()
+
 
     /**
      * Get id
@@ -35,12 +48,14 @@ class Image
     public function getId()
     {
         return $this->id;
-    }
+
+    }//end getId()
+
 
     /**
      * Set originalName
      *
-     * @param string $originalName
+     * @param  string $originalName
      * @return Images
      */
     public function setFileName($fileName)
@@ -48,7 +63,9 @@ class Image
         $this->fileName = $fileName;
 
         return $this;
-    }
+
+    }//end setFileName()
+
 
     /**
      * Get originalName
@@ -58,11 +75,14 @@ class Image
     public function getFileName()
     {
         return $this->fileName;
-    }
+
+    }//end getFileName()
+
+
     /**
      * Set resolution
      *
-     * @param string $resolution
+     * @param  string $resolution
      * @return Images
      */
     public function setResolution($resolution)
@@ -70,7 +90,9 @@ class Image
         $this->resolution = $resolution;
 
         return $this;
-    }
+
+    }//end setResolution()
+
 
     /**
      * Get resolution
@@ -80,12 +102,14 @@ class Image
     public function getResolution()
     {
         return $this->resolution;
-    }
+
+    }//end getResolution()
+
 
     /**
      * Set size
      *
-     * @param integer $size
+     * @param  integer $size
      * @return Images
      */
     public function setSize($size)
@@ -93,7 +117,9 @@ class Image
         $this->size = $size;
 
         return $this;
-    }
+
+    }//end setSize()
+
 
     /**
      * Get size
@@ -103,12 +129,14 @@ class Image
     public function getSize()
     {
         return $this->size;
-    }
+
+    }//end getSize()
+
 
     /**
      * Set description
      *
-     * @param string $title
+     * @param  string $title
      * @return Images
      */
     public function setTitle($title)
@@ -116,7 +144,9 @@ class Image
         $this->title = $title;
 
         return $this;
-    }
+
+    }//end setTitle()
+
 
     /**
      * Get title
@@ -126,12 +156,14 @@ class Image
     public function getTitle()
     {
         return $this->title;
-    }
+
+    }//end getTitle()
+
 
     /**
      * Set description
      *
-     * @param string $description
+     * @param  string $description
      * @return Images
      */
     public function setDescription($description)
@@ -139,7 +171,9 @@ class Image
         $this->description = $description;
 
         return $this;
-    }
+
+    }//end setDescription()
+
 
     /**
      * Get description
@@ -149,12 +183,14 @@ class Image
     public function getDescription()
     {
         return $this->description;
-    }
+
+    }//end getDescription()
+
 
     /**
      * Set extension
      *
-     * @param string $extension
+     * @param  string $extension
      * @return Images
      */
     public function setExtension($extension)
@@ -162,7 +198,9 @@ class Image
         $this->extension = $extension;
 
         return $this;
-    }
+
+    }//end setExtension()
+
 
     /**
      * Get extension
@@ -172,12 +210,14 @@ class Image
     public function getExtension()
     {
         return $this->extension;
-    }
+
+    }//end getExtension()
+
 
     /**
      * Set created
      *
-     * @param \DateTime $created
+     * @param  \DateTime $created
      * @return Images
      */
     public function setCreated($created)
@@ -185,7 +225,9 @@ class Image
         $this->created = $created;
 
         return $this;
-    }
+
+    }//end setCreated()
+
 
     /**
      * Get created
@@ -195,12 +237,14 @@ class Image
     public function getCreated()
     {
         return $this->created;
-    }
+
+    }//end getCreated()
+
 
     /**
      * Set updated
      *
-     * @param \DateTime $updated
+     * @param  \DateTime $updated
      * @return Images
      */
     public function setUpdated($updated)
@@ -208,7 +252,9 @@ class Image
         $this->updated = $updated;
 
         return $this;
-    }
+
+    }//end setUpdated()
+
 
     /**
      * Get updated
@@ -218,22 +264,29 @@ class Image
     public function getUpdated()
     {
         return $this->updated;
-    }
+
+    }//end getUpdated()
+
+
     /**
      * @var \AppBundle\Entity\User
      */
+
+
     /**
      * Set owner
      *
-     * @param \AppBundle\Entity\User $owner
+     * @param  \AppBundle\Entity\User $owner
      * @return Image
      */
-    public function setOwner(\AppBundle\Entity\User $owner = null)
+    public function setOwner(\AppBundle\Entity\User $owner=null)
     {
         $this->owner = $owner;
 
         return $this;
-    }
+
+    }//end setOwner()
+
 
     /**
      * Get owner
@@ -243,5 +296,8 @@ class Image
     public function getOwner()
     {
         return $this->owner;
-    }
-}
+
+    }//end getOwner()
+
+
+}//end class

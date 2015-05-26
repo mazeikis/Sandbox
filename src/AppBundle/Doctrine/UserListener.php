@@ -10,54 +10,80 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 
 class UserListener
 {
-	private $encoder;
-	private $tokenStorage;
-	public function prePersist(LifecycleEventArgs $args)
-	{
-		$entity = $args->getEntity();
-		if($entity instanceof User){
-			$this->handleEvent($entity);
-		}
-	}
-	public function preUpdate(LifecycleEventArgs $args)
-	{
-		$entity = $args->getEntity();
-		if($entity instanceof User){
-			$entity->setUpdated(new \Datetime());
-			$this->handleEvent($entity);
-		}
-	}
-	public function postUpdate(LifecycleEventArgs $args)
-	{
-		$entity = $args->getEntity();
-		if($entity instanceof User){
-			$this->authenticateUser($entity);
-		}
-	}
-	public function postPersist(LifecycleEventArgs $args)
-	{
-		$entity = $args->getEntity();
-		if($entity instanceof User){
-			$this->authenticateUser($entity);
-		}
-	}
-	public function __construct(UserPasswordEncoder $encoder, TokenStorage $tokenStorage)
-	{
-		$this->encoder = $encoder;
-		$this->tokenStorage = $tokenStorage;
-	}
-	private function handleEvent(User $user)
-	{
-		if(!$user->getPlainPassword()){
-			return;
-		}
-		$encoded = $this->encoder->encodePassword($user, $user->getPlainPassword());
-		$user->setPassword($encoded);
-	}
-	private function authenticateUser(User $user)
+
+    public $encoder;
+
+    public $tokenStorage;
+
+
+    public function prePersist(LifecycleEventArgs $args)
+    {
+        $entity = $args->getEntity();
+        if ($entity instanceof User) {
+            $this->handleEvent($entity);
+        }//end if
+
+    }//end prePersist()
+
+
+    public function preUpdate(LifecycleEventArgs $args)
+    {
+        $entity = $args->getEntity();
+        if ($entity instanceof User) {
+             $entity->setUpdated(new \Datetime());
+             $this->handleEvent($entity);
+        }//end if
+
+    }//end preUpdate()
+
+
+    public function postUpdate(LifecycleEventArgs $args)
+    {
+        $entity = $args->getEntity();
+        if ($entity instanceof User) {
+             $this->authenticateUser($entity);
+        }//end if
+
+    }//end postUpdate()
+
+
+    public function postPersist(LifecycleEventArgs $args)
+    {
+        $entity = $args->getEntity();
+        if ($entity instanceof User) {
+            $this->authenticateUser($entity);
+        }//end if
+
+    }//end postPersist()
+
+
+    public function __construct(UserPasswordEncoder $encoder, TokenStorage $tokenStorage)
+    {
+        $this->encoder      = $encoder;
+        $this->tokenStorage = $tokenStorage;
+
+    }//end __construct()
+
+
+    private function handleEvent(User $user)
+    {
+        if ($user->getPlainPassword() === false) {
+            return;
+        }
+
+         $encoded = $this->encoder->encodePassword($user, $user->getPlainPassword());
+         $user->setPassword($encoded);
+
+    }//end handleEvent()
+
+
+    private function authenticateUser(User $user)
     {
         $providerKey = 'secured_area';
-        $token = new UsernamePasswordToken($user, null, $providerKey, $user->getRoles());
+        $token       = new UsernamePasswordToken($user, null, $providerKey, $user->getRoles());
         $this->tokenStorage->setToken($token);
-    }    
-}
+
+    }//end authenticateUser()
+
+
+}//end class
