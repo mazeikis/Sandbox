@@ -3,58 +3,79 @@ namespace AppBundle\Entity;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class User implements UserInterface, \Serializable
-
 {
-	protected $id;
-	protected $username;
-	protected $password;
-	protected $firstName;
-	protected $lastName;
-	protected $email;
-	protected $roles;
-	protected $enabled;
-	protected $created;
-	protected $updated;
+
+    protected $id;
+
+    protected $username;
+
+    protected $password;
+
+    protected $firstName;
+
+    protected $lastName;
+
+    protected $email;
+
+    protected $roles;
+
+    protected $enabled;
+
+    protected $created;
+
+    protected $updated;
 
     protected $confirmationToken;
 
     protected $plainPassword;
-	
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $images;
+
     public function __construct()
     {
         $this->setEnabled(false);
         $this->setCreated(new \Datetime);
         $this->setUpdated(new \Datetime);
         $this->setRoles('ROLE_USER');
-        $this->setConfirmationToken(NULL);
-    }
+        $this->setConfirmationToken(null);
+
+    }//end __construct()
+
+
     /**
      * Set id
      *
-     * @param integer $id
+     * @param  integer $id
      * @return User
      */
-    public function setId($Id)
+    public function setId($id)
     {
         $this->id = $id;
 
         return $this;
-    }
+
+    }//end setId()
+
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
         return $this->id;
-    }
+
+    }//end getId()
+
 
     /**
      * Set login
      *
-     * @param string $login
+     * @param  string $username
      * @return User
      */
     public function setUsername($username)
@@ -62,22 +83,26 @@ class User implements UserInterface, \Serializable
         $this->username = $username;
 
         return $this;
-    }
+
+    }//end setUsername()
+
 
     /**
      * Get login
      *
-     * @return string 
+     * @return string
      */
     public function getUsername()
     {
         return $this->username;
-    }
+
+    }//end getUsername()
+
 
     /**
      * Set password
      *
-     * @param string $password
+     * @param  string $password
      * @return User
      */
     public function setPassword($password)
@@ -85,22 +110,26 @@ class User implements UserInterface, \Serializable
         $this->password = $password;
 
         return $this;
-    }
+
+    }//end setPassword()
+
 
     /**
      * Get password
      *
-     * @return string 
+     * @return string
      */
     public function getPassword()
     {
         return $this->password;
-    }
+
+    }//end getPassword()
+
 
     /**
      * Set firstName
      *
-     * @param string $firstName
+     * @param  string $firstName
      * @return User
      */
     public function setFirstName($firstName)
@@ -108,22 +137,26 @@ class User implements UserInterface, \Serializable
         $this->firstName = $firstName;
 
         return $this;
-    }
+
+    }//end setFirstName()
+
 
     /**
      * Get firstName
      *
-     * @return string 
+     * @return string
      */
     public function getFirstName()
     {
         return $this->firstName;
-    }
+
+    }//end getFirstName()
+
 
     /**
      * Set lastName
      *
-     * @param string $lastName
+     * @param  string $lastName
      * @return User
      */
     public function setLastName($lastName)
@@ -131,22 +164,26 @@ class User implements UserInterface, \Serializable
         $this->lastName = $lastName;
 
         return $this;
-    }
+
+    }//end setLastName()
+
 
     /**
      * Get lastName
      *
-     * @return string 
+     * @return string
      */
     public function getLastName()
     {
         return $this->lastName;
-    }
+
+    }//end getLastName()
+
 
     /**
      * Set email
      *
-     * @param string $email
+     * @param  string $email
      * @return User
      */
     public function setEmail($email)
@@ -154,22 +191,26 @@ class User implements UserInterface, \Serializable
         $this->email = $email;
 
         return $this;
-    }
+
+    }//end setEmail()
+
 
     /**
      * Get email
      *
-     * @return string 
+     * @return string
      */
     public function getEmail()
     {
         return $this->email;
-    }
+
+    }//end getEmail()
+
 
     /**
      * Set enabled
      *
-     * @param boolean $enabled
+     * @param  boolean $enabled
      * @return User
      */
     public function setEnabled($enabled)
@@ -177,164 +218,194 @@ class User implements UserInterface, \Serializable
         $this->enabled = $enabled;
 
         return $this;
-    }
+
+    }//end setEnabled()
+
 
     /**
      * Get enabled
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getEnabled()
     {
         return $this->enabled;
-    }
+
+    }//end getEnabled()
+
 
     /**
      * Set created
      *
-     * @param \DateTime $created
+     * @param  \DateTime $created
      * @return Users
      */
-    public function setCreated($created)
+    public function setCreated(\DateTime $created)
     {
         $this->created = $created;
 
         return $this;
-    }
+
+    }//end setCreated()
+
 
     /**
      * Get created
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCreated()
     {
         return $this->created;
-    }
+
+    }//end getCreated()
+
 
     /**
      * Set updated
      *
-     * @param \DateTime $updated
+     * @param  \DateTime $updated
      * @return Users
      */
-    public function setUpdated($updated)
+    public function setUpdated(\DateTime $updated)
     {
         $this->updated = $updated;
 
         return $this;
-    }
+
+    }//end setUpdated()
+
 
     /**
      * Get updated
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getUpdated()
     {
         return $this->updated;
-    }
-    
+
+    }//end getUpdated()
+
+
     public function setRoles($role)
     {
         return $this->roles = $role;
-    }
+
+    }//end setRoles()
+
 
     public function getRoles()
     {
         return array($this->roles);
-    }
+
+    }//end getRoles()
+
+
     public function serialize()
     {
-        return serialize(array(
-            $this->id,
-            $this->username,
-            $this->password,
-            // see section on salt below
-            // $this->salt,
-        ));
-    }
+        return serialize(
+            array(
+             $this->id,
+             $this->username,
+             $this->password,
+            )
+        );
+
+    }//end serialize()
+
+
     public function unserialize($serialized)
     {
         list (
             $this->id,
             $this->username,
             $this->password,
-            // see section on salt below
-            // $this->salt
         ) = unserialize($serialized);
-   }
-   public function eraseCredentials()
+
+    }//end unserialize()
+
+
+    public function eraseCredentials()
     {
-    }
+
+    }//end eraseCredentials()
+
 
     /**
      * Set salt
      *
-     * @param string $salt
+     * @param  string $salt
      * @return User
      */
+
 
     /**
      * Get salt
      *
-     * @return string 
+     * @return string
      */
     public function getSalt()
     {
-        return NULL;
-    }
+        return null;
+
+    }//end getSalt()
+
+
     /**
-    * Set plainPassword
-    *
-    * @param string $plainPassword
-    * @return User
-    */
+     * Set plainPassword
+     *
+     * @param  string $plainPassword
+     * @return User
+     */
     public function setPlainPassword($plainPassword)
     {
         $this->plainPassword = $plainPassword;
         $this->setPassword(null);
-    }
+
+    }//end setPlainPassword()
+
 
     /**
-    * Get plainPassword
-    *
-    * @return string
-    */
+     * Get plainPassword
+     *
+     * @return string
+     */
     public function getPlainPassword()
     {
         return $this->plainPassword;
-    }
+
+    }//end getPlainPassword()
+
+
     /**
-    * Set confirmationToken
-    *
-    * @param string $confirmationToken
-    * @return User
-    */
+     * Set confirmationToken
+     *
+     * @param  string $confirmationToken
+     * @return User
+     */
     public function setConfirmationToken($confirmationToken)
     {
         $this->confirmationToken = $confirmationToken;
-    }
+
+    }//end setConfirmationToken()
+
 
     /**
-    *
-    * Get confirmationToken
-    * @return string
-    */
+     * Get confirmationToken
+     * @return string
+     */
     public function getConfirmationToken()
     {
         return $this->confirmationToken;
-    }
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     */
-    private $images;
+
+    }//end getConfirmationToken()
 
 
     /**
      * Add images
      *
-     * @param \AppBundle\Entity\Image $images
+     * @param  \AppBundle\Entity\Image $images
      * @return User
      */
     public function addImage(\AppBundle\Entity\Image $images)
@@ -342,7 +413,9 @@ class User implements UserInterface, \Serializable
         $this->images[] = $images;
 
         return $this;
-    }
+
+    }//end addImage()
+
 
     /**
      * Remove images
@@ -352,15 +425,20 @@ class User implements UserInterface, \Serializable
     public function removeImage(\AppBundle\Entity\Image $images)
     {
         $this->images->removeElement($images);
-    }
+
+    }//end removeImage()
+
 
     /**
      * Get images
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getImages()
     {
         return $this->images;
-    }
-}
+
+    }//end getImages()
+
+
+}//end class

@@ -5,7 +5,13 @@ use Doctrine\ORM\EntityRepository;
 
 class UserRepository extends EntityRepository
 {
-	public function test(){
-		return 'TEST METHOD, PLEASE IGNORE';
-	}
-}
+
+
+    public function test()
+    {
+        return 'TEST METHOD, PLEASE IGNORE';
+
+    }//end test()
+
+
+}//end class

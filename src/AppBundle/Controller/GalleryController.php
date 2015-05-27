@@ -77,7 +77,7 @@ class GalleryController extends Controller
         $form  = $this->createForm(new UploadFormType());
         $user  = $this->getUser();
         $form->handleRequest($request);
-        if ($form->isValid() === ture) {
+        if ($form->isValid() === true) {
             if ($this->get('security.authorization_checker')->isGranted('create', $image, $user) === false) {
                 throw new AccessDeniedException('Unauthorised access!');
             }

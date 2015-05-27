@@ -53,9 +53,9 @@ class Image
 
 
     /**
-     * Set originalName
+     * Set fileName
      *
-     * @param  string $originalName
+     * @param  string $fileName
      * @return Images
      */
     public function setFileName($fileName)
@@ -220,7 +220,7 @@ class Image
      * @param  \DateTime $created
      * @return Images
      */
-    public function setCreated($created)
+    public function setCreated(\DateTime $created)
     {
         $this->created = $created;
 
@@ -247,7 +247,7 @@ class Image
      * @param  \DateTime $updated
      * @return Images
      */
-    public function setUpdated($updated)
+    public function setUpdated(\DateTime $updated)
     {
         $this->updated = $updated;
 

@@ -30,7 +30,11 @@ class DefaultController extends Controller
 
         if ($form->isValid() === true) {
             $data    = $form->getData();
-            $message = \Swift_Message::newInstance()->setSubject($data['subject'])->setFrom($data['from'])->setTo('robot@codesandbox.info')->setBody(
+            $message = \Swift_Message::newInstance()
+            ->setSubject($data['subject'])
+            ->setFrom($data['from'])
+            ->setTo('robot@codesandbox.info')
+            ->setBody(
                 $this->renderView(
                     'AppBundle:Email:contact.txt.twig',
                     array(
@@ -41,6 +45,7 @@ class DefaultController extends Controller
             );
             $this->get('mailer')->send($message);
             $request->getSession()->getFlashBag()->add('success', 'Message sent, thank you!');
+
             return $this->redirectToRoute('_about');
         }
 
