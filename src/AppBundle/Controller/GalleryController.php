@@ -97,9 +97,7 @@ class GalleryController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($image);
             $em->flush();
-            $request->getSession()
-                ->getFlashBag()
-                ->add('success', 'Image uploaded!');
+            $this->addFlash('success', 'Image uploaded!');
             return $this->redirectToRoute('_gallery');
         } else {
             $request->getSession()
