@@ -12,13 +12,13 @@
         <div class="row">
             <div class="col-xs-12">
                 <div class="page-header">
-                        {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-                            <a class="btn btn-success btn-sm pull-right" href="{{path('_upload')}}">+ upload image</a>
-                        {% else %}
-                            <a class="btn btn-success btn-sm pull-right disabled">+ upload image</a>
-                        {% endif %}
                     <h1 >Image Gallery
                     <small>8 Images at a time</small></h1>
+                    {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                            <a class="btn btn-success btn-sm pull-right" href="{{path('_upload')}}">+ upload image</a>
+                    {% else %}
+                            <a class="btn btn-success btn-sm pull-right disabled">+ upload image</a>
+                    {% endif %}
                 </div>
             </div>
             </div>

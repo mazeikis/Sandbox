@@ -10,11 +10,12 @@ use AppBundle\Form\Type\ContactFormType;
 class DefaultController extends Controller
 {
 
+    const ITEMS_PER_PAGE = 4;
 
     public function indexAction()
     {
         $em     = $this->getDoctrine()->getManager();
-        $recent = $em->getRepository('AppBundle:Image')->getRecentlyUploaded(4);
+        $recent = $em->getRepository('AppBundle:Image')->getRecentlyUploaded(self::ITEMS_PER_PAGE);
 
         return $this->render('AppBundle:Twig:index.html.twig', array('title' => 'sandbox|project', 'recent' => $recent));
 

@@ -34,11 +34,11 @@ _upload:
     methods:  [GET, POST]
 _registration:
     path:    /registration/
-    defaults: { _controller: AppBundle:Registration:index }
+    defaults: { _controller: AppBundle:User:registration }
     methods:  [GET, POST]
-_verification:
+_email_verification:
     path:    /verify/{confirmationToken}
-    defaults: { _controller: AppBundle:Verification:email }
+    defaults: { _controller: AppBundle:User:emailVerification }
     methods: [GET, POST]
 _user:
     path: /user/{slug}
@@ -46,15 +46,15 @@ _user:
     requirements:
         slug: \d+
     methods:  [GET]
-_reset:
+_password_reset_request:
     path: /reset/
-    defaults: { _controller: AppBundle:Verification:reset }
+    defaults: { _controller: AppBundle:User:passwordResetRequest }
     requirements:
         slug: \d+
     methods:  [GET, POST]
-_password_verify_reset:
+_password_reset_verification:
     path: /reset/{confirmationToken}
-    defaults: { _controller: AppBundle:Verification:verifyReset }
+    defaults: { _controller: AppBundle:User:passwordResetVerification }
     methods:  [GET, POST]
 login_route:
     path:     /login

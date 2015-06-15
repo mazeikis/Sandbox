@@ -15,7 +15,7 @@ class ConfirmationTokenGenerator
 
     private function getRandomNumber()
     {
-        return hash('sha256', uniqid(mt_rand(), true), true);
+        return hash('sha256', uniqid(), true);
 
     }//end getRandomNumber()
 

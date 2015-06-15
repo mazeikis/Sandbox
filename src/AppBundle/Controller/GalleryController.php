@@ -16,6 +16,7 @@ use Symfony\Component\Filesystem\Filesystem;
 class GalleryController extends Controller
 {
 
+    const MAX_PER_PAGE = 8;
 
     public function indexAction(Request $request)
     {
@@ -32,19 +33,17 @@ class GalleryController extends Controller
             $request->query->set('order', 'desc');
         }
 
-        $order = $request->query->get('order');
-        if ($q === true) {
-            $query = $this->getDoctrine()->getManager()->getRepository('AppBundle:Image')->searchForQuery($q, $sortBy, $order);
+        $order      = $request->query->get('order');
+        $repository = $this->getDoctrine()->getManager()->getRepository('AppBundle:Image');
+        if ($q !== null) {
+            $query = $repository->searchForQuery($q, $sortBy, $order);
         } else {
-            $query = $this->getDoctrine()->getManager()->createQueryBuilder()
-              ->select('image')
-              ->from('AppBundle:Image', 'image')
-              ->orderBy('image.'.$sortBy, $order);
+            $query = $repository->getImagesQuery($sortBy, $order);
         }
 
         $adapter    = new DoctrineORMAdapter($query);
         $pagerfanta = new Pagerfanta($adapter);
-        $pagerfanta->setMaxPerPage(8)->setCurrentPage($currentPage);
+        $pagerfanta->setMaxPerPage(self::MAX_PER_PAGE)->setCurrentPage($currentPage);
         $currentPageResults = $pagerfanta->getCurrentPageResults();
         return $this->render(
             'AppBundle:Twig:gallery.html.twig',
@@ -84,7 +83,7 @@ class GalleryController extends Controller
 
             $data             = $form->getData();
             $imageSizeDetails = getimagesize($data['file']->getPathName());
-            $randomFileName   = sha1(uniqid(mt_rand(), true));
+            $randomFileName   = sha1(uniqid());
             $image->setFileName($randomFileName)
                   ->setSize($data['file']->getSize())
                   ->setResolution(strval($imageSizeDetails[0]).' x '.strval($imageSizeDetails[1]))

@@ -27,13 +27,23 @@ class ImageRepository extends EntityRepository
     }//end searchForQuery()
 
 
-    public function getRecentlyUploaded($count, $slug=null)
+    public function getImagesQuery($sortBy, $order)
     {
+        $query = $this->createQueryBuilder('image');
+        $query->select('image')
+              ->orderBy('image.'.$sortBy, $order);
+        return $query;
+
+    }//end getImagesQuery()
+
+
+    public function getRecentlyUploaded($count, $slug = null)
+    {
+        $paramters = array();
         if ($slug !== null) {
-            return $this->findBy(array('owner' => $slug), array('created' => 'DESC'), $count);
-        } else {
-            return $this->findBy(array(), array('created' => 'DESC'), $count);
+            $paramters['owner'] = $slug;
         }
+        return $this->findBy($paramters, array('created' => 'DESC'), $count);
 
     }//end getRecentlyUploaded()
 
