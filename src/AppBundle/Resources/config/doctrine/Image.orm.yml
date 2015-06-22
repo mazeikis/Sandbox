@@ -36,3 +36,8 @@ AppBundle\Entity\Image:
             joinColumn:
                 name: ownerId
                 referencedColumnName: id
+    oneToMany:
+        votes:
+            targetEntity: Vote
+            mappedBy: image
+            cascade: [ remove ]

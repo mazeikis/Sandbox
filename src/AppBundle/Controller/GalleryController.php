@@ -9,9 +9,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Pagerfanta\Pagerfanta;
 use AppBundle\Entity\Image;
+use AppBundle\Entity\Vote;
 use AppBundle\Form\Type\UploadFormType;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Filesystem\Filesystem;
+
+use Pagerfanta\Adapter\DoctrineDbalAdapter;
+use Doctrine\DBAL\Query\QueryBuilder;
 
 class GalleryController extends Controller
 {
@@ -23,7 +27,7 @@ class GalleryController extends Controller
         $q           = $request->query->get('q');
         $currentPage = ($request->query->get('page') < 1) ? 1 : $request->query->get('page');
 
-        if (in_array($request->query->get('sortBy'), ['created', 'owner', 'title'], true) === false) {
+        if (in_array($request->query->get('sortBy'), ['created', 'rating', 'title'], true) === false) {
                 $request->query->set('sortBy', 'created');
         }
 
@@ -41,10 +45,11 @@ class GalleryController extends Controller
             $query = $repository->getImagesQuery($sortBy, $order);
         }
 
-        $adapter    = new DoctrineORMAdapter($query);
-        $pagerfanta = new Pagerfanta($adapter);
-        $pagerfanta->setMaxPerPage(self::MAX_PER_PAGE)->setCurrentPage($currentPage);
-        $currentPageResults = $pagerfanta->getCurrentPageResults();
+        $adapter            = new DoctrineORMAdapter($query);
+        $pagerfanta         = new Pagerfanta($adapter);
+        $currentPageResults = $pagerfanta->setMaxPerPage(self::MAX_PER_PAGE)
+                                         ->setCurrentPage($currentPage)
+                                         ->getCurrentPageResults();
         return $this->render(
             'AppBundle:Twig:gallery.html.twig',
             array(
@@ -59,13 +64,18 @@ class GalleryController extends Controller
 
     public function imageAction($id)
     {
+        $user = $this->getUser();
         $em    = $this->getDoctrine()->getManager();
         $image = $em->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
-        if ($image === false) {
+        if ($image === null) {
             throw $this->createNotFoundException('No image with id '.$id);
         }
-
-        return $this->render('AppBundle:Twig:image.html.twig', array('title' => 'sandbox|image', 'image' => $image));
+        if ($user === null) {
+            throw $this->createNotFoundException(('no user'));
+        }
+        $votes = $em->getRepository('AppBundle:Vote')->countVotes($image);
+        $test = $em->getRepository('AppBundle:Vote')->checkForVote($user, $image);
+        return $this->render('AppBundle:Twig:image.html.twig', array('title' => 'sandbox|image', 'image' => $image, 'test' =>$test, 'votes' =>$votes));
 
     }//end imageAction()
 
@@ -163,6 +173,49 @@ class GalleryController extends Controller
         }
 
     }//end imageDeleteAction()
+
+
+    public function imageVoteAction(Request $request)
+    {
+        $voteValue     = $request->request->get('voteValue');
+        $id            = $request->request->get('id');
+        $em            = $this->getDoctrine()->getManager();
+        $image         = $em->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
+        $user          = $this->getUser();
+        $voteWhiteList = array(-1, 1);
+
+        if (!in_array($voteValue, $voteWhiteList)) {
+            return $this->redirectToRoute('_home');
+        }
+
+        $voteCheck         = $em->getRepository('AppBundle:Vote')->findOneBy(array('user' => $user, 'image' => $image));
+        if ($voteCheck !== null) {
+            throw new AccessDeniedException('Unauthorised access tadsdasdasdo voting, because cupcakes!');
+        }
+
+        if ($this->get('security.authorization_checker')->isGranted('vote', $image, $user) === false) {
+            throw new AccessDeniedException('Unauthorised access to voting!');
+        }
+
+        if ($image === false) {
+                throw $this->createNotFoundException('No image with id '.$id);
+        } else {
+                if ($image->getVotes()->contains($user)){
+                    break;
+                }
+                $vote = new Vote();
+                $vote->setImage($image);
+                $vote->setUser($user);
+                $vote->setVote($voteValue);
+                $em->persist($vote);
+                $em->flush();
+                $request->getSession()
+                    ->getFlashBag()
+                    ->add('success', 'Vote recorded, thanks!');
+                return $this->redirectToRoute('_gallery');
+        }//end if
+
+    }//end voteAction()
 
 
 }//end class

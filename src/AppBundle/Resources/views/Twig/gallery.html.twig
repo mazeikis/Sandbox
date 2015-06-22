@@ -10,20 +10,13 @@
     <div class="container">
         <!-- Page Heading -->
         <div class="row">
-            <div class="col-xs-12">
-                <div class="page-header">
-                    <h1 >Image Gallery
-                    <small>8 Images at a time</small></h1>
-                    {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-                            <a class="btn btn-success btn-sm pull-right" href="{{path('_upload')}}">+ upload image</a>
-                    {% else %}
-                            <a class="btn btn-success btn-sm pull-right disabled">+ upload image</a>
-                    {% endif %}
-                </div>
+            <div class="col-xs-12 page-header">
+                <h1 >Image Gallery
+                <small>8 Images at a time</small></h1>
             </div>
-            </div>
+        </div>
             <div class="row">
-                <div class="col-md-6" style="padding-top:5px">
+                <div class="col-md-4" style="padding-top:5px">
                     <form method="get" action="{{path('_gallery')}}" class="form-inline" role="form">
                         <div class="input-group">
                             <label for="search" class="sr-only">Filter: </label>
@@ -34,15 +27,24 @@
                         </div>
                     </form>
                 </div>
-                <div class="col-md-6" style="padding-top:5px">
-                    <div class="form-inline pull-right">
+                <div class="col-md-4" style="padding-top:5px">
+                    <div class="form-inline">
                     <label>Sort By:</label>
-                    {{sortable('created', 'Date')}}
-                    {{sortable('title', 'Title')}}
-                    {{sortable('owner', 'User')}}
+                    {{sortable('created', 'Date', app.request.query.get('q'))}}
+                    {{sortable('title', 'Title', app.request.query.get('q'))}}
+                    {{sortable('rating', 'Rating', app.request.query.get('q'))}}
                     </div>
                 </div>
+                <div class="col-md-4" style="padding-top:5px">
+                    {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                            <a class="btn btn-success btn-sm" href="{{path('_upload')}}">+ upload image</a>
+                    {% else %}
+                            <a class="btn btn-success btn-s disabled">+ upload image</a>
+                    {% endif %}
+                </div>
+            </div><br>
                 {% if app.session.flashBag.has('success') %}
+            <div class="row">
                 <div class="col-xs-12">
                     <div class="alert alert-success">
                         {% for msg in app.session.flashBag.get('success') %}
@@ -50,16 +52,16 @@
                         {% endfor %}
                     </div>
                 </div>
+            </div>
                 {% endif %}
-            </div><br>
-        <!-- /.row -->
         <!-- Gallery Grid -->
     <div class="row">
     {% for image in content %}
     <div class="col-md-3 portfolio-item">
-      <a href='{{path('_image', { 'id' : image.id })}}'>
-        <img src='{{ (image.fileName~'.'~image.extension) | imagine_filter('thumb')}}' class="img-responsive">
+      <a href='{{path('_image', { 'id' : image[0].id })}}'>
+        <img src='{{ (image[0].fileName~'.'~image[0].extension) | imagine_filter('thumb')}}' class="img-responsive">
       </a>
+      <h4>Image Rating: {{image['votes_sum']|default('<small> Not yet rated</small>')|raw}}</h4>
     </div>
     {% else %}
     <div class="col-lg-12"><h3>No images were found, database is empty?</h3></div>

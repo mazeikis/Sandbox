@@ -1,0 +1,19 @@
+AppBundle\Entity\Vote:
+    type: entity
+    repositoryClass: AppBundle\Entity\VoteRepository
+    table: votes
+    id:
+        id:
+            type: integer
+            generator:
+                strategy: AUTO
+    fields:
+        vote:
+            type: integer
+    manyToOne:
+          user:
+              targetEntity: User
+              inversedBy: vote
+          image:
+              targetEntity: Image
+              inversedBy: vote
