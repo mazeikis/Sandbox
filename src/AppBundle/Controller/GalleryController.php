@@ -14,9 +14,6 @@ use AppBundle\Form\Type\UploadFormType;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Filesystem\Filesystem;
 
-use Pagerfanta\Adapter\DoctrineDbalAdapter;
-use Doctrine\DBAL\Query\QueryBuilder;
-
 class GalleryController extends Controller
 {
 
@@ -179,18 +176,18 @@ class GalleryController extends Controller
     {
         $voteValue     = $request->request->get('voteValue');
         $imageId       = $request->request->get('id');
-        $em            = $this->getDoctrine()->getManager();
+        $entityManager = $this->getDoctrine()->getManager();
         $image         = $em->getRepository('AppBundle:Image')->findOneBy(array('id' => $imageId));
         $user          = $this->getUser();
         $voteWhiteList = array(-1, 1);
 
-        if (!in_array($voteValue, $voteWhiteList)) {
+        if (in_array($voteValue, $voteWhiteList) !== false) {
             return $this->redirectToRoute('_home');
         }
 
-        $voteCheck         = $em->getRepository('AppBundle:Vote')->findOneBy(array('user' => $user, 'image' => $image));
+        $voteCheck = $entityManager->getRepository('AppBundle:Vote')->findOneBy(array('user' => $user, 'image' => $image));
         if ($voteCheck !== null) {
-            throw new AccessDeniedException('Unauthorised access tadsdasdasdo voting, because cupcakes!');
+            throw new AccessDeniedException('Already voted!');
         }
 
         if ($this->get('security.authorization_checker')->isGranted('vote', $image, $user) === false) {
@@ -199,21 +196,15 @@ class GalleryController extends Controller
 
         if ($image === false) {
                 throw $this->createNotFoundException('No image with id '.$imageId);
-        } else {
-                if ($image->getVotes()->contains($user)){
-                    break;
-                }
-                $vote = new Vote();
-                $vote->setImage($image);
-                $vote->setUser($user);
-                $vote->setVote($voteValue);
-                $em->persist($vote);
-                $em->flush();
-                $request->getSession()
-                    ->getFlashBag()
-                    ->add('success', 'Vote recorded, thanks!');
-                return $this->redirectToRoute('_gallery');
-        }//end if
+        }
+        $vote = new Vote();
+        $vote->setImage($image)->setUser($user)->setVote($voteValue);
+        $em->persist($vote);
+        $em->flush();
+        $request->getSession()
+                ->getFlashBag()
+                ->add('success', 'Vote recorded, thanks!');
+        return $this->redirectToRoute('_gallery');
 
     }//end voteAction()
 
