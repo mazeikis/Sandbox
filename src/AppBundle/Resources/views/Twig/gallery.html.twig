@@ -37,7 +37,7 @@
                 </div>
                 <div class="col-md-4" style="padding-top:5px">
                     {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-                            <a class="btn btn-success btn-sm" href="{{path('_upload')}}">+ upload image</a>
+                            <a class="btn btn-success btn-sm pull-xs-left pull-md-right pull-lg-right" href="{{path('_upload')}}">+ upload image</a>
                     {% else %}
                             <a class="btn btn-success btn-s disabled">+ upload image</a>
                     {% endif %}

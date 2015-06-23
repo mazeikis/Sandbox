@@ -62,13 +62,13 @@ class GalleryController extends Controller
     }//end indexAction()
 
 
-    public function imageAction($id)
+    public function imageAction($imageId)
     {
         $user = $this->getUser();
         $em    = $this->getDoctrine()->getManager();
-        $image = $em->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
+        $image = $em->getRepository('AppBundle:Image')->findOneBy(array('id' => $imageId));
         if ($image === null) {
-            throw $this->createNotFoundException('No image with id '.$id);
+            throw $this->createNotFoundException('No image with id '.$imageId);
         }
         if ($user === null) {
             throw $this->createNotFoundException(('no user'));
@@ -118,10 +118,10 @@ class GalleryController extends Controller
     }//end uploadAction()
 
 
-    public function imageEditAction(Request $request, $id)
+imageId    public function imageEditAction(Request $request, $imageId)
     {
         $em    = $this->getDoctrine()->getManager();
-        $image = $em->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
+        $image = $em->getRepository('AppBundle:Image')->findOneBy(array('id' => $imageId));
 
         if ($this->get('security.authorization_checker')->isGranted('edit', $image) === false) {
             throw new AccessDeniedException('Unauthorised access!');
@@ -140,7 +140,7 @@ class GalleryController extends Controller
             $data = $form->getData();
             $image->setTitle($data['title'])->setDescription($data['description'])->setUpdated(new \Datetime());
             $em->flush();
-            return $this->redirectToRoute('_image', array('id' => $id));
+            return $this->redirectToRoute('_image', array('id' => $imageId));
         }
 
         return $this->render('AppBundle:Twig:image.html.twig', array('title' => 'sandbox|image', 'image' => $image, 'form' => $form->createView()));
@@ -148,17 +148,17 @@ class GalleryController extends Controller
     }//end imageEditAction()
 
 
-    public function imageDeleteAction(Request $request, $id)
+    public function imageDeleteAction(Request $request, $imageId)
     {
         $em    = $this->getDoctrine()->getManager();
-        $image = $em->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
+        $image = $em->getRepository('AppBundle:Image')->findOneBy(array('id' => $imageId));
 
         if ($this->get('security.authorization_checker')->isGranted('delete', $image) === false) {
             throw new AccessDeniedException('Unauthorised access!');
         }
 
         if ($image === false) {
-                throw $this->createNotFoundException('No image with id '.$id);
+                throw $this->createNotFoundException('No image with id '.$imageId);
         } else {
                 $em->remove($image);
                 $em->flush();
@@ -178,9 +178,9 @@ class GalleryController extends Controller
     public function imageVoteAction(Request $request)
     {
         $voteValue     = $request->request->get('voteValue');
-        $id            = $request->request->get('id');
+        $imageId       = $request->request->get('id');
         $em            = $this->getDoctrine()->getManager();
-        $image         = $em->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
+        $image         = $em->getRepository('AppBundle:Image')->findOneBy(array('id' => $imageId));
         $user          = $this->getUser();
         $voteWhiteList = array(-1, 1);
 
@@ -198,7 +198,7 @@ class GalleryController extends Controller
         }
 
         if ($image === false) {
-                throw $this->createNotFoundException('No image with id '.$id);
+                throw $this->createNotFoundException('No image with id '.$imageId);
         } else {
                 if ($image->getVotes()->contains($user)){
                     break;
