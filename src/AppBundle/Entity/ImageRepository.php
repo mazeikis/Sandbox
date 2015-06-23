@@ -2,7 +2,6 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query\Expr\Join;
 
 class ImageRepository extends EntityRepository
 {
@@ -15,17 +14,19 @@ class ImageRepository extends EntityRepository
       } else {
         $sortBy = 'image.'.$sortBy;
       }
-      $query = $this->getEntityManager()->createQuery(
-           'SELECT image,
-            SUM(votes.vote) as votes_sum
-            FROM AppBundle\Entity\Image image
-            LEFT JOIN image.owner user
-            LEFT JOIN image.votes votes
-            WHERE image.title LIKE :key
-            OR image.description LIKE :key 
-            OR user.username LIKE :key  
-            GROUP BY image.id 
-            ORDER BY '.$sortBy.' '.$order);
+      $query = $this->createQueryBuilder('image');
+      $query->select('image')->addSelect('SUM(votes.vote) as votes_sum')
+            ->leftJoin('image.owner', 'user')
+            ->leftJoin('image.votes', 'votes')
+            ->where(
+                $query->expr()->orX(
+                  $query->expr()->like('image.title', ':key'),
+                  $query->expr()->like('image.description', ':key'),
+                  $query->expr()->like('user.username', ':key')
+                  )
+                )
+            ->groupBy('image.id')
+            ->orderBy($sortBy, $order);    
       $query->setParameter('key', '%'.$q.'%');
       return $query;
 
@@ -41,14 +42,11 @@ class ImageRepository extends EntityRepository
         } else {
           $sortBy = 'image.'.$sortBy;
         }
-        $query = $this->getEntityManager()->createQuery(
-            'SELECT image, 
-             SUM(votes.vote) as votes_sum
-             FROM AppBundle\Entity\Image image 
-             LEFT JOIN image.votes votes 
-             GROUP BY image.id 
-             ORDER BY '.$sortBy.' '.$order
-            );
+        $query = $this->createQueryBuilder('image');
+        $query->select('image')->addSelect('SUM(votes.vote) AS votes_sum')
+              ->leftJoin('image.votes', 'votes')
+              ->groupBy('image.id')
+              ->orderBy($sortBy, $order);
         return $query;
 
     }//end getImagesQuery()
