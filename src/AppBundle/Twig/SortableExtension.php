@@ -28,7 +28,7 @@ class SortableExtension extends \Twig_Extension
      return $this->requestStack->getCurrentRequest()->query->get('sortBy') === $key;
 
   }
-  public function sortable($twig, $newSortBy, $buttonValue)
+  public function sortable($twig, $newSortBy, $buttonValue, $q = null)
   {
     $request = $this->requestStack->getCurrentRequest();
     $sortBy = $request->query->get('sortBy', 'created');
@@ -38,12 +38,16 @@ class SortableExtension extends \Twig_Extension
     }else{
       $sortBy = $newSortBy;
     }
-    $link = $this->router->generate('_gallery', array(
-      'page' => $request->query->get('page', 1), 
-      'order' => $order,
-      'sortBy' => $sortBy,
-      ), true);
+    $parameters = array(
+       'order' => $order,
+       'page' => $request->query->get('page', 1), 
+       'sortBy' => $sortBy,
+      );
+    if ($q !== null) {
+      $parameters['q'] = $q;
+    }
+    $link = $this->router->generate('_gallery', $parameters, true);
     $iconKey = $order == 'desc' ? '-alt' : null;
-    return $twig->render('AppBundle:Twig:sortButtons.html.twig', array('test' => $newSortBy, 'link' => $link, 'iconKey' => $iconKey, 'buttonValue' => $buttonValue));
+    return $twig->render('AppBundle:Twig:sortButtons.html.twig', array('newSortBy' => $newSortBy, 'link' => $link, 'iconKey' => $iconKey, 'buttonValue' => $buttonValue));
   }
 }

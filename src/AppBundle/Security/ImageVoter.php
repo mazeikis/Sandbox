@@ -10,6 +10,7 @@ class ImageVoter extends AbstractVoter
     const CREATE = 'create';
     const EDIT   = 'edit';
     const DELETE = 'delete';
+    const VOTE   = 'vote';
 
 
     protected function getSupportedAttributes()
@@ -18,6 +19,7 @@ class ImageVoter extends AbstractVoter
                  self::CREATE,
                  self::EDIT,
                  self::DELETE,
+                 self::VOTE,
                 );
 
     }//end getSupportedAttributes()
@@ -55,6 +57,10 @@ class ImageVoter extends AbstractVoter
 
                 case 'delete':
                     if ($user->getEnabled() && $user == $image->getOwner() || $user->getRoles() == 'ROLE_ADMIN') {
+                        return true;
+                    }
+                case 'vote':
+                    if ($user->getEnabled() && $image->getOwner() !== $user) {
                         return true;
                     }
             }

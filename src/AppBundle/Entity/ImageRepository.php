@@ -10,32 +10,48 @@ class ImageRepository extends EntityRepository
 
     public function searchForQuery($q, $sortBy, $order)
     {
-        $query = $this->createQueryBuilder('image');
-        $query->select('image')
-              ->leftJoin('image.owner', 'users', Join::WITH)
-              ->where(
-                  $query->expr()->orX(
-                      $query->expr()->like('image.title', ':key'),
-                      $query->expr()->like('image.description', ':key'),
-                      $query->expr()->like('users.username', ':key')
-                  )
-              )
-              ->orderBy('image.'.$sortBy, $order)
-              ->setParameter('key', '%'.$q.'%');
-        return $query;
+      if ($sortBy === 'rating') {
+        $sortBy = 'votes_sum';
+      } else {
+        $sortBy = 'image.'.$sortBy;
+      }
+      $query = $this->getEntityManager()->createQuery(
+           'SELECT image,
+            SUM(votes.vote) as votes_sum
+            FROM AppBundle\Entity\Image image
+            LEFT JOIN image.owner user
+            LEFT JOIN image.votes votes
+            WHERE image.title LIKE :key
+            OR image.description LIKE :key 
+            OR user.username LIKE :key  
+            GROUP BY image.id 
+            ORDER BY '.$sortBy.' '.$order);
+      $query->setParameter('key', '%'.$q.'%');
+      return $query;
 
-    }//end searchForQuery()
+    }
+
+    //end searchForQuery()
 
 
     public function getImagesQuery($sortBy, $order)
     {
-        $query = $this->createQueryBuilder('image');
-        $query->select('image')
-              ->orderBy('image.'.$sortBy, $order);
+        if ($sortBy === 'rating') {
+          $sortBy = 'votes_sum';
+        } else {
+          $sortBy = 'image.'.$sortBy;
+        }
+        $query = $this->getEntityManager()->createQuery(
+            'SELECT image, 
+             SUM(votes.vote) as votes_sum
+             FROM AppBundle\Entity\Image image 
+             LEFT JOIN image.votes votes 
+             GROUP BY image.id 
+             ORDER BY '.$sortBy.' '.$order
+            );
         return $query;
 
     }//end getImagesQuery()
-
 
     public function getRecentlyUploaded($count, $slug = null)
     {
