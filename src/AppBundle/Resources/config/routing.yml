@@ -19,6 +19,7 @@ _image:
 _image_vote:
     path:    /gallery
     defaults: { _controller: AppBundle:Gallery:ImageVote }
+    methods: [POST]
 _image_edit:
     path:    /gallery/image/edit/{id}
     defaults: { _controller: AppBundle:Gallery:ImageEdit }
