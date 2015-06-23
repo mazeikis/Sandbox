@@ -133,13 +133,12 @@ class UserController extends Controller
                     ->getFlashBag()
                     ->add('success', 'User '.$user->getUsername().' reset email sent successfuly!');
 
-                return $this->redirectToRoute('_home');
             } else {
                     $request->getSession()
                     ->getFlashBag()
                     ->add('warning', 'Oops, no user with matching token found!');
-                return $this->redirectToRoute('_home');
             }//end if
+            return $this->redirectToRoute('_home');
         }//end if
         return $this->render(
             'AppBundle:Twig:reset.html.twig',

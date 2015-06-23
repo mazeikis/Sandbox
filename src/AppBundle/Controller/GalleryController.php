@@ -118,7 +118,7 @@ class GalleryController extends Controller
     }//end uploadAction()
 
 
-imageId    public function imageEditAction(Request $request, $imageId)
+    public function imageEditAction(Request $request, $imageId)
     {
         $em    = $this->getDoctrine()->getManager();
         $image = $em->getRepository('AppBundle:Image')->findOneBy(array('id' => $imageId));
