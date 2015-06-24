@@ -28,8 +28,8 @@
                     </form>
                 </div>
                 <div class="col-md-4" style="padding-top:5px">
-                    <div class="form-inline">
-                    <label>Sort By:</label>
+                    <label for="sort-buttons">Sort By:</label>
+                    <div class="btn-group" role="group" id="sort-buttons">
                     {{sortable('created', 'Date', app.request.query.get('q'))}}
                     {{sortable('title', 'Title', app.request.query.get('q'))}}
                     {{sortable('rating', 'Rating', app.request.query.get('q'))}}
@@ -39,7 +39,7 @@
                     {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
                             <a class="btn btn-success btn-sm pull-xs-left pull-md-right pull-lg-right" href="{{path('_upload')}}">+ upload image</a>
                     {% else %}
-                            <a class="btn btn-success btn-s disabled">+ upload image</a>
+                            <a type="button" role="button" class="btn btn-success btn-sm next disabled pull-xs-left pull-md-right pull-lg-right">+ upload image</a>
                     {% endif %}
                 </div>
             </div><br>
@@ -58,10 +58,14 @@
     <div class="row">
     {% for image in content %}
     <div class="col-md-3 portfolio-item">
-      <a href='{{path('_image', { 'id' : image[0].id })}}'>
-        <img src='{{ (image[0].fileName~'.'~image[0].extension) | imagine_filter('thumb')}}' class="img-responsive">
-      </a>
-      <h4>Image Rating: {{image['votes_sum']|default('Not yet rated')}}</h4>
+        <div class="image-box">
+          <a href='{{path('_image', { 'id' : image[0].id })}}'>
+            <img src='{{ (image[0].fileName~'.'~image[0].extension) | imagine_filter('thumb')}}' class="img-responsive">
+          </a>
+        </div>
+        <div class="rating-box text-center" style="color: #999999; padding: 8px 15px; font-size: 14px">
+            {{image[0].title}} | {{image['votes_sum']|default('Not yet rated')}}
+        </div>
     </div>
     {% else %}
     <div class="col-lg-12"><h3>No images were found, database is empty?</h3></div>

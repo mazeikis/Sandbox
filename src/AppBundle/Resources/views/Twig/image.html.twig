@@ -24,36 +24,45 @@
             <div class="col-md-8">
                 <img class="img-responsive" src="{{asset('images/'~image.getFileName~'.'~image.getExtension)}}" alt="">
             </div>
-
             <div class="col-md-4">
-                {% if form is defined %}
-                            {% block form_row %}
-                                {{ form_start(form) }}
-                                {{ form_widget(form) }}
-                                {{ form_end(form) }}
-                            {% endblock form_row %}
+                <h3>Current Image Rating:  {{votes_sum|default('None :(')}}</h3>
+                {% if is_granted('IS_AUTHENTICATED_REMEMBERED') and image.getowner != app.user %}
+                    <div class="btn-group" role="group" aria-label="...">
+                        <form action="{{ path('_image_vote')}}" method="post">
+                            <input type="hidden" name="id" value='{{image.getid}}'>
+                            <button type="button" class="btn btn-default" value='-1' name="voteValue">Upvote  <span class="glyphicon glyphicon-thumbs-up"></button>
+                            <button type="button" class="btn btn-default" value='1' name="voteValue">Downvote  <span class="glyphicon glyphicon-thumbs-down"></button>
+                        </form>
+                    </div>
                 {% elseif image.getowner == app.user %}
-                    <a class="btn btn-warning btn-xs " href="{{path('_image_edit', { 'id' : image.getid })}}">edit</a>
-                    <a class="btn btn-danger btn-xs " href="{{path('_image_delete', { 'id' : image.getid })}}">delete</a>
-                {% endif %}
-                {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-                    <form action="{{ path('_image_vote')}}" class="form-group" method="post">
-                        <input class="form-control" type="hidden" name="id" value='{{image.getid}}'>
-                        <button type="submit" class="btn btn-default" value='-1' name="voteValue">minus</button>
-                        <button type="submit" class="btn btn-default" value='1' name="voteValue">plus</button>
-                    </form>
+                    <h4>Image owners and guests are not allowed to vote, sorry.</h4>
                 {% endif %}
                 <h3>Image Description</h3>
                 <p>{{image.getdescription}}</p>
-                <h3>Image Details</h3>
-                <ul>
+                <a class="collapse-toggle" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample"><h3>Image Details<strong class="caret"></strong></h3></a>
+                <div class="collapse in" id="collapseExample">
+                <div class="col-md-6">
+                <ul class="list-unstyled text-right">
+                    <li>image resolution</li>
+                    <li>file extension</li>
+                    <li>file size</li>
+                    <li>file uploaded</li>
+                </ul>
+                </div>
+                <div class="col-md-6">
+                    <ul class="list-unstyled text-left">
                     <li>{{image.getresolution}}</li>
                     <li>{{image.getextension}}</li>
                     <li>{{(image.getsize/1024/1024)|number_format(3, '.', ',') ~ ' MB'}}</li>
                     <li>{{image.getcreated|date('g:ia / l M j, Y')}}</li>
                 </ul>
-                <h3>{% if test == null %}lalala{% else %}{{test.getVote()}}{% endif %}</h3>
-                <h3>{{votes}}</h3>
+                </div>
+                </div>
+                {% if image.getowner == app.user %}
+                    <h3>Image owner control panel:</h3>
+                    <a class="btn btn-warning btn-xs " href="{{path('_image_edit', { 'id' : image.getid })}}">edit</a>
+                    <a class="btn btn-danger btn-xs " href="{{path('_image_delete', { 'id' : image.getid })}}">delete</a>
+                {% endif %}
             </div>
 
         </div>

@@ -1,5 +1,5 @@
 {% if isSorted(newSortBy)%}
-<a class="btn btn-info btn-sm active" href="{{link}}"><span class="glyphicon glyphicon-sort-by-alphabet{{iconKey}}" aria-hidden="true"> {{buttonValue}}</span></a>
+<a class="btn btn-info btn-sm active" href="{{link}}"><span class="glyphicon glyphicon-menu-{{iconKey}}" aria-hidden="true"></span> {{buttonValue}}</a>
 {% else %}
-<a class="btn btn-info btn-sm" href="{{link}}"><span class="glyphicon glyphicon-sort-by-alphabet" aria-hidden="true"> {{buttonValue}}</span></a>
+<a class="btn btn-info btn-sm" href="{{link}}"><span class="glyphicon glyphicon-sort-by-alphabet{{iconKey}}" aria-hidden="true"></span> {{buttonValue}}</a>
 {% endif %}

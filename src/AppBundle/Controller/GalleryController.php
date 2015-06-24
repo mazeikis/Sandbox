@@ -68,13 +68,19 @@ class GalleryController extends Controller
         if ($image === null) {
             throw $this->createNotFoundException('No image with id '.$imageId);
         }
-        if ($user === null) {
-            throw $this->createNotFoundException(('no user'));
-        }
 
-        $votes = $entityManager->getRepository('AppBundle:Vote')->countVotes($image);
-        $test = $entityManager->getRepository('AppBundle:Vote')->checkForVote($user, $image);
-        return $this->render('AppBundle:Twig:image.html.twig', array('title' => 'sandbox|image', 'image' => $image, 'test' =>$test, 'votes' =>$votes));
+        $query     = $entityManager->getRepository('AppBundle:Vote')->countVotes($image)->getQuery();
+        $votes_sum = $query->getSingleScalarResult(); 
+        if ($user !== null) {
+            $hasVoted  = $entityManager->getRepository('AppBundle:Vote')->checkForVote($user, $image);
+        } else {
+            $hasVoted = false;
+        }
+        return $this->render('AppBundle:Twig:image.html.twig', array(
+            'title' => 'sandbox|image', 
+            'image' => $image, 
+            'hasVoted' =>$hasVoted, 
+            'votes_sum' =>$votes_sum));
 
     }//end imageAction()
 

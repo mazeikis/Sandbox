@@ -39,15 +39,15 @@ class SortableExtension extends \Twig_Extension
       $sortBy = $newSortBy;
     }
     $parameters = array(
-       'order' => $order,
-       'page' => $request->query->get('page', 1), 
+       'order'  => $order,
+       'page'   => $request->query->get('page', 1), 
        'sortBy' => $sortBy,
       );
     if ($q !== null) {
       $parameters['q'] = $q;
     }
     $link = $this->router->generate('_gallery', $parameters, true);
-    $iconKey = $order == 'desc' ? '-alt' : null;
+    $iconKey = $order == 'desc' ? 'up' : 'down';
     return $twig->render('AppBundle:Twig:sortButtons.html.twig', array('newSortBy' => $newSortBy, 'link' => $link, 'iconKey' => $iconKey, 'buttonValue' => $buttonValue));
   }
 }
