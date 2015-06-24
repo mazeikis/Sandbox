@@ -33,11 +33,6 @@ class VoteRepository extends EntityRepository
 			  ->where('vote.image = :image')
 			  ->setParameter('image', $image);
 		return $query;
-		$dql = "SELECT SUM(e.vote) AS rating FROM AppBundle\Entity\Vote e WHERE e.image = :image";
-		$rating = $this->getEntityManager()->createQuery($dql)
-		      ->setParameter('image', $image)
-              ->getSingleScalarResult();
-		return $rating;
 
 	}//end countVotes()
 
