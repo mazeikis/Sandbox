@@ -6,3 +6,6 @@ languages:
 exclude_paths:
 - "web/js/bootstrap.js"
 - "app/SymfonyRequirements.php"
+- "app/app_dev.php"
+- "app/check.php"
+- "web/js/npm.js"

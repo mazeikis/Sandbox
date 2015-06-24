@@ -16,10 +16,10 @@ class UserController extends Controller
 
     public function indexAction($slug)
     {
-        $em = $this->getDoctrine()->getManager();
+        $entityManager = $this->getDoctrine()->getManager();
 
-        $user             = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $slug));
-        $recentlyUploaded = $em->getRepository('AppBundle:Image')->getRecentlyUploaded(self::ITEMS_PER_PAGE, $user);
+        $user             = $entityManager->getRepository('AppBundle:User')->findOneBy(array('id' => $slug));
+        $recentlyUploaded = $entityManager->getRepository('AppBundle:Image')->getRecentlyUploaded(self::ITEMS_PER_PAGE, $user);
         $test             = $this->generateUrl('_user', array('slug' => $slug), true);
 
         return $this->render(
@@ -44,9 +44,9 @@ class UserController extends Controller
             $confirmationTokenManager = new ConfirmationTokenGenerator();
             $user->setConfirmationToken($confirmationTokenManager->generateConfirmationToken());
 
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($user);
-            $em->flush();
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($user);
+            $entityManager->flush();
 
             $message = \Swift_Message::newInstance()
             ->setSubject('Verification Email')
@@ -84,8 +84,8 @@ class UserController extends Controller
 
     public function emailVerificationAction(Request $request, $confirmationToken)
     {
-        $em   = $this->getDoctrine()->getManager();
-        $user = $em->getRepository('AppBundle:User')->findOneBy(array('confirmationToken' => $confirmationToken));
+        $entityManager = $this->getDoctrine()->getManager();
+        $user          = $entityManager->getRepository('AppBundle:User')->findOneBy(array('confirmationToken' => $confirmationToken));
         if ($user === false) {
             $request->getSession()
                     ->getFlashBag()
@@ -93,7 +93,7 @@ class UserController extends Controller
             return $this->redirectToRoute('_home');
         } else {
             $user->setEnabled(true)->setConfirmationToken(null);
-            $em->flush();
+            $entityManager->flush();
             $request->getSession()
                     ->getFlashBag()
                     ->add('success', 'User '.$user->getUsername().' verified successfully!');
@@ -112,14 +112,14 @@ class UserController extends Controller
 
         $form->handleRequest($request);
         if ($form->isValid() === true) {
-            $em   = $this->getDoctrine()->getManager();
+            $entityManager   = $this->getDoctrine()->getManager();
             $data = $form->getData();
-            $user = $em->getRepository('AppBundle:User')->findOneBy(array('username' => $data['username']));
+            $user = $entityManager->getRepository('AppBundle:User')->findOneBy(array('username' => $data['username']));
 
             if ($user !== null) {
                 $confirmationTokenManager = new confirmationTokenGenerator();
                 $user->setConfirmationToken($confirmationTokenManager->generateConfirmationToken());
-                $em->flush();
+                $entityManager->flush();
 
                 $message = \Swift_Message::newInstance()
                     ->setSubject('Password reset Email')
@@ -153,8 +153,8 @@ class UserController extends Controller
 
     public function passwordResetVerificationAction(Request $request, $confirmationToken)
     {
-        $em   = $this->getDoctrine()->getManager();
-        $user = $em->getRepository('AppBundle:User')->findOneBy(['confirmationToken' => $confirmationToken]);
+        $entityManager = $this->getDoctrine()->getManager();
+        $user          = $entityManager->getRepository('AppBundle:User')->findOneBy(['confirmationToken' => $confirmationToken]);
 
         if ($user === false) {
             $request->getSession()
@@ -170,7 +170,7 @@ class UserController extends Controller
             $data = $form->getData();
             $user->setPlainPassword($data['plainPassword']);
             $user->setConfirmationToken(null);
-            $em->flush();
+            $entityManager->flush();
             $request->getSession()
                     ->getFlashBag()
                     ->add('success', 'Users '.$user->getUsername().' password changed successfully!');
