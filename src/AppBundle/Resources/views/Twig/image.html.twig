@@ -26,21 +26,27 @@
             </div>
             <div class="col-md-4">
                 <h3>Current Image Rating:  {{votes_sum|default('None :(')}}</h3>
-                {% if is_granted('IS_AUTHENTICATED_REMEMBERED') and image.getowner != app.user %}
+                {% if is_granted('IS_AUTHENTICATED_REMEMBERED') and image.getowner != app.user and hasVoted == false %}
                     <div class="btn-group" role="group" aria-label="...">
                         <form action="{{ path('_image_vote')}}" method="post">
                             <input type="hidden" name="id" value='{{image.getid}}'>
-                            <button type="button" class="btn btn-default" value='-1' name="voteValue">Upvote  <span class="glyphicon glyphicon-thumbs-up"></button>
-                            <button type="button" class="btn btn-default" value='1' name="voteValue">Downvote  <span class="glyphicon glyphicon-thumbs-down"></button>
+                            <button type="submit" class="btn btn-default" value='-1' name="voteValue">Upvote  <span class="glyphicon glyphicon-thumbs-up"></button>
+                            <button type="submit" class="btn btn-default" value='1' name="voteValue">Downvote  <span class="glyphicon glyphicon-thumbs-down"></button>
                         </form>
                     </div>
                 {% elseif image.getowner == app.user %}
                     <h4>Image owners and guests are not allowed to vote, sorry.</h4>
                 {% endif %}
-                <h3>Image Description</h3>
-                <p>{{image.getdescription}}</p>
-                <a class="collapse-toggle text-unstyled" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample"><h3>Image Details<strong class="caret"></strong></h3></a>
-                <div class="collapse in" id="collapseExample">
+                <a class="collapse-toggle" data-toggle="collapse" href="#descriptionCollapse" aria-expanded="false" aria-controls="descriptionCollapse">
+                    <h3>Image Description</h3>
+                </a>
+                <div class="collapse in" id="descriptionCollapse">
+                    <p>{{image.getdescription}}</p>
+                </div>
+                <a class="collapse-toggle" data-toggle="collapse" href="#detailsCollapse" aria-expanded="false" aria-controls="detailsCollapse">
+                    <h3>Image Details<strong class="caret"></strong></h3>
+                </a>
+                <div class="collapse in" id="detailsCollapse">
                 <div class="col-md-6">
                 <ul class="list-unstyled text-right">
                     <li>image resolution</li>

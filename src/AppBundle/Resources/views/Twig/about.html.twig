@@ -18,16 +18,18 @@
             </div>
         </div>
 	<div class="row">
-            <div class="col-md-6">
+            <div class="col-md-5">
                 <h3>Contact form</h3>
                 {% if form is defined %}
-                    {{ form_start(form) }}
+                    {{ form_start(form, { 'attr': {'class': 'form-horizontal'} }) }}
                     {{ form_widget(form) }}
                     {{ form_end(form) }}
                 {% endif %}
             </div>
-            <div class="col-md-6">
+            <div class="col-md-2"></div>
+            <div class="col-md-5">
                 <h3>My details</h3>
+                <br>
                 <ul>
                     <li>First Name: Feliksas</li>
                     <li>Last Name: Mažeikis</li>
