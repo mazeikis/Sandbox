@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "e2b398c52f9d680a6e5be1608c4b8972",
+    "hash": "1ddffd05fc4901a4f0011cc987bb8925",
     "packages": [
         {
             "name": "braincrafted/bootstrap-bundle",
-            "version": "dev-master",
+            "version": "v2.1.2",
             "target-dir": "Braincrafted/Bundle/BootstrapBundle",
             "source": {
                 "type": "git",
                 "url": "https://github.com/braincrafted/bootstrap-bundle.git",
-                "reference": "dd53559cfe15428f07ac3681826573fab1557bd9"
+                "reference": "c301bae8ba91b1a6f1045919b16f9cb9b62c7e7b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/braincrafted/bootstrap-bundle/zipball/dd53559cfe15428f07ac3681826573fab1557bd9",
-                "reference": "dd53559cfe15428f07ac3681826573fab1557bd9",
+                "url": "https://api.github.com/repos/braincrafted/bootstrap-bundle/zipball/c301bae8ba91b1a6f1045919b16f9cb9b62c7e7b",
+                "reference": "c301bae8ba91b1a6f1045919b16f9cb9b62c7e7b",
                 "shasum": ""
             },
             "require": {
@@ -64,11 +64,11 @@
             "keywords": [
                 "bootstrap"
             ],
-            "time": "2015-04-15 11:59:36"
+            "time": "2015-03-06 12:14:13"
         },
         {
             "name": "components/jquery",
-            "version": "dev-master",
+            "version": "2.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/components/jquery.git",
@@ -2018,10 +2018,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "braincrafted/bootstrap-bundle": 20,
-        "components/jquery": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

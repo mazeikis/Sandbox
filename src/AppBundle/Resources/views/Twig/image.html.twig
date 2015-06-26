@@ -51,25 +51,25 @@
                     <p><strong>Image Details <span class="caret"></span></strong></h4>
                 </a>
                 <div class="collapse in" id="detailsCollapse">
-                <div class="col-md-6">
-                <ul class="list-unstyled text-right">
-                    <li>image resolution</li>
-                    <li>file extension</li>
-                    <li>file size</li>
-                    <li>file uploaded</li>
-                </ul>
-                </div>
-                <div class="col-md-6">
-                    <ul class="list-unstyled text-left">
-                    <li>{{image.getresolution}}</li>
-                    <li>{{image.getextension}}</li>
-                    <li>{{(image.getsize/1024/1024)|number_format(3, '.', ',') ~ ' MB'}}</li>
-                    <li>{{image.getcreated|date('g:ia / l M j, Y')}}</li>
-                </ul>
-                </div>
+                    <div class="col-md-6">
+                        <ul class="list-unstyled text-right">
+                            <li>image resolution</li>
+                            <li>file extension</li>
+                            <li>file size</li>
+                            <li>file uploaded</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="list-unstyled text-left">
+                            <li>{{image.getresolution}}</li>
+                            <li>{{image.getextension}}</li>
+                            <li>{{(image.getsize/1024/1024)|number_format(3, '.', ',') ~ ' MB'}}</li>
+                            <li>{{image.getcreated|date('g:ia / l M j, Y')}}</li>
+                        </ul>
+                    </div>
                 </div>
                 {% if image.getowner == app.user %}
-                    <h3>Image owner control panel:</h3>
+                    <p><strong>Image owner control panel:</strong></p>
                     <a class="btn btn-warning btn-xs " href="{{path('_image_edit', { 'id' : image.getid })}}">edit</a>
                     <a class="btn btn-danger btn-xs " href="{{path('_image_delete', { 'id' : image.getid })}}">delete</a>
                 {% endif %}

@@ -125,15 +125,15 @@ class GalleryController extends Controller
     }//end uploadAction()
 
 
-    public function imageEditAction(Request $request, $imageId)
+    public function imageEditAction(Request $request, $id)
     {
         $entityManager    = $this->getDoctrine()->getManager();
-        $image = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $imageId));
+        $image = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
         $flash = $this->get('braincrafted_bootstrap.flash');
 
         if ($this->get('security.authorization_checker')->isGranted('edit', $image) === false) {
             $flash->error('Sadly, You were not authorized to edit this image.');
-            return $this->redirectToRoute('_image', array('id' => $imageId));
+            return $this->redirectToRoute('_image', array('id' => $id));
         }
 
         $defaultData = array('message' => 'Enter image description.');

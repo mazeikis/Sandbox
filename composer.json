@@ -21,8 +21,8 @@
         "incenteev/composer-parameter-handler": "~2.0",
         "liip/imagine-bundle": "~1.2",
         "white-october/pagerfanta-bundle": "^1.0",
-        "braincrafted/bootstrap-bundle": "dev-master",
-        "components/jquery": "dev-master"
+        "braincrafted/bootstrap-bundle": "2.1.*",
+        "components/jquery": "2.1.4"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"

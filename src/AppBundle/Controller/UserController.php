@@ -97,11 +97,10 @@ class UserController extends Controller
 
     public function passwordResetRequestAction(Request $request)
     {
-        $tempData = array();
-        $form     = $this->createFormBuilder($tempData)
-            ->add('username', 'text', array('label' => 'Your username: ', 'required' => true))
-            ->add('reset password', 'submit')
-            ->getForm();
+        $form = $this->createFormBuilder()
+                     ->add('username', 'text', array('label' => 'Your username: ', 'required' => true))
+                     ->add('reset password', 'submit')
+                     ->getForm();
 
         $form->handleRequest($request);
         if ($form->isValid() === true) {
