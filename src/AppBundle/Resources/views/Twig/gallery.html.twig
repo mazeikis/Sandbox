@@ -10,8 +10,8 @@
     <div class="container">
         <!-- Page Heading -->
         <div class="row">
-            <div class="col-xs-12 page-header">
-                <h1 >Image Gallery
+            <div class="col-xs-12">
+                <h1 class="page-header">Image Gallery
                 <small>8 Images at a time</small></h1>
             </div>
         </div>
@@ -28,8 +28,7 @@
                     </form>
                 </div>
                 <div class="col-md-4" style="padding-top:5px">
-                    <label for="sort-buttons">Sort By:</label>
-                    <div class="btn-group" role="group" id="sort-buttons">
+                    <div class="btn-group btn-group-justified" role="group">
                     {{sortable('created', 'Date', app.request.query.get('q'))}}
                     {{sortable('title', 'Title', app.request.query.get('q'))}}
                     {{sortable('rating', 'Rating', app.request.query.get('q'))}}
@@ -43,17 +42,7 @@
                     {% endif %}
                 </div>
             </div><br>
-                {% if app.session.flashBag.has('success') %}
-            <div class="row">
-                <div class="col-xs-12">
-                    <div class="alert alert-success">
-                        {% for msg in app.session.flashBag.get('success') %}
-                            <strong>{{ msg }}</strong>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-                {% endif %}
+    {% include 'BraincraftedBootstrapBundle::flash.html.twig' %}
         <!-- Gallery Grid -->
     <div class="row">
     {% for image in content %}

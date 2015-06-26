@@ -7,7 +7,7 @@
 {% endblock %}
 {% block content %}
     <div class="container">
-
+    {% include 'BraincraftedBootstrapBundle::flash.html.twig' %}
         <!-- Portfolio Item Heading -->
         <div class="row">
             <div class="col-lg-12">
@@ -25,7 +25,7 @@
                 <img class="img-responsive" src="{{asset('images/'~image.getFileName~'.'~image.getExtension)}}" alt="">
             </div>
             <div class="col-md-4">
-                <h3>Current Image Rating:  {{votes_sum|default('None :(')}}</h3>
+                <p><strong>Current Image Rating:</strong>  {{votes_sum|default('None :(')}}</p>
                 {% if is_granted('IS_AUTHENTICATED_REMEMBERED') and image.getowner != app.user and hasVoted == false %}
                     <div class="btn-group" role="group" aria-label="...">
                         <form action="{{ path('_image_vote')}}" method="post">
@@ -35,16 +35,20 @@
                         </form>
                     </div>
                 {% elseif image.getowner == app.user %}
-                    <h4>Image owners and guests are not allowed to vote, sorry.</h4>
+                    <p>Image owners and guests are not allowed to vote, sorry.</p>
+                {% elseif hasVoted == true %}
+                    <p>You have already voted.</p>
                 {% endif %}
+                <hr>
                 <a class="collapse-toggle" data-toggle="collapse" href="#descriptionCollapse" aria-expanded="false" aria-controls="descriptionCollapse">
-                    <h3>Image Description</h3>
+                    <p><strong>Image Description <span class="caret"></span></strong></p>
                 </a>
                 <div class="collapse in" id="descriptionCollapse">
                     <p>{{image.getdescription}}</p>
                 </div>
+                <hr>
                 <a class="collapse-toggle" data-toggle="collapse" href="#detailsCollapse" aria-expanded="false" aria-controls="detailsCollapse">
-                    <h3>Image Details<strong class="caret"></strong></h3>
+                    <p><strong>Image Details <span class="caret"></span></strong></h4>
                 </a>
                 <div class="collapse in" id="detailsCollapse">
                 <div class="col-md-6">

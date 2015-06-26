@@ -45,7 +45,9 @@ class DefaultController extends Controller
                 )
             );
             $this->get('mailer')->send($message);
-            $request->getSession()->getFlashBag()->add('success', 'Message sent, thank you!');
+
+            $flash = $this->get('braincrafted_bootstrap.flash');
+            $flash->error('Message sent, thank you!');
 
             return $this->redirectToRoute('_about');
         }

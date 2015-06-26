@@ -42,16 +42,16 @@ class GalleryController extends Controller
             $query = $repository->getImagesQuery($sortBy, $order);
         }
 
-        $adapter            = new DoctrineORMAdapter($query);
-        $pagerfanta         = new Pagerfanta($adapter);
-        $currentPageResults = $pagerfanta->setMaxPerPage(self::MAX_PER_PAGE)
-                                         ->setCurrentPage($currentPage)
-                                         ->getCurrentPageResults();
+        $adapter    = new DoctrineORMAdapter($query);
+        $pagerfanta = new Pagerfanta($adapter);
+        $result     = $pagerfanta->setMaxPerPage(self::MAX_PER_PAGE)
+                                 ->setCurrentPage($currentPage)
+                                 ->getCurrentPageResults();
         return $this->render(
             'AppBundle:Twig:gallery.html.twig',
             array(
              'title'   => 'sandbox|gallery',
-             'content' => $currentPageResults,
+             'content' => $result,
              'pager'   => $pagerfanta,
             )
         );
@@ -66,7 +66,9 @@ class GalleryController extends Controller
         $image         = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
 
         if ($image === null) {
-            throw $this->createNotFoundException('No image with id '.$imageId);
+            $flash = $this->get('braincrafted_bootstrap.flash');
+            $flash->error('Sadly, I could not find the image with id "' . $id . '"');
+            return $this->redirectToRoute('_gallery');        
         }
 
         $query     = $entityManager->getRepository('AppBundle:Vote')->countVotes($image)->getQuery();
@@ -91,6 +93,7 @@ class GalleryController extends Controller
         $form  = $this->createForm(new UploadFormType());
         $user  = $this->getUser();
         $form->handleRequest($request);
+        $flash = $this->get('braincrafted_bootstrap.flash');
         if ($form->isValid() === true) {
             if ($this->get('security.authorization_checker')->isGranted('create', $image, $user) === false) {
                 throw new AccessDeniedException('Unauthorised access!');
@@ -111,12 +114,11 @@ class GalleryController extends Controller
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($image);
             $entityManager->flush();
-            $this->addFlash('success', 'Image uploaded!');
+
+            $flash->success('Image sucessfully uploaded!');
             return $this->redirectToRoute('_gallery');
         } else {
-            $request->getSession()
-                ->getFlashBag()
-                ->add('warning', 'Image upload error!');
+            $flash->error('Image Upload error.');
         }//end if
         return $this->render('AppBundle:Twig:upload.html.twig', array('title' => 'sandbox|project', 'form' => $form->createView()));
 
@@ -127,9 +129,11 @@ class GalleryController extends Controller
     {
         $entityManager    = $this->getDoctrine()->getManager();
         $image = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $imageId));
+        $flash = $this->get('braincrafted_bootstrap.flash');
 
         if ($this->get('security.authorization_checker')->isGranted('edit', $image) === false) {
-            throw new AccessDeniedException('Unauthorised access!');
+            $flash->error('Sadly, You were not authorized to edit this image.');
+            return $this->redirectToRoute('_image', array('id' => $imageId));
         }
 
         $defaultData = array('message' => 'Enter image description.');
@@ -145,6 +149,7 @@ class GalleryController extends Controller
             $data = $form->getData();
             $image->setTitle($data['title'])->setDescription($data['description'])->setUpdated(new \Datetime());
             $entityManager->flush();
+            $flash->success('Image details were edited and changes saved.');
             return $this->redirectToRoute('_image', array('id' => $imageId));
         }
 
@@ -157,24 +162,26 @@ class GalleryController extends Controller
     {
         $em    = $this->getDoctrine()->getManager();
         $image = $em->getRepository('AppBundle:Image')->findOneBy(array('id' => $imageId));
+        $flash = $this->get('braincrafted_bootstrap.flash');
 
         if ($this->get('security.authorization_checker')->isGranted('delete', $image) === false) {
-            throw new AccessDeniedException('Unauthorised access!');
+            $flash->error('Sadly, You were not authorized to delete this image.');
+            return $this->redirectToRoute('_image', array('id' => $imageId));
         }
 
         if ($image === false) {
-                throw $this->createNotFoundException('No image with id '.$imageId);
+            $flash->error('Sadly, I could not find the image with id "' . $id . '"');
+            return $this->redirectToRoute('_gallery');
         } else {
-                $em->remove($image);
-                $em->flush();
-                $fileSystem       = new Filesystem();
-                $imageDir = $this->get('kernel')->getRootDir().'/../web/images'.$this->getRequest()->getBasePath();
-                $fileSystem->remove($imageDir.$image->getFileName().'.'.$image->getExtension());
-                $fileSystem->remove($imageDir.'/cache/thumb/'.$image->getFileName().'.'.$image->getExtension());
-                $request->getSession()
-                    ->getFlashBag()
-                    ->add('success', 'Image deleted!');
-                return $this->redirectToRoute('_gallery');
+            $em->remove($image);
+            $em->flush();
+            $fileSystem = new Filesystem();
+            $imageDir   = $this->get('kernel')->getRootDir().'/../web/images'.$this->getRequest()->getBasePath();
+            $fileSystem->remove($imageDir.$image->getFileName().'.'.$image->getExtension());
+            $fileSystem->remove($imageDir.'/cache/thumb/'.$image->getFileName().'.'.$image->getExtension());
+            $flash->alert('Image was successfully deleted.');
+
+            return $this->redirectToRoute('_gallery');
         }
 
     }//end imageDeleteAction()

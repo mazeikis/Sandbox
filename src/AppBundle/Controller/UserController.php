@@ -59,23 +59,17 @@ class UserController extends Controller
                 )
             );
             $this->get('mailer')->send($message);
-            $request->getSession()
-                ->getFlashBag()
-                ->add(
-                    'success',
-                    'Rergistration almost complete,
-                    please check Your email
-                    for verification link to finish registration process!'
-                );
+            
+            $flash = $this->get('braincrafted_bootstrap.flash');
+            $flash->success('Registration submitted, please check Your email and finish registration progress.');
+
             return $this->redirectToRoute('_home');
-        } else {
-            $message = null;
         }//end if
+
         return $this->render(
             'AppBundle:Twig:registration.html.twig',
             array(
              'title'   => 'sandbox|project',
-             'message' => $message,
              'form'    => $form->createView()
             )
         );
@@ -86,19 +80,18 @@ class UserController extends Controller
     {
         $entityManager = $this->getDoctrine()->getManager();
         $user          = $entityManager->getRepository('AppBundle:User')->findOneBy(array('confirmationToken' => $confirmationToken));
+        $flash         = $this->get('braincrafted_bootstrap.flash');
+
         if ($user === false) {
-            $request->getSession()
-                    ->getFlashBag()
-                    ->add('warning', 'Oops, no user with matching token found!');
-            return $this->redirectToRoute('_home');
+            $flash->error('Oops, no user with matching token found!');
         } else {
             $user->setEnabled(true)->setConfirmationToken(null);
             $entityManager->flush();
-            $request->getSession()
-                    ->getFlashBag()
-                    ->add('success', 'User '.$user->getUsername().' verified successfully!');
-            return $this->redirectToRoute('_home');
+
+            $flash->success('User '.$user->getUsername().' verified successfully!');
+
         }//end if
+        return $this->redirectToRoute('_home');
 
     }//end emailVerificationAction()
 
@@ -112,9 +105,10 @@ class UserController extends Controller
 
         $form->handleRequest($request);
         if ($form->isValid() === true) {
-            $entityManager   = $this->getDoctrine()->getManager();
-            $data = $form->getData();
-            $user = $entityManager->getRepository('AppBundle:User')->findOneBy(array('username' => $data['username']));
+            $entityManager = $this->getDoctrine()->getManager();
+            $data          = $form->getData();
+            $user          = $entityManager->getRepository('AppBundle:User')->findOneBy(array('username' => $data['username']));
+            $flash         = $this->get('braincrafted_bootstrap.flash');
 
             if ($user !== null) {
                 $confirmationTokenManager = new confirmationTokenGenerator();
@@ -126,17 +120,11 @@ class UserController extends Controller
                     ->setFrom('robot@codesandbox.info')
                     ->setTo($user->getEmail())
                     ->setBody($this->renderView('AppBundle:Email:reset.txt.twig', array('link' => $user->getConfirmationToken())));
-
                 $this->get('mailer')->send($message);
 
-                $request->getSession()
-                    ->getFlashBag()
-                    ->add('success', 'User '.$user->getUsername().' reset email sent successfuly!');
-
+                $flash->success('success', 'User '.$user->getUsername().' reset email sent successfuly!');
             } else {
-                    $request->getSession()
-                    ->getFlashBag()
-                    ->add('warning', 'Oops, no user with matching token found!');
+                $flash->error('Oops, no user with matching token found!');
             }//end if
             return $this->redirectToRoute('_home');
         }//end if
@@ -155,11 +143,10 @@ class UserController extends Controller
     {
         $entityManager = $this->getDoctrine()->getManager();
         $user          = $entityManager->getRepository('AppBundle:User')->findOneBy(['confirmationToken' => $confirmationToken]);
+        $flash         = $this->get('braincrafted_bootstrap.flash');
 
         if ($user === false) {
-            $request->getSession()
-                    ->getFlashBag()
-                    ->add('success', 'Oops, no matching user found!');
+            $flash->error('Oops, no user with matching token found!');
             return $this->redirectToRoute('_home');
         }//end if
 
@@ -171,9 +158,7 @@ class UserController extends Controller
             $user->setPlainPassword($data['plainPassword']);
             $user->setConfirmationToken(null);
             $entityManager->flush();
-            $request->getSession()
-                    ->getFlashBag()
-                    ->add('success', 'Users '.$user->getUsername().' password changed successfully!');
+            $flash->success('Password for '.$user->getUsername().' was changed successfully!');
             return $this->redirectToRoute('_user', array('slug' => $user->getId()));
         }//end if
 
