@@ -96,7 +96,7 @@ class GalleryController extends Controller
         $flash = $this->get('braincrafted_bootstrap.flash');
         if ($form->isValid() === true) {
             if ($this->get('security.authorization_checker')->isGranted('create', $image, $user) === false) {
-                throw new AccessDeniedException('Unauthorised access!');
+                $flash->error('You are not authorized to upload an image.');
             }
 
             $data             = $form->getData();
@@ -117,8 +117,6 @@ class GalleryController extends Controller
 
             $flash->success('Image sucessfully uploaded!');
             return $this->redirectToRoute('_gallery');
-        } else {
-            $flash->error('Image Upload error.');
         }//end if
         return $this->render('AppBundle:Twig:upload.html.twig', array('title' => 'sandbox|project', 'form' => $form->createView()));
 
@@ -127,21 +125,22 @@ class GalleryController extends Controller
 
     public function imageEditAction(Request $request, $id)
     {
-        $entityManager    = $this->getDoctrine()->getManager();
-        $image = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
-        $flash = $this->get('braincrafted_bootstrap.flash');
+        $entityManager = $this->getDoctrine()->getManager();
+        $image         = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
+        $flash         = $this->get('braincrafted_bootstrap.flash');
 
         if ($this->get('security.authorization_checker')->isGranted('edit', $image) === false) {
             $flash->error('Sadly, You were not authorized to edit this image.');
             return $this->redirectToRoute('_image', array('id' => $id));
         }
 
-        $defaultData = array('message' => 'Enter image description.');
-        $form        = $this->createFormBuilder($defaultData)
-            ->add('title', 'text', array('data' => $image->getTitle(), 'constraints' => new Length(array('min' => 3), new NotBlank)))
-            ->add('description', 'textarea', array( 'data' => $image->getDescription(), 'required' => true))
-            ->add('Save', 'submit')
-            ->getForm();
+        $form = $this->createFormBuilder()
+                     ->add('title', 'text', array(
+                                                   'data' => $image->getTitle(), 
+                                                   'constraints' => new Length(array('min' => 3), new NotBlank)))
+                     ->add('description', 'textarea', array( 'data' => $image->getDescription(), 'required' => true))
+                     ->add('Save', 'submit')
+                     ->getForm();
 
         $form->handleRequest($request);
 
@@ -150,7 +149,8 @@ class GalleryController extends Controller
             $image->setTitle($data['title'])->setDescription($data['description'])->setUpdated(new \Datetime());
             $entityManager->flush();
             $flash->success('Image details were edited and changes saved.');
-            return $this->redirectToRoute('_image', array('id' => $imageId));
+
+            return $this->redirectToRoute('_image', array('id' => $id));
         }
 
         return $this->render('AppBundle:Twig:image.html.twig', array('title' => 'sandbox|image', 'image' => $image, 'form' => $form->createView()));
@@ -158,10 +158,10 @@ class GalleryController extends Controller
     }//end imageEditAction()
 
 
-    public function imageDeleteAction(Request $request, $imageId)
+    public function imageDeleteAction(Request $request, $id)
     {
         $em    = $this->getDoctrine()->getManager();
-        $image = $em->getRepository('AppBundle:Image')->findOneBy(array('id' => $imageId));
+        $image = $em->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
         $flash = $this->get('braincrafted_bootstrap.flash');
 
         if ($this->get('security.authorization_checker')->isGranted('delete', $image) === false) {

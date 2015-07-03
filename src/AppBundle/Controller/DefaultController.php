@@ -32,6 +32,7 @@ class DefaultController extends Controller
         if ($form->isValid() === true) {
             $data    = $form->getData();
             $message = \Swift_Message::newInstance()
+            ->setContentType("text/html")
             ->setSubject($data['subject'])
             ->setFrom($data['from'])
             ->setTo('robot@codesandbox.info')
@@ -47,7 +48,7 @@ class DefaultController extends Controller
             $this->get('mailer')->send($message);
 
             $flash = $this->get('braincrafted_bootstrap.flash');
-            $flash->error('Message sent, thank you!');
+            $flash->success('Message sent, thank you!');
 
             return $this->redirectToRoute('_about');
         }

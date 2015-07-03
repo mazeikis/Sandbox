@@ -5,7 +5,7 @@ _home:
 _about:
     path:    /about/
     defaults: { _controller: AppBundle:Default:about }
-    methods:  [GET]
+    methods:  [GET, POST]
 _gallery:
     path:    /gallery/
     defaults: { _controller: AppBundle:Gallery:index }
@@ -25,13 +25,13 @@ _image_edit:
     defaults: { _controller: AppBundle:Gallery:ImageEdit }
     requirements:
         id: \d+
-    methods:  [POST, GET]
+    methods:  [POST]
 _image_delete:
     path:    /gallery/image/delete/{id}
     defaults: { _controller: AppBundle:Gallery:ImageDelete }
     requirements:
         id: \d+
-    methods:  [GET]
+    methods:  [POST]
 _upload:
     path:    /upload/
     defaults: { _controller: AppBundle:Gallery:upload }

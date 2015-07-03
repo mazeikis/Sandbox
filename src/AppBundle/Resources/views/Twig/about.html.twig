@@ -1,4 +1,9 @@
 {% extends "AppBundle:Twig:layout.html.twig" %}
+{% block style %}
+{% spaceless %}
+    {{parent()}}
+    {% endspaceless %}
+{% endblock %}
 {% block content %}
 <div class="container" style="padding-top:70px">
     <div class="row">
@@ -11,7 +16,7 @@
             </div>
         </div>
 	<div class="row">
-            <div class="col-md-5">
+            <div class="col-md-6">
                 <h4>Contact form</h4>
                 {% if form is defined %}
                     {{ form_start(form, { 'attr': {'class': 'form-horizontal'} }) }}
@@ -19,8 +24,7 @@
                     {{ form_end(form) }}
                 {% endif %}
             </div>
-            <div class="col-md-2"></div>
-            <div class="col-md-5">
+            <div class="col-md-6">
                 <h4>My details</h4>
                 <br>
                 <ul>

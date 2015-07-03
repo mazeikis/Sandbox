@@ -49,6 +49,7 @@ class UserController extends Controller
             $entityManager->flush();
 
             $message = \Swift_Message::newInstance()
+            ->setContentType("text/html")
             ->setSubject('Verification Email')
             ->setFrom('robot@codesandbox.info')
             ->setTo($user->getEmail())

@@ -70,8 +70,49 @@
                 </div>
                 {% if image.getowner == app.user %}
                     <p><strong>Image owner control panel:</strong></p>
-                    <a class="btn btn-warning btn-xs " href="{{path('_image_edit', { 'id' : image.getid })}}">edit</a>
-                    <a class="btn btn-danger btn-xs " href="{{path('_image_delete', { 'id' : image.getid })}}">delete</a>
+                    {% if form is defined %}
+                        {{ form_start(form, { 'style': 'horizontal', 'label_col': 4, 'widget_col': 8, 'col_size': 'sm' }) }}
+                        {{ form_end(form) }}
+                    {% else %}
+                    <div class="col-md-6">
+                        <form action="{{path('_image_edit', { 'id' : image.getid } ) }}" class="form-horizontal" method="POST" >
+                            <button type="submit" class="btn btn-warning btn-sm form-control" value="edit">Edit Image</button>
+                        </form>
+                    </div>
+
+
+                    <div class="col-md-6">
+                        <form action="{{path('_image_edit', { 'id' : image.getid } ) }}" class="form-horizontal" method="POST">
+                            <button type="button" name="btn" class="btn btn-danger btn-sm form-control" data-toggle="modal" data-target="#confirmDelete">Delete Image</button>
+                        </form>
+                    </div>
+
+                <div class="modal fade" id="confirmDelete" tabindex="-1" rolde="dialog" aria-labeledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4>Confirm Delete</h4>
+                            </div>
+                            <div class="modal-body">
+                                Are You sure You want to delete this image?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-danger danger" id="confirm">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <script>$('#confirmDelete').on('show.bs.modal', function (e) {
+                            var form = $(e.relatedTarget).closest('form');
+                            $(this).find('.modal-footer #confirm').data('form', form);
+                            alert('test');
+                        });
+                        $('#confirmDelete').find('.modal-footer #confirm').on('click', function(){
+                            $(this).data('form').submit();
+                        });
+                </script>
+                    {% endif %}
                 {% endif %}
             </div>
 

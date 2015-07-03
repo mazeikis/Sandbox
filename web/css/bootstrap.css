@@ -5966,7 +5966,7 @@ button.close {
   right: 0;
   bottom: 0;
   left: 0;
-  z-index: 1040;
+  z-index: 1020;
   background-color: #000;
 }
 .modal-backdrop.fade {
@@ -5976,6 +5976,7 @@ button.close {
 .modal-backdrop.in {
   filter: alpha(opacity=50);
   opacity: .5;
+  z-index: auto;
 }
 .modal-header {
   min-height: 16.42857143px;
