@@ -20,7 +20,8 @@
         "sensio/framework-extra-bundle": "~3.0,>=3.0.2",
         "incenteev/composer-parameter-handler": "~2.0",
         "liip/imagine-bundle": "~1.2",
-        "white-october/pagerfanta-bundle": "^1.0"
+        "white-october/pagerfanta-bundle": "^1.0",
+        "braincrafted/bootstrap-bundle": "2.1.*"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"
@@ -47,7 +48,8 @@
         ]
     },
     "config": {
-        "bin-dir": "bin"
+        "bin-dir": "bin",
+        "components-dir": "web/components"
     },
     "extra": {
         "symfony-app-dir": "app",

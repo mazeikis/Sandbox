@@ -10,11 +10,14 @@
 		<link rel="stylesheet" href="{{ asset('css/normalize.css') }}"/>
 		<link rel="stylesheet" href="{{ asset('css/bootstrap.css') }}"/>
 		<link rel="stylesheet" href="{{ asset('css/bootstrap-theme.css') }}"/>
-
 		<link rel="stylesheet" href="{{ asset('css/application.css') }}"/>
-	       <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-		<script  type="text/javascript" src="{{ asset('js/bootstrap.min.js') }}"></script>
 		{% endspaceless %}
+		{% endblock %}
+		{% block javascripts %}
+			{% spaceless %}
+				<script src="{{ asset('js/jquery-2.1.4.min.js') }}"></script>
+				<script src="{{ asset('js/bootstrap.js') }}"></script>
+			{% endspaceless %}
 		{% endblock %}
 	</head>
 <body>
@@ -37,9 +40,9 @@
 		</ul>
 		<ul class="nav navbar-nav navbar-right">
 			{% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-			<li><a href="{{ path('_user', { slug : app.user.id })}}">{{app.user.username}}</a></li>
-			<li class="divider-vertical"></li>
-			<li><a href="{{ path('logout') }}">Logout</a></li>
+				<li><a href="{{ path('_user', { slug : app.user.id })}}">{{app.user.username}}</a></li>
+				<li class="divider-vertical"></li>
+				<li><a href="{{ path('logout') }}">Logout</a></li>
     		{% else %}
 			<li><a href="{{path('_registration')}}">Sign Up</a></li>
 			<li class="divider-vertical"></li>

@@ -8,17 +8,7 @@
 {% block content %}
 	   <div class="container">
 	   	<br>
-        {% if app.session.flashBag.has('success') %}
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="alert alert-success">
-                    {% for msg in app.session.flashBag.get('success') %}
-                        <strong>{{ msg }}</strong>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-       	{% else %}
+        {% include 'BraincraftedBootstrapBundle::flash.html.twig' %}
         <!-- Jumbotron Header -->
         <header class="jumbotron hero-spacer">
         	<h1>Welcome to the sandbox project!</h1>
@@ -26,8 +16,6 @@
             <p><a class="btn btn-primary btn-large" href="{{path('_gallery')}}">Go to the gallery!</a>
             </p>
         </header>
-        {% endif %}
-
         <hr>
 
         <!-- Title -->

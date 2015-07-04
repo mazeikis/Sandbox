@@ -7,7 +7,7 @@
 {% endblock %}
 {% block content %}
     <div class="container">
-
+    {% include 'BraincraftedBootstrapBundle::flash.html.twig' %}
         <!-- Portfolio Item Heading -->
         <div class="row">
             <div class="col-lg-12">
@@ -25,7 +25,7 @@
                 <img class="img-responsive" src="{{asset('images/'~image.getFileName~'.'~image.getExtension)}}" alt="">
             </div>
             <div class="col-md-4">
-                <h3>Current Image Rating:  {{votes_sum|default('None :(')}}</h3>
+                <p><strong>Current Image Rating:</strong>  {{votes_sum|default('None :(')}}</p>
                 {% if is_granted('IS_AUTHENTICATED_REMEMBERED') and image.getowner != app.user and hasVoted == false %}
                     <div class="btn-group" role="group" aria-label="...">
                         <form action="{{ path('_image_vote')}}" method="post">
@@ -35,39 +35,84 @@
                         </form>
                     </div>
                 {% elseif image.getowner == app.user %}
-                    <h4>Image owners and guests are not allowed to vote, sorry.</h4>
+                    <p>Image owners and guests are not allowed to vote, sorry.</p>
+                {% elseif hasVoted == true %}
+                    <p>You have already voted.</p>
                 {% endif %}
+                <hr>
                 <a class="collapse-toggle" data-toggle="collapse" href="#descriptionCollapse" aria-expanded="false" aria-controls="descriptionCollapse">
-                    <h3>Image Description</h3>
+                    <p><strong>Image Description <span class="caret"></span></strong></p>
                 </a>
                 <div class="collapse in" id="descriptionCollapse">
                     <p>{{image.getdescription}}</p>
                 </div>
+                <hr>
                 <a class="collapse-toggle" data-toggle="collapse" href="#detailsCollapse" aria-expanded="false" aria-controls="detailsCollapse">
-                    <h3>Image Details<strong class="caret"></strong></h3>
+                    <p><strong>Image Details <span class="caret"></span></strong></h4>
                 </a>
                 <div class="collapse in" id="detailsCollapse">
-                <div class="col-md-6">
-                <ul class="list-unstyled text-right">
-                    <li>image resolution</li>
-                    <li>file extension</li>
-                    <li>file size</li>
-                    <li>file uploaded</li>
-                </ul>
-                </div>
-                <div class="col-md-6">
-                    <ul class="list-unstyled text-left">
-                    <li>{{image.getresolution}}</li>
-                    <li>{{image.getextension}}</li>
-                    <li>{{(image.getsize/1024/1024)|number_format(3, '.', ',') ~ ' MB'}}</li>
-                    <li>{{image.getcreated|date('g:ia / l M j, Y')}}</li>
-                </ul>
-                </div>
+                    <div class="col-md-6">
+                        <ul class="list-unstyled text-right">
+                            <li>image resolution</li>
+                            <li>file extension</li>
+                            <li>file size</li>
+                            <li>file uploaded</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="list-unstyled text-left">
+                            <li>{{image.getresolution}}</li>
+                            <li>{{image.getextension}}</li>
+                            <li>{{(image.getsize/1024/1024)|number_format(3, '.', ',') ~ ' MB'}}</li>
+                            <li>{{image.getcreated|date('g:ia / l M j, Y')}}</li>
+                        </ul>
+                    </div>
                 </div>
                 {% if image.getowner == app.user %}
-                    <h3>Image owner control panel:</h3>
-                    <a class="btn btn-warning btn-xs " href="{{path('_image_edit', { 'id' : image.getid })}}">edit</a>
-                    <a class="btn btn-danger btn-xs " href="{{path('_image_delete', { 'id' : image.getid })}}">delete</a>
+                    <p><strong>Image owner control panel:</strong></p>
+                    {% if form is defined %}
+                        {{ form_start(form, { 'style': 'horizontal', 'label_col': 4, 'widget_col': 8, 'col_size': 'sm' }) }}
+                        {{ form_end(form) }}
+                    {% else %}
+                    <div class="col-md-6">
+                        <form action="{{path('_image_edit', { 'id' : image.getid } ) }}" class="form-horizontal" method="POST" >
+                            <button type="submit" class="btn btn-warning btn-sm form-control" value="edit">Edit Image</button>
+                        </form>
+                    </div>
+
+
+                    <div class="col-md-6">
+                        <form action="{{path('_image_edit', { 'id' : image.getid } ) }}" class="form-horizontal" method="POST">
+                            <button type="button" name="btn" class="btn btn-danger btn-sm form-control" data-toggle="modal" data-target="#confirmDelete">Delete Image</button>
+                        </form>
+                    </div>
+
+                <div class="modal fade" id="confirmDelete" tabindex="-1" rolde="dialog" aria-labeledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4>Confirm Delete</h4>
+                            </div>
+                            <div class="modal-body">
+                                Are You sure You want to delete this image?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-danger danger" id="confirm">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <script>$('#confirmDelete').on('show.bs.modal', function (e) {
+                            var form = $(e.relatedTarget).closest('form');
+                            $(this).find('.modal-footer #confirm').data('form', form);
+                            alert('test');
+                        });
+                        $('#confirmDelete').find('.modal-footer #confirm').on('click', function(){
+                            $(this).data('form').submit();
+                        });
+                </script>
+                    {% endif %}
                 {% endif %}
             </div>
 
