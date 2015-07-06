@@ -1,17 +1,36 @@
-{% block subject 'sandbox testing'  %}
-
-{% block body_text %}
-codesandbox.info email verification robot 
-----
-In order to verify Your email address and finish registration process, 
-please click on the link bellow: 
-
-
- http://codesandbox.info/verify/{{link}}
-
-----
-This is automated message, please do not reply. 
-If You are not trying to register a new account at http://codesandbox.info/
-and were not expecting this message, please ignore it without following the link, 
-sorry for any inconvenience it may caused.
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+   </head>
+   <body style="background:#F6F6F6; font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px; margin:0; padding:0;">
+      <div style="background:#F6F6F6; font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px; margin:0; padding:0;">
+         <table cellspacing="0" cellpadding="0" border="0" width="100%">
+            <tr>
+               <td align="center" valign="top" style="padding:20px 0 20px 0">
+                  <table bgcolor="#FFFFFF" cellspacing="0" cellpadding="10" border="0" width="650" style="border:1px solid #E0E0E0;">
+                     <tr>
+                        <th><h2>codesandbox.info email verification robot</h2>
+                        	<h4>This is automated message, please do not reply.</h4>
+                        </th>               
+                     </tr>
+                     <tr>
+                        <td valign="top">
+                        	<br>
+                           <p style="font-size:12px; line-height:16px; margin:0;">
+                           	In order to verify Your email address and finish registration process, please follow the link bellow:<br>
+                            <a href="http://codesandbox.info/verify/{{ link }}">Verification Link</a><br>
+                           </p>
+                           <br>
+                           <p>If You are not trying to register a new account at <a href="http://codesandbox.info/">codesandbox.info</a>and were not expecting this message, please ignore it without following the link, 
+							sorry for any inconvenience it may caused.
+                        </td>
+                     </tr>
+                  </table>
+               </td>
+            </tr>
+         </table>
+      </div>
+   </body>
+</html>
 {% endblock %}
