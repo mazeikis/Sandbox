@@ -49,3 +49,10 @@
   text-align: left;
   vertical-align: middle;
 }
+.contact-form {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.contact-form-textarea {
+  height: 140px !important;
+}

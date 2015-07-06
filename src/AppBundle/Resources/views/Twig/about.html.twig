@@ -17,11 +17,13 @@
         </div>
 	<div class="row">
             <div class="col-md-6">
-                <h4>Contact form</h4>
                 {% if form is defined %}
+                <h4>Contact form</h4>
+                <div class="contact-form">
                     {{ form_start(form, { 'attr': {'class': 'form-horizontal'} }) }}
                     {{ form_widget(form) }}
                     {{ form_end(form) }}
+                </div>
                 {% endif %}
             </div>
             <div class="col-md-6">
