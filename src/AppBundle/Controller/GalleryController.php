@@ -101,7 +101,8 @@ class GalleryController extends Controller
  
             $data             = $form->getData();
             $imageSizeDetails = getimagesize($data['file']->getPathName());
-            $image->setFileName(strval(sha1(uniqid())))
+            $randomFileName   = sha1(uniqid());
+            $image->setFileName($randomFileName)
                   ->setSize($data['file']->getSize())
                   ->setResolution(strval($imageSizeDetails[0]).' x '.strval($imageSizeDetails[1]))
                   ->setExtension($data['file']->getClientOriginalExtension())
