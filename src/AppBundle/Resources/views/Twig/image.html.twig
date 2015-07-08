@@ -30,8 +30,8 @@
                     <div class="btn-group" role="group" aria-label="...">
                         <form action="{{ path('_image_vote')}}" method="post">
                             <input type="hidden" name="id" value='{{image.getid}}'>
-                            <button type="submit" class="btn btn-default" value='-1' name="voteValue">Upvote  <span class="glyphicon glyphicon-thumbs-up"></button>
-                            <button type="submit" class="btn btn-default" value='1' name="voteValue">Downvote  <span class="glyphicon glyphicon-thumbs-down"></button>
+                            <button type="submit" class="btn btn-default" value='1' name="voteValue">Upvote  <span class="glyphicon glyphicon-thumbs-up"></button>
+                            <button type="submit" class="btn btn-default" value='-1' name="voteValue">Downvote  <span class="glyphicon glyphicon-thumbs-down"></button>
                         </form>
                     </div>
                 {% elseif image.getowner == app.user %}
