@@ -195,20 +195,22 @@ class GalleryController extends Controller
         $image         = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $imageId));
         $user          = $this->getUser();
         $voteWhiteList = array(-1, 1);
+        $flash         = $this->get('braincrafted_bootstrap.flash');
+
  
         $voteCheck = $entityManager->getRepository('AppBundle:Vote')->findOneBy(array('user' => $user, 'image' => $image));
  
         if ($this->get('security.authorization_checker')->isGranted('vote', $image, $user) === false || $voteCheck !== null || in_array($voteValue, $voteWhiteList) === false) {
-            throw new AccessDeniedException('Unauthorised access to voting!');
+                $flash->success('Voting access unauthorized, sorry!');
+                return $this->redirectToRoute('_gallery');
         }
  
         $vote = new Vote();
         $vote->setImage($image)->setUser($user)->setVote($voteValue);
         $entityManager->persist($vote);
         $entityManager->flush();
-        $request->getSession()
-                ->getFlashBag()
-                ->add('success', 'Vote recorded, thanks!');
+        $flash->success('Vote recorded, thanks!');
+
         return $this->redirectToRoute('_gallery');
  
     }//end voteAction()

@@ -15,7 +15,7 @@ class SecurityController extends Controller
         $lastUsername        = $authenticationUtils->getLastUsername();
         if ($error !== null){
         	$flash = $this->get('braincrafted_bootstrap.flash');
-        	$flash->error('Wrong password. Please try again or use Password Recovery option!');
+        	$flash->error('Wrong password. Please try again or use Reset Password option!');
         }
 
         return $this->redirectToRoute('_home');

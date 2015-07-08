@@ -29,7 +29,7 @@ class VerificationFormType extends AbstractType
              'type'        => 'password',
              'constraints' => new Length(array('min' => 6, 'max' => 4096), new NotBlank),
             )
-        )->add('save', 'submit', array('label' => 'Upload'));
+        )->add('save', 'submit', array('label' => 'Submit'));
 
     }//end buildForm()
 
