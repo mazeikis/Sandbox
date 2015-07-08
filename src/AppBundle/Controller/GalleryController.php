@@ -11,7 +11,6 @@ use Pagerfanta\Pagerfanta;
 use AppBundle\Entity\Image;
 use AppBundle\Entity\Vote;
 use AppBundle\Form\Type\UploadFormType;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Filesystem\Filesystem;
  
 class GalleryController extends Controller
