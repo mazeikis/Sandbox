@@ -5,6 +5,12 @@
     <link rel="stylesheet" href="{{ asset('css/portfolio-item.css') }}"/>
 {% endspaceless %}
 {% endblock %}
+{% block javascripts %}
+    {% spaceless %}
+        {{parent()}}
+        <script src="{{ asset('js/confirm.js') }}"></script>
+    {% endspaceless %}
+{% endblock %}
 {% block content %}
     <div class="container">
     {% include 'BraincraftedBootstrapBundle::flash.html.twig' %}
@@ -103,14 +109,7 @@
                         </div>
                     </div>
                 </div>
-                <script>$('#confirmDelete').on('show.bs.modal', function (e) {
-                            var form = $(e.relatedTarget).closest('form');
-                            $(this).find('.modal-footer #confirm').data('form', form);
-                        });
-                        $('#confirmDelete').find('.modal-footer #confirm').on('click', function(){
-                            $(this).data('form').submit();
-                        });
-                </script>
+                
                     {% endif %}
                 {% endif %}
             </div>
