@@ -13,7 +13,10 @@ class SecurityController extends Controller
         $authenticationUtils = $this->get('security.authentication_utils');
         $error               = $authenticationUtils->getLastAuthenticationError();
         $lastUsername        = $authenticationUtils->getLastUsername();
-        return $this->redirectToRoute('_home', array('last_username' => $lastUsername, 'error' => $error));
+        $flash = $this->get('braincrafted_bootstrap.flash');
+        $flash->error('Wrong password, try again or use Reset Password option!');
+
+        return $this->redirectToRoute('_home');
 
     }//end loginAction()
 

@@ -9,6 +9,9 @@
 	   <div class="container">
 	   	<br>
         {% include 'BraincraftedBootstrapBundle::flash.html.twig' %}
+        {% if error is defined %}
+            <div>{{ error.message }}</div>
+        {% endif %}
         <!-- Jumbotron Header -->
         <header class="jumbotron hero-spacer">
         	<h1>Welcome to the sandbox project!</h1>
