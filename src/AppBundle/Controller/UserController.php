@@ -80,8 +80,14 @@ class UserController extends Controller
     public function emailVerificationAction(Request $request, $confirmationToken)
     {
         $entityManager = $this->getDoctrine()->getManager();
-        $user          = $entityManager->getRepository('AppBundle:User')->findOneBy(array('confirmationToken' => $confirmationToken));
         $flash         = $this->get('braincrafted_bootstrap.flash');
+
+        if($confirmationToken === null){
+            $flash->error('Invalid verification token!');
+            return $this->redirectToRoute('_home');
+        }
+
+        $user = $entityManager->getRepository('AppBundle:User')->findOneBy(array('confirmationToken' => $confirmationToken));
 
         if ($user === false) {
             $flash->error('Oops, no user with matching token found!');
@@ -116,13 +122,14 @@ class UserController extends Controller
                 $entityManager->flush();
 
                 $message = \Swift_Message::newInstance()
+                    ->setContentType("text/html")
                     ->setSubject('Password reset Email')
                     ->setFrom('robot@codesandbox.info')
                     ->setTo($user->getEmail())
                     ->setBody($this->renderView('AppBundle:Email:reset.txt.twig', array('link' => $user->getConfirmationToken())));
                 $this->get('mailer')->send($message);
 
-                $flash->success('success', 'User '.$user->getUsername().' reset email sent successfuly!');
+                $flash->success('User '.$user->getUsername().' reset email sent successfuly!');
             } else {
                 $flash->error('Oops, no user with matching token found!');
             }//end if
@@ -156,7 +163,7 @@ class UserController extends Controller
         if ($form->isValid() === true) {
             $data = $form->getData();
             $user->setPlainPassword($data['plainPassword']);
-            $user->setConfirmationToken(null);
+            $user->setConfirmationToken(0);
             $entityManager->flush();
             $flash->success('Password for '.$user->getUsername().' was changed successfully!');
             return $this->redirectToRoute('_user', array('slug' => $user->getId()));

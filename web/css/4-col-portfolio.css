@@ -15,3 +15,11 @@ body {
 footer {
     margin: 50px 0;
 }
+.gallery-buttons {
+	padding-top: 5px;
+}
+.rating-box{
+	color: #999999;
+	padding: 8px 15px;
+	font-size: 14px;
+	}

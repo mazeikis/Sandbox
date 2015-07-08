@@ -7,15 +7,11 @@
             {% if requestForm is defined %}
             	<h1>Enter username.
             		<small>If You can't remember it, tough luck.</small></h1><br><br>
-                    {{ form_start(requestForm) }}
-                    {{ form_widget(requestForm) }}
-                    {{ form_end(requestForm) }}
+                {{ form(requestForm, { 'style': 'horizontal', 'label_col': 4, 'widget_col': 4, 'col_size': 'sm' }) }}
             {% elseif submitForm is defined %}
-            <h1>Enter new password!
-            		<small>The safer - the better.</small></h1><br><br>
-                    {{ form_start(submitForm) }}
-                    {{ form_widget(submitForm) }}
-                    {{ form_end(submitForm) }}
+                <h1>Enter new password!
+                		<small>The safer - the better.</small></h1><br><br>
+                {{ form(submitForm, { 'style': 'horizontal', 'label_col': 4, 'widget_col': 4, 'col_size': 'sm' }) }}
             {% endif %}
             </div>
         </div>

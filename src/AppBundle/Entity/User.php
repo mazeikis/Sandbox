@@ -384,7 +384,7 @@ class User implements UserInterface, \Serializable
      * @param  string $confirmationToken
      * @return User
      */
-    public function setConfirmationToken($confirmationToken)
+    public function setConfirmationToken($confirmationToken = null)
     {
         $this->confirmationToken = $confirmationToken;
 

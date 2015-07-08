@@ -37,6 +37,7 @@ AppBundle\Entity\User:
         confirmationToken:
             type: string
             length: 100
+            nullable: TRUE
     oneToMany:
         images:
             targetEntity: Image

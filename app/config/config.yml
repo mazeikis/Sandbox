@@ -89,7 +89,7 @@ liip_imagine:
         thumb:
             quality: 75
             filters:
-                thumbnail: { size: [750, 450], mode: outbound }
+                thumbnail: { size: [375, 225], mode: outbound }
 braincrafted_bootstrap:
     output_dir:
     assets_dir: %kernel.root_dir%/../vendor/twbs/bootstrap
