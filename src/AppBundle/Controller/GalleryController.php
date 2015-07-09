@@ -62,7 +62,6 @@ class GalleryController extends Controller
         $user          = $this->getUser();
         $entityManager = $this->getDoctrine()->getManager();
         $image         = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
-        $breadcrumb    = $this->getRequest()->headers->get('referer');
 
         if ($image === null) {
             $flash = $this->get('braincrafted_bootstrap.flash');
@@ -81,8 +80,7 @@ class GalleryController extends Controller
             'title' => 'sandbox|image',
             'image' => $image,
             'hasVoted' =>$hasVoted,
-            'votes_sum' =>$votes_sum,
-            'breadcrumb' => $breadcrumb
+            'votes_sum' =>$votes_sum
             ));
  
     }//end imageAction()
