@@ -8,10 +8,10 @@ Thanks to Bootstrap v3 mobile first approach, website works at mobile device res
 If for some reason one would like to try and install this website, here's the short <strong>installation guide</strong>:
 <ol>
 <li> Clone this repository in a destination directory.</li>
-<li> Install composer and run "composer install" in the root directory of the cloned repository.</li>
+<li> Install composer and run <code>composer install</code> in the root directory of the cloned repository.</li>
 <li> Edit app/config.yml and app/parameters.yml to Your requirements, make sure Your SQL credentials are setup and server is running.</li>
-<li> In the root directory of cloned repository run "php app/console doctrine:schema:update --force" command to create SQL schema.</li>
-<li> To start Symfony 2 just run "php app/console server:run" in the root directory of the repository.</li>
+<li> In the root directory of cloned repository run <code>php app/console doctrine:schema:update --force</code> command to create SQL schema.</li>
+<li> To start Symfony 2 just run <code>php app/console server:run</code> in the root directory of the repository.</li>
 </ol>
 
 Links to bundles used:
