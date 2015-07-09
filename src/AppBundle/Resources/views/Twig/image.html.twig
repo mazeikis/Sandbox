@@ -21,7 +21,7 @@
         <!-- Portfolio Item Row -->
         <div class="row">
             <div class="col-md-12">
-                    {% if breadcrumb != app.request.getUri() %}
+                    {% if breadcrumb is defined %}
                         <a type="button" class="btn btn-sm btn-info" style="margin-bottom: 15px" href="{{breadcrumb}}"><span class="glyphicon glyphicon-arrow-left"></span> Back to Gallery</a>
                     {% endif %}
             </div>

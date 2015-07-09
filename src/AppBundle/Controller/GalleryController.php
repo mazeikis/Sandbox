@@ -57,7 +57,7 @@ class GalleryController extends Controller
     }//end indexAction()
  
  
-    public function imageAction($id)
+    public function imageAction(Request $request, $id)
     {
         $user          = $this->getUser();
         $entityManager = $this->getDoctrine()->getManager();
@@ -82,7 +82,8 @@ class GalleryController extends Controller
             'image' => $image,
             'hasVoted' =>$hasVoted,
             'votes_sum' =>$votes_sum,
-            'breadcrumb' => $breadcrumb));
+            'breadcrumb' => $breadcrumb
+            ));
  
     }//end imageAction()
  
