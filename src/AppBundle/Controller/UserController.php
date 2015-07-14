@@ -20,7 +20,6 @@ class UserController extends Controller
     {
         $entityManager = $this->getDoctrine()->getManager();
         $flash         = $this->get('braincrafted_bootstrap.flash');
-        $entityManager = $this->getDoctrine()->getManager();
 
         $user             = $entityManager->getRepository('AppBundle:User')->findOneBy(array('id' => $slug));
         $recentlyUploaded = $entityManager->getRepository('AppBundle:Image')->getRecentlyUploaded(self::ITEMS_PER_PAGE, $user);
