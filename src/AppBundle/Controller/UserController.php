@@ -8,6 +8,8 @@ use AppBundle\Entity\User;
 use AppBundle\Security\ConfirmationTokenGenerator;
 use AppBundle\Form\Type\RegistrationFormType;
 use AppBundle\Form\Type\VerificationFormType;
+use AppBundle\Form\Type\PasswordChangeFormType;
+use AppBundle\Form\Type\EmailChangeFormType;
 
 
 class UserController extends Controller
@@ -18,47 +20,39 @@ class UserController extends Controller
     {
         $entityManager = $this->getDoctrine()->getManager();
         $flash         = $this->get('braincrafted_bootstrap.flash');
+        $entityManager = $this->getDoctrine()->getManager();
 
         $user             = $entityManager->getRepository('AppBundle:User')->findOneBy(array('id' => $slug));
         $recentlyUploaded = $entityManager->getRepository('AppBundle:Image')->getRecentlyUploaded(self::ITEMS_PER_PAGE, $user);
 
-        $passwordForm = $this->createForm(new VerificationFormType());
-        $passwordForm->add('Cancel', 'button', array('attr' => array('data-dismiss' => 'modal')));
-        
-        $emailForm = $this->createFormBuilder()
-                          ->add('email', 'email', array('label' => 'Your email address: ', 'required' => true))
-                          ->add('save', 'submit', array('label' => 'Register'))
-                          ->add('Cancel', 'button', array('attr' => array('data-dismiss' => 'modal')))
-                          ->getForm();
+        $passwordForm = $this->createForm(new PasswordChangeFormType());
+        $emailForm = $this->createForm(new EmailChangeFormType());
 
         $emailForm->handleRequest($request);
         $passwordForm->handleRequest($request);
-        $entityManager = $this->getDoctrine()->getManager();
 
         if($emailForm->isValid() === true){
             $data = $emailForm->getData();
             $user->setEmail($data['email']);
-            $entityManager->flush();
-            $flash->success('Email for '.$user->getUsername().' was changed successfully');
-            return $this->redirectToRoute('_user', array('slug' => $user->getId()));
         } else {
-            $message = (string) $emailForm->getErrors(true);
-            if (empty($message) === false) {
-                $flash->error($test);
-            }
+            $emailError = (string) $emailForm->getErrors(true);
         }//end if
 
         if($passwordForm->isValid() === true) {
             $data = $passwordForm->getData();
             $user->setPlainPassword($data['plainPassword']);
-            $entityManager ->flush();
-            $flash->success('Password for '.$user->getUsername().' was changed successfully!');
-            return $this->redirectToRoute('_user', array('slug' => $user->getId()));
         } else {
-            $message = (string) $passwordForm->getErrors(true);
-            if (empty($message) === false) {
-                $flash->error($test);
-            }
+            $passwordError = (string) $passwordForm->getErrors(true);
+        }//end if
+
+        if(empty($data) === false) {
+            $entityManager->flush();
+            $flash->success('User '.$user->getUsername().' settings were changed successfully!');
+            return $this->redirectToRoute('_user', array('slug' => $user->getId()));
+        }//end if
+
+        if (empty($emailError) === false || empty($passwordError) === false) {
+                $flash->error($emailError.$passwordError);
         }//end if
 
         return $this->render(

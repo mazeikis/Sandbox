@@ -89,10 +89,12 @@ class GalleryController extends Controller
     public function uploadAction(Request $request)
     {
         $image = new Image();
-        $form  = $this->createForm(new UploadFormType());
         $user  = $this->getUser();
-        $form->handleRequest($request);
         $flash = $this->get('braincrafted_bootstrap.flash');
+
+        $form  = $this->createForm(new UploadFormType());
+        $form->handleRequest($request);
+
         if ($form->isValid() === true) {
             if ($this->get('security.authorization_checker')->isGranted('create', $image, $user) === false) {
                 $flash->error('You are not authorized to upload an image.');
