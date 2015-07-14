@@ -49,7 +49,7 @@ _user:
     defaults: { _controller: AppBundle:User:index }
     requirements:
         slug: \d+
-    methods:  [GET]
+    methods:  [GET, POST]
 _password_reset_request:
     path: /reset/
     defaults: { _controller: AppBundle:User:passwordResetRequest }

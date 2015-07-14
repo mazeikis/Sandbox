@@ -16,16 +16,57 @@
             </div>
         </div>
         {% include 'BraincraftedBootstrapBundle::flash.html.twig' %}
+
         <!-- /.row -->
 
         <!-- Portfolio Item Row -->
         <div class="row">
            <div class="col-md-8">
-                <h3>Just a blank space for now</h3>
-                <h3><a href="">Linky</a></h3>
+                <h4>User settings: {{form_errors(passwordForm.plainPassword)}}</h4>
+                {% if passwordForm is defined and app.user == user %}
+                <button type="button" name="btn" class="btn btn-info btn-sm" data-toggle="modal" data-target="#changePassword">Change Password</button>
+                <button type="button" name="btn" class="btn btn-info btn-sm" data-toggle="modal" data-target="#changeEmail">Change Email</button>
+                <div class="modal fade" id="changeEmail" tabindex="-1" rolde="dialog" aria-labeledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4>Enter new email:</h4>
+                            </div>                
+                            <div class="modal-body form-horizontal">
+                            {{ form_start(emailForm) }}
+                                {{ form_row(emailForm.email, {'style': 'horizontal', 'label_col': 4, 'widget_col': 8 }) }}
+                            </div>
+                            <div class="modal-footer">
+                                {{ form_row(emailForm.save, { 'style': 'inline' }) }}
+                                {{ form_row(emailForm.Cancel, { 'style': 'inline'}) }}
+                            {{ form_end(emailForm) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="changePassword" tabindex="-1" rolde="dialog" aria-labeledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4>Enter new password:</h4>
+                            </div>
+                            <div class="modal-body">
+                            {{ form_start(passwordForm) }}
+                                {{ form_row(passwordForm.plainPassword.password) }}
+                                {{ form_row(passwordForm.plainPassword.confirm) }}
+                            </div>
+                            <div class="modal-footer">
+                                {{ form_row(passwordForm.save, { 'style': 'inline' }) }}
+                                {{ form_row(passwordForm.Cancel, { 'style': 'inline'}) }}
+                            {{ form_end(passwordForm) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
             </div>
             <div class="col-md-4">
-                <h3>User Details:</h3>
+                <h4>User Details:</h4>
                 {% if app.user == user %}
                 <ul>
                     <li>First Name: {{user.getfirstname}}</li>
