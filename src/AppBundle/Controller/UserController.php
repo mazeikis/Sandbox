@@ -19,7 +19,6 @@ class UserController extends Controller
     public function indexAction(Request $request, $slug)
     {
         $entityManager = $this->getDoctrine()->getManager();
-        $flash         = $this->get('braincrafted_bootstrap.flash');
 
         $user             = $entityManager->getRepository('AppBundle:User')->findOneBy(array('id' => $slug));
         $recentlyUploaded = $entityManager->getRepository('AppBundle:Image')->getRecentlyUploaded(self::ITEMS_PER_PAGE, $user);
@@ -207,6 +206,7 @@ class UserController extends Controller
             $error = (string) $emailForm->getErrors(true);
             if (empty($error) === false) {
                 $flash->error($error);
+                return $this->redirectToRoute('_user', array('slug' => $user->getId()));
             }//end if
         }//end if
 
@@ -219,12 +219,13 @@ class UserController extends Controller
             $error = (string) $passwordForm->getErrors(true);
             if (empty($error) === false) {
                 $flash->error($error);
+                return $this->redirectToRoute('_user', array('slug' => $user->getId()));
             }//end if
         }//end if
 
         if(empty($data) === false) {
             $entityManager->flush();
-            return;
+            return $this->redirectToRoute('_user', array('slug' => $user->getId()));
         }//end if
 
     }
