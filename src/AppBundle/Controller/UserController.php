@@ -31,7 +31,7 @@ class UserController extends Controller
             $passwordForm->handleRequest($request);
             
             if($this->handleForm($emailForm, $passwordForm)) {
-                $this->redirectToRoute('_user', array('slug' => $user->getId()));
+                return $this->redirectToRoute('_user', array('slug' => $user->getId()));
             }
         }
 
