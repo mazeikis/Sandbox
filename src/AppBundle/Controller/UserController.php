@@ -26,10 +26,10 @@ class UserController extends Controller
         $passwordForm = $this->createForm(new PasswordChangeFormType());
         $emailForm = $this->createForm(new EmailChangeFormType());
 
-        $emailForm->handleRequest($request);
-        $passwordForm->handleRequest($request);
-
         if($user === $this->getUser()) {
+            $emailForm->handleRequest($request);
+            $passwordForm->handleRequest($request);
+            
             if($this->handleForm($emailForm, $passwordForm)) {
                 $this->redirectToRoute('_user', array('slug' => $user->getId()));
             }
