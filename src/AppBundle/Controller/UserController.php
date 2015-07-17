@@ -30,29 +30,9 @@ class UserController extends Controller
         $emailForm->handleRequest($request);
         $passwordForm->handleRequest($request);
 
-        if($emailForm->isValid() === true){
-            $data = $emailForm->getData();
-            $user->setEmail($data['email']);
-        } else {
-            $emailError = (string) $emailForm->getErrors(true);
-        }//end if
-
-        if($passwordForm->isValid() === true) {
-            $data = $passwordForm->getData();
-            $user->setPlainPassword($data['plainPassword']);
-        } else {
-            $passwordError = (string) $passwordForm->getErrors(true);
-        }//end if
-
-        if(empty($data) === false) {
-            $entityManager->flush();
-            $flash->success('User '.$user->getUsername().' settings were changed successfully!');
-            return $this->redirectToRoute('_user', array('slug' => $user->getId()));
-        }//end if
-
-        if (empty($emailError) === false || empty($passwordError) === false) {
-                $flash->error($emailError.$passwordError);
-        }//end if
+        if($user === $this->getUser()) {
+            $this->handleForm($emailForm, $passwordForm);
+        }
 
         return $this->render(
             'AppBundle:Twig:user.html.twig',
@@ -212,5 +192,41 @@ class UserController extends Controller
 
     }//end passwordResetVerificationAction()
 
+
+    private function handleForm($emailForm, $passwordForm)
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $flash         = $this->get('braincrafted_bootstrap.flash');
+        $user          = $this->getUser();
+
+        if($emailForm->isValid() === true){
+            $data = $emailForm->getData();
+            $user->setEmail($data['email']);
+            $flash->success('User '.$user->getUsername().' email was changed successfully!');
+        } else {
+            $error = (string) $emailForm->getErrors(true);
+            if (empty($error) === false) {
+                $flash->error($error);
+            }//end if
+        }//end if
+
+
+        if($passwordForm->isValid() === true) {
+            $data = $passwordForm->getData();
+            $user->setPlainPassword($data['plainPassword']);
+            $flash->success('User '.$user->getUsername().' password was changed successfully!');
+        } else {
+            $error = (string) $passwordForm->getErrors(true);
+            if (empty($error) === false) {
+                $flash->error($error);
+            }//end if
+        }//end if
+
+        if(empty($data) === false) {
+            $entityManager->flush();
+            return;
+        }//end if
+
+    }
 
 }//end class
