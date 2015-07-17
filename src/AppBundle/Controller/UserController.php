@@ -30,7 +30,9 @@ class UserController extends Controller
         $passwordForm->handleRequest($request);
 
         if($user === $this->getUser()) {
-            $this->handleForm($emailForm, $passwordForm);
+            if($this->handleForm($emailForm, $passwordForm)) {
+                $this->redirectToRoute('_user', array('slug' => $user->getId()));
+            }
         }
 
         return $this->render(
@@ -202,11 +204,13 @@ class UserController extends Controller
             $data = $emailForm->getData();
             $user->setEmail($data['email']);
             $flash->success('User '.$user->getUsername().' email was changed successfully!');
+            $entityManager->flush();
+            return true;
         } else {
             $error = (string) $emailForm->getErrors(true);
             if (empty($error) === false) {
                 $flash->error($error);
-                return $this->redirectToRoute('_user', array('slug' => $user->getId()));
+                return true;
             }//end if
         }//end if
 
@@ -215,18 +219,17 @@ class UserController extends Controller
             $data = $passwordForm->getData();
             $user->setPlainPassword($data['plainPassword']);
             $flash->success('User '.$user->getUsername().' password was changed successfully!');
+            $entityManager->flush();
+            return true;
         } else {
             $error = (string) $passwordForm->getErrors(true);
             if (empty($error) === false) {
                 $flash->error($error);
-                return $this->redirectToRoute('_user', array('slug' => $user->getId()));
+                return true;
             }//end if
         }//end if
+        return false;
 
-        if(empty($data) === false) {
-            $entityManager->flush();
-            return $this->redirectToRoute('_user', array('slug' => $user->getId()));
-        }//end if
 
     }
 
