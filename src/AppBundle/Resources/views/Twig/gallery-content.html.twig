@@ -1,0 +1,32 @@
+<!-- Gallery Grid -->
+<div class="content">
+    <div class="row">
+    {% for image in content %}
+        <div class="col-md-3 portfolio-item">
+            <div class="image-box">
+              <a href='{{path('_image', { 'id' : image[0].id })}}' target="_blank">
+                <img src='{{ (image[0].fileName~'.'~image[0].extension) | imagine_filter('thumb')}}' class="img-responsive">
+              </a>
+            </div>
+            <div class="rating-box text-center">
+                {{image[0].title}} | {{image['votes_sum']|default('Not yet rated')}}
+            </div>
+        </div>
+    {% else %}
+        <div class="col-lg-12">
+            <h3>No images were found, database is empty?</h3>
+        </div>
+    {% endfor %}
+    </div>
+    <!-- End of Grid -->
+    <!-- Pager -->
+    <div class="row text-center">
+        <div class="col-md-12">
+            <div class="pagerfanta">
+                {{ pagerfanta(pager, 'twitter_bootstrap3') }}
+            </div>
+        </div>
+    </div>
+    <button class="btn t2">{{app.request.query.get('page', 'none')}}</button>
+    <script src="{{ asset('js/gallery.js') }}"></script>
+</div>

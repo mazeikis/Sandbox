@@ -40,7 +40,6 @@ class SortableExtension extends \Twig_Extension
     }
     $parameters = array(
        'order'  => $order,
-       'page'   => $request->query->get('page', 1), 
        'sortBy' => $sortBy,
       );
     if ($q !== null) {

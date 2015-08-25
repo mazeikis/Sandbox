@@ -34,24 +34,26 @@ class GalleryController extends Controller
         }
  
         $repository = $this->getDoctrine()->getManager()->getRepository('AppBundle:Image');
-        if ($q !== null) {
-            $query = $repository->searchForQuery($q, $sortBy, $order);
-        } else {
-            $query = $repository->getImagesQuery($sortBy, $order);
-        }
+        $query = $repository->getImages($sortBy, $order, $q);
  
         $adapter    = new DoctrineORMAdapter($query);
         $pagerfanta = new Pagerfanta($adapter);
         $result     = $pagerfanta->setMaxPerPage(self::MAX_PER_PAGE)
                                  ->setCurrentPage($currentPage)
                                  ->getCurrentPageResults();
-        return $this->render(
-            'AppBundle:Twig:gallery.html.twig',
-            array(
-             'title'   => 'sandbox|gallery',
-             'content' => $result,
-             'pager'   => $pagerfanta,
-            )
+
+        if($request->isXmlHttpRequest() === true){
+            $template = 'AppBundle:Twig:gallery-content.html.twig';
+        } else {
+            $template = 'AppBundle:Twig:gallery.html.twig';
+
+        }
+        return $this->render( $template,
+                array(
+                 'title'   => 'sandbox|gallery',
+                 'content' => $result,
+                 'pager'   => $pagerfanta,
+                )
         );
  
     }//end indexAction()

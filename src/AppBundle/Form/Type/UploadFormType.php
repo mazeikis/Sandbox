@@ -18,8 +18,8 @@ class UploadFormType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('title', 'text', array('label' => 'Title of the photo', 'required' => true))
-        ->add('file', 'file', array('required' => true, 'data_class' => null))
+        $builder->add('file', 'file', array('required' => true, 'data_class' => null))
+        ->add('title', 'text', array('label' => 'Title of the photo', 'required' => true))
         ->add('description', 'textarea', array('label' => 'Description of your photo', 'required' => true))
         ->add('save', 'submit', array('label' => 'Upload'));
 

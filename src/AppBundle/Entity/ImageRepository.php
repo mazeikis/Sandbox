@@ -7,7 +7,7 @@ class ImageRepository extends EntityRepository
 {
 
 
-    public function searchForQuery($q, $sortBy, $order)
+    public function getImages($sortBy, $order, $q = null)
     {
       if ($sortBy === 'rating') {
         $sortBy = 'votes_sum';
@@ -16,40 +16,26 @@ class ImageRepository extends EntityRepository
       }
       $query = $this->createQueryBuilder('image');
       $query->select('image')->addSelect('SUM(votes.vote) as votes_sum')
-            ->leftJoin('image.owner', 'user')
-            ->leftJoin('image.votes', 'votes')
-            ->where(
-                $query->expr()->orX(
-                  $query->expr()->like('image.title', ':key'),
-                  $query->expr()->like('image.description', ':key'),
-                  $query->expr()->like('user.username', ':key')
-                  )
-                )
-            ->groupBy('image.id')
-            ->orderBy($sortBy, $order);    
-      $query->setParameter('key', '%'.$q.'%');
+            ->leftJoin('image.votes', 'votes');
+
+      //block for search keyword only
+      if($q !== null){
+            $query->leftJoin('image.owner', 'user')
+                  ->where(
+                          $query->expr()->orX(
+                                              $query->expr()->like('image.title', ':key'),
+                                              $query->expr()->like('image.description', ':key'),
+                                              $query->expr()->like('user.username', ':key')
+                                              )
+                          )
+            ->setParameter('key', '%'.$q.'%');
+           }//end of search keyword block
+  
+      $query->groupBy('image.id')->orderBy($sortBy, $order);
+
       return $query;
 
-    }
-
-    //end searchForQuery()
-
-
-    public function getImagesQuery($sortBy, $order)
-    {
-        if ($sortBy === 'rating') {
-          $sortBy = 'votes_sum';
-        } else {
-          $sortBy = 'image.'.$sortBy;
-        }
-        $query = $this->createQueryBuilder('image');
-        $query->select('image')->addSelect('SUM(votes.vote) AS votes_sum')
-              ->leftJoin('image.votes', 'votes')
-              ->groupBy('image.id')
-              ->orderBy($sortBy, $order);
-        return $query;
-
-    }//end getImagesQuery()
+    }//end getImages()
 
     public function getRecentlyUploaded($count, $slug = null)
     {

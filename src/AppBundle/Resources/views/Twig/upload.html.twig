@@ -17,11 +17,9 @@
 		{% if app.user.enabled == true %}
 		{% block form_row %}
   			{{ form_start(form, { 'attr': {'class': 'form-horizontal'} }) }}
-  			<fieldset>
-				{{ form_widget(form) }}
-			</fieldset>
+			{{ form_widget(form) }}
 			{{ form_end(form) }}
-			{% endblock form_row %}
+	    {% endblock form_row %}
 	</div>
 </div>
 {% else %}
