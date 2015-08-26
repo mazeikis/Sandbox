@@ -34,7 +34,7 @@ class GalleryController extends Controller
         }
  
         $repository = $this->getDoctrine()->getManager()->getRepository('AppBundle:Image');
-        $query = $repository->getImages($sortBy, $order, $q);
+        $query      = $repository->getImages($sortBy, $order, $q);
  
         $adapter    = new DoctrineORMAdapter($query);
         $pagerfanta = new Pagerfanta($adapter);
@@ -42,12 +42,9 @@ class GalleryController extends Controller
                                  ->setCurrentPage($currentPage)
                                  ->getCurrentPageResults();
 
-        if($request->isXmlHttpRequest() === true){
-            $template = 'AppBundle:Twig:gallery-content.html.twig';
-        } else {
-            $template = 'AppBundle:Twig:gallery.html.twig';
+        $template = $request->isXmlHttpRequest() ? 'AppBundle:Twig:gallery-content.html.twig' 
+                                                 : 'AppBundle:Twig:gallery.html.twig';
 
-        }
         return $this->render( $template,
                 array(
                  'title'   => 'sandbox|gallery',
