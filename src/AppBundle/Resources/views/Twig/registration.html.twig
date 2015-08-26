@@ -10,7 +10,7 @@
             </div>
      <div class="row">
         <div class="col-xs-12">
-            {% include 'BraincraftedBootstrapBundle::flash.html.twig' %}
+            {% include 'BraincraftedBootstrapBundle::flash.html.twig' with { 'close': true } %}
             {{ form(form, { 'style': 'horizontal', 'label_col': 4, 'widget_col': 4, 'col_size': 'sm' }) }}
     	</div>
     </div>

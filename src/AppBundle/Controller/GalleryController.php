@@ -205,7 +205,7 @@ class GalleryController extends Controller
         $voteCheck = $entityManager->getRepository('AppBundle:Vote')->findOneBy(array('user' => $user, 'image' => $image));
  
         if ($this->get('security.authorization_checker')->isGranted('vote', $image, $user) === false || $voteCheck !== null || in_array($voteValue, $voteWhiteList) === false) {
-                $flash->success('Voting access unauthorized, sorry!');
+                $flash->error('Voting access unauthorized, sorry!');
                 return $this->redirectToRoute('_gallery');
         }
  
@@ -215,7 +215,7 @@ class GalleryController extends Controller
         $entityManager->flush();
         $flash->success('Vote recorded, thanks!');
 
-        return $this->redirectToRoute('_gallery');
+        return $this->redirectToRoute('_image', array('id' => $imageId));
  
     }//end voteAction()
  

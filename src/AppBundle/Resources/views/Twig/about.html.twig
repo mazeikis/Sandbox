@@ -7,7 +7,7 @@
 {% block content %}
 <div class="container" style="padding-top:70px">
     <div class="row">
-        {% include 'BraincraftedBootstrapBundle::flash.html.twig' %}
+        {% include 'BraincraftedBootstrapBundle::flash.html.twig' with { 'close': true } %}
             <div class="col-lg-12">
                 <h1 class="page-header">About This Page</h1>
                 <h5>This website was made with <a href="http://symfony.com/">Symfony 2</a> PHP framework. For managing back end data <a href="https://www.mysql.com/">MySQL</a> database and <a href="http://www.doctrine-project.org/">Doctrine 2</a> Object relational mapper (ORM) were used. Front end is glued together with <a href="http://twig.sensiolabs.org/">Twig</a> template engine, <a href="http://getbootstrap.com/">Bootstrap v3</a> CSS framework and <a href="https://jquery.com/">jQuery</a> with some free templates. Image caching and resizing to thumbnails is being done with the help of <a href="https://github.com/liip/LiipImagineBundle">LiipImagineBundle</a> and gallery pagination is done with <a href="https://github.com/whiteoctober/WhiteOctoberPagerfantaBundle">WhiteOctoberPagerfantaBundle</a>. The sourcecode is available at my Github account at: 

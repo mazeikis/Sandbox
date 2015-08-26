@@ -48,7 +48,7 @@
                         {% endif %}
                     </div>
                 </div><br>
-        {% include 'BraincraftedBootstrapBundle::flash.html.twig' %}
+        {% include 'BraincraftedBootstrapBundle::flash.html.twig' with { 'close': true } %}
         <div class="content-wrapper">
         {% include 'AppBundle:Twig:gallery-content.html.twig' %}
         </div>

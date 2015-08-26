@@ -8,7 +8,7 @@
 {% block content %}
 	   <div class="container">
 	   	<br>
-        {% include 'BraincraftedBootstrapBundle::flash.html.twig' %}
+        {% include 'BraincraftedBootstrapBundle::flash.html.twig' with { 'close': true } %}
         {% if error is defined %}
             <div>{{ error.message }}</div>
         {% endif %}
