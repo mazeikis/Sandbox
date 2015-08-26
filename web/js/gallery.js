@@ -3,8 +3,11 @@ $(document).ready(function(){
                 event.preventDefault();
                 var link = $(this).attr('href');
                 jQuery.get(link, function(result){
-                    $(".content").detach().fadeOut('fast');
-                    $(".content-wrapper").append($(result)).fadeIn('fast');
+                    $(".content").stop().fadeOut('normal', function(){
+                        $(this).detach();
+                        $(".content-wrapper").append($(result)).hide().stop().fadeIn('normal');
+
+                    });
                 });
             });
         });
