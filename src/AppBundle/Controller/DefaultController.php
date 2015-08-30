@@ -14,8 +14,8 @@ class DefaultController extends Controller
 
     public function indexAction()
     {
-        $em     = $this->getDoctrine()->getManager();
-        $recent = $em->getRepository('AppBundle:Image')->getRecentlyUploaded(self::ITEMS_PER_PAGE);
+        $entityManager = $this->getDoctrine()->getManager();
+        $recent        = $entityManager->getRepository('AppBundle:Image')->findBy(array(), array('created' => 'DESC'), self::ITEMS_PER_PAGE);
 
         return $this->render('AppBundle:Twig:index.html.twig', array('title' => 'sandbox|project', 'recent' => $recent));
 

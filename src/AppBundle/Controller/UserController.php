@@ -20,8 +20,9 @@ class UserController extends Controller
     {
         $entityManager = $this->getDoctrine()->getManager();
 
-        $user             = $entityManager->getRepository('AppBundle:User')->findOneBy(array('id' => $slug));
-        $recentlyUploaded = $entityManager->getRepository('AppBundle:Image')->getRecentlyUploaded(self::ITEMS_PER_PAGE, $user);
+        $user   = $entityManager->getRepository('AppBundle:User')->findOneBy(array('id' => $slug));
+        $recent = $entityManager->getRepository('AppBundle:Image')->findBy(array('owner' => $user), array('created' => 'DESC'), self::ITEMS_PER_PAGE);
+
 
         $passwordForm = $this->createForm(new PasswordChangeFormType());
         $emailForm    = $this->createForm(new EmailChangeFormType());
@@ -39,7 +40,7 @@ class UserController extends Controller
             'AppBundle:Twig:user.html.twig',
             array(
              'title'        => 'sandbox|user profile',
-             'recent'       => $recentlyUploaded,
+             'recent'       => $recent,
              'user'         => $user,
              'passwordForm' => $passwordForm->createView(),
              'emailForm'    => $emailForm->createView()
