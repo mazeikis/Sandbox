@@ -19,3 +19,7 @@ body {
 footer {
     margin: 50px 0;
 }
+.jumbotron {
+	padding-left: 15px;
+	padding-right: 15px;
+}

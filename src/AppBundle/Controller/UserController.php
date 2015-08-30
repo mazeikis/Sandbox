@@ -24,7 +24,7 @@ class UserController extends Controller
         $recentlyUploaded = $entityManager->getRepository('AppBundle:Image')->getRecentlyUploaded(self::ITEMS_PER_PAGE, $user);
 
         $passwordForm = $this->createForm(new PasswordChangeFormType());
-        $emailForm = $this->createForm(new EmailChangeFormType());
+        $emailForm    = $this->createForm(new EmailChangeFormType());
 
         if($user === $this->getUser()) {
             $emailForm->handleRequest($request);

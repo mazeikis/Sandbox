@@ -5,7 +5,7 @@ $(document).ready(function(){
                 jQuery.get(link, function(result){
                     $(".content").stop().fadeOut('normal', function(){
                         $(this).detach();
-                        $(".content-wrapper").append($(result)).hide().stop().fadeIn('normal');
+                        $(".content-wrapper").append($(result)).hide().fadeIn('normal');
 
                     });
                 });
