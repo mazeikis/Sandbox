@@ -37,10 +37,10 @@ class ImageRepository extends EntityRepository
 
     }//end getImages()
 
-    public function getRecentlyUploaded($count, $slug = null)
+    public function getRecentlyUploaded($count, $username = null)
     {
         $paramters = array();
-        if ($slug !== null) {
+        if ($username !== null) {
             $paramters['owner'] = $slug;
         }
         return $this->findBy($paramters, array('created' => 'DESC'), $count);
