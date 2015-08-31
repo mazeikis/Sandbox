@@ -21,18 +21,18 @@ class GalleryController extends Controller
     public function indexAction(Request $request)
     {
         $q           = $request->query->get('q');
-        $currentPage = ($request->query->get('page') < 1) ? 1 : $request->query->get('page');
+        $currentPage = max( 1, $request->query->get('page'));
  
-        $sortBy = $request->query->get('sortBy', 'created');
-        if (in_array($sortBy, ['created', 'rating', 'title']) === false) {
-                $request->query->set('sortBy', 'created');
-                $sortBy = 'created';
+        $sortBy = $request->query->get('sortBy');
+        $whiteList = array('created', 'rating', 'title');
+        if (in_array($sortBy, $whiteList) === false) {
+                $sortBy = reset($whiteList);
         }
  
-        $order = $request->query->get('order', 'desc');
-        if (in_array($order, ['asc', 'desc']) === false) {
-            $request->query->set('order', 'desc');
-            $order = 'desc';
+        $order     = $request->query->get('order');
+        $whiteList = array('desc', 'asc');
+        if (in_array($order, $whiteList) === false) {
+            $order = reset($whiteList);
         }
  
         $repository = $this->getDoctrine()->getManager()->getRepository('AppBundle:Image');
@@ -55,7 +55,7 @@ class GalleryController extends Controller
                 )
         );
  
-    }//end indexAction()
+    }
  
  
     public function imageAction(Request $request, $id)
@@ -84,7 +84,7 @@ class GalleryController extends Controller
             'votes_sum' =>$votes_sum
             ));
  
-    }//end imageAction()
+    }
  
  
     public function uploadAction(Request $request)
@@ -120,10 +120,10 @@ class GalleryController extends Controller
  
             $flash->success('Image sucessfully uploaded!');
             return $this->redirectToRoute('_gallery');
-        }//end if
+        }
         return $this->render('AppBundle:Twig:upload.html.twig', array('title' => 'sandbox|project', 'form' => $form->createView()));
  
-    }//end uploadAction()
+    }
  
  
     public function imageEditAction(Request $request, $id)
@@ -158,7 +158,7 @@ class GalleryController extends Controller
  
         return $this->render('AppBundle:Twig:image.html.twig', array('title' => 'sandbox|image', 'image' => $image, 'form' => $form->createView()));
  
-    }//end imageEditAction()
+    }
  
  
     public function imageDeleteAction(Request $request, $id)
@@ -187,7 +187,7 @@ class GalleryController extends Controller
             return $this->redirectToRoute('_gallery');
         }
  
-    }//end imageDeleteAction()
+    }
  
  
     public function imageVoteAction(Request $request)
@@ -216,7 +216,7 @@ class GalleryController extends Controller
 
         return $this->redirectToRoute('_image', array('id' => $imageId));
  
-    }//end voteAction()
+    }
  
  
-}//end class
+}

@@ -13,7 +13,7 @@ class UploadFormType extends AbstractType
     {
         return 'image_upload';
 
-    }//end getName()
+    }
 
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -23,13 +23,13 @@ class UploadFormType extends AbstractType
         ->add('description', 'textarea', array('label' => 'Description of your photo', 'required' => true))
         ->add('save', 'submit', array('label' => 'Upload'));
 
-    }//end buildForm()
+    }
 
 
     public function configureOptions(OptionsResolver $resolver)
     {
 
-    }//end configureOptions()
+    }
 
 
-}//end class
+}

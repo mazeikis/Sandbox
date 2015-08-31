@@ -13,7 +13,7 @@ class ContactFormType extends AbstractType
     {
         return 'contact_form';
 
-    }//end getName()
+    }
 
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -23,13 +23,13 @@ class ContactFormType extends AbstractType
         ->add('message', 'textarea', array('label' => 'Message:', 'required' => true, 'attr' => array('class' => 'contact-form-textarea')))
         ->add('Send', 'submit');
 
-    }//end buildForm()
+    }
 
 
     public function configureOptions(OptionsResolver $resolver)
     {
 
-    }//end configureOptions()
+    }
 
 
-}//end class
+}

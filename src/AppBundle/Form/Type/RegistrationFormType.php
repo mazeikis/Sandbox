@@ -13,7 +13,7 @@ class RegistrationFormType extends AbstractType
     {
         return 'user_registration';
 
-    }//end getName()
+    }
 
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -33,14 +33,14 @@ class RegistrationFormType extends AbstractType
         ->add('email', 'email', array('label' => 'Your email address: ', 'required' => true))
         ->add('save', 'submit', array('label' => 'Register'));
 
-    }//end buildForm()
+    }
 
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array('data_class' => 'AppBundle\Entity\User' ));
 
-    }//end configureOptions()
+    }
 
 
-}//end class
+}

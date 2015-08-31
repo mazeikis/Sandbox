@@ -13,9 +13,9 @@ class ImageListener
         $entity = $args->getEntity();
         if ($entity instanceof Image) {
             $this->handleEvent($entity);
-        }//end if
+        }
 
-    }//end prePersist()
+    }
 
 
     private function handleEvent(Image $image)
@@ -23,7 +23,7 @@ class ImageListener
         $image->setCreated(new \Datetime());
         $image->setUpdated(new \Datetime());
 
-    }//end handleEvent()
+    }
 
 
-}//end class
+}

@@ -22,7 +22,7 @@ class ImageVoter extends AbstractVoter
                  self::VOTE,
                 );
 
-    }//end getSupportedAttributes()
+    }
 
 
      protected function getSupportedClasses()
@@ -32,7 +32,7 @@ class ImageVoter extends AbstractVoter
                 'AppBundle\Entity\User',
                );
 
-        }//end getSupportedClasses()
+        }
 
 
         protected function isGranted($attribute, $image=null, $user=null)
@@ -42,7 +42,7 @@ class ImageVoter extends AbstractVoter
                 return false;
             }
 
-            // custom business logic to decide if the given user can create
+            // logic to decide if the given user can create
             // edit and/or delete the given image
             switch($attribute) {
                 case 'create':
@@ -63,11 +63,10 @@ class ImageVoter extends AbstractVoter
                     if ($user->getEnabled() && $image->getOwner() !== $user) {
                         return true;
                     }
+                default:
+                    return false;
             }
-
-            return false;
-
-        }//end isGranted()
+        }
 
 
-}//end class
+}

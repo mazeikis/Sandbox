@@ -15,7 +15,7 @@ class PasswordChangeFormType extends AbstractType
     {
         return 'password_change_form';
 
-    }//end getName()
+    }
 
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -34,13 +34,13 @@ class PasswordChangeFormType extends AbstractType
                 ->add('Cancel', 'button', array('attr' => array('data-dismiss' => 'modal')));
 
 
-    }//end buildForm()
+    }
 
 
     public function configureOptions(OptionsResolver $resolver)
     {
 
-    }//end configureOptions()
+    }
 
 
-}//end class
+}

@@ -15,7 +15,7 @@ class VerificationFormType extends AbstractType
     {
         return 'verification_form';
 
-    }//end getName()
+    }
 
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -31,13 +31,13 @@ class VerificationFormType extends AbstractType
             )
         )->add('save', 'submit', array('label' => 'Submit'));
 
-    }//end buildForm()
+    }
 
 
     public function configureOptions(OptionsResolver $resolver)
     {
 
-    }//end configureOptions()
+    }
 
 
-}//end class
+}

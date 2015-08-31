@@ -19,7 +19,7 @@ class SecurityController extends Controller
 
         return $this->redirectToRoute('_home');
 
-    }//end loginAction()
+    }
 
 
-}//end class
+}

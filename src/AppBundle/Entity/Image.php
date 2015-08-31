@@ -37,7 +37,7 @@ class Image
 
         return $this;
 
-    }//end setId()
+    }
 
 
     /**
@@ -49,7 +49,7 @@ class Image
     {
         return $this->id;
 
-    }//end getId()
+    }
 
 
     /**
@@ -64,7 +64,7 @@ class Image
 
         return $this;
 
-    }//end setFileName()
+    }
 
 
     /**
@@ -76,7 +76,7 @@ class Image
     {
         return $this->fileName;
 
-    }//end getFileName()
+    }
 
 
     /**
@@ -91,7 +91,7 @@ class Image
 
         return $this;
 
-    }//end setResolution()
+    }
 
 
     /**
@@ -103,7 +103,7 @@ class Image
     {
         return $this->resolution;
 
-    }//end getResolution()
+    }
 
 
     /**
@@ -118,7 +118,7 @@ class Image
 
         return $this;
 
-    }//end setSize()
+    }
 
 
     /**
@@ -130,7 +130,7 @@ class Image
     {
         return $this->size;
 
-    }//end getSize()
+    }
 
 
     /**
@@ -145,7 +145,7 @@ class Image
 
         return $this;
 
-    }//end setTitle()
+    }
 
 
     /**
@@ -157,7 +157,7 @@ class Image
     {
         return $this->title;
 
-    }//end getTitle()
+    }
 
 
     /**
@@ -172,7 +172,7 @@ class Image
 
         return $this;
 
-    }//end setDescription()
+    }
 
 
     /**
@@ -184,7 +184,7 @@ class Image
     {
         return $this->description;
 
-    }//end getDescription()
+    }
 
 
     /**
@@ -199,7 +199,7 @@ class Image
 
         return $this;
 
-    }//end setExtension()
+    }
 
 
     /**
@@ -211,7 +211,7 @@ class Image
     {
         return $this->extension;
 
-    }//end getExtension()
+    }
 
 
     /**
@@ -226,7 +226,7 @@ class Image
 
         return $this;
 
-    }//end setCreated()
+    }
 
 
     /**
@@ -238,7 +238,7 @@ class Image
     {
         return $this->created;
 
-    }//end getCreated()
+    }
 
 
     /**
@@ -253,7 +253,7 @@ class Image
 
         return $this;
 
-    }//end setUpdated()
+    }
 
 
     /**
@@ -265,7 +265,7 @@ class Image
     {
         return $this->updated;
 
-    }//end getUpdated()
+    }
 
 
     /**
@@ -285,7 +285,7 @@ class Image
 
         return $this;
 
-    }//end setOwner()
+    }
 
 
     /**
@@ -297,7 +297,7 @@ class Image
     {
         return $this->owner;
 
-    }//end getOwner()
+    }
 
 
     /**

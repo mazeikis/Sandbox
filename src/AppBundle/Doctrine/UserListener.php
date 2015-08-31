@@ -21,9 +21,9 @@ class UserListener
         $entity = $args->getEntity();
         if ($entity instanceof User) {
             $this->handleEvent($entity);
-        }//end if
+        }
 
-    }//end prePersist()
+    }
 
 
     public function preUpdate(LifecycleEventArgs $args)
@@ -32,9 +32,9 @@ class UserListener
         if ($entity instanceof User) {
              $entity->setUpdated(new \Datetime());
              $this->handleEvent($entity);
-        }//end if
+        }
 
-    }//end preUpdate()
+    }
 
 
     public function postUpdate(LifecycleEventArgs $args)
@@ -42,9 +42,9 @@ class UserListener
         $entity = $args->getEntity();
         if ($entity instanceof User) {
              $this->authenticateUser($entity);
-        }//end if
+        }
 
-    }//end postUpdate()
+    }
 
 
     public function postPersist(LifecycleEventArgs $args)
@@ -52,9 +52,9 @@ class UserListener
         $entity = $args->getEntity();
         if ($entity instanceof User) {
             $this->authenticateUser($entity);
-        }//end if
+        }
 
-    }//end postPersist()
+    }
 
 
     public function __construct(UserPasswordEncoder $encoder, TokenStorage $tokenStorage)
@@ -62,7 +62,7 @@ class UserListener
         $this->encoder      = $encoder;
         $this->tokenStorage = $tokenStorage;
 
-    }//end __construct()
+    }
 
 
     private function handleEvent(User $user)
@@ -74,7 +74,7 @@ class UserListener
          $encoded = $this->encoder->encodePassword($user, $user->getPlainPassword());
          $user->setPassword($encoded);
 
-    }//end handleEvent()
+    }
 
 
     private function authenticateUser(User $user)
@@ -83,7 +83,7 @@ class UserListener
         $token       = new UsernamePasswordToken($user, null, $providerKey, $user->getRoles());
         $this->tokenStorage->setToken($token);
 
-    }//end authenticateUser()
+    }
 
 
-}//end class
+}

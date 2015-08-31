@@ -23,7 +23,7 @@ class VoteRepository extends EntityRepository
 			return false;
 		}
 
-	}//end checkForVote()
+	}
 
 
 	public function countVotes(Image $image)
@@ -34,6 +34,6 @@ class VoteRepository extends EntityRepository
 			  ->setParameter('image', $image);
 		return $query;
 
-	}//end countVotes()
+	}
 
-}//end class
+}

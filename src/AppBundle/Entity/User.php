@@ -42,7 +42,7 @@ class User implements UserInterface, \Serializable
         $this->setRoles('ROLE_USER');
         $this->setConfirmationToken(null);
 
-    }//end __construct()
+    }
 
 
     /**
@@ -57,7 +57,7 @@ class User implements UserInterface, \Serializable
 
         return $this;
 
-    }//end setId()
+    }
 
 
     /**
@@ -69,7 +69,7 @@ class User implements UserInterface, \Serializable
     {
         return $this->id;
 
-    }//end getId()
+    }
 
 
     /**
@@ -84,7 +84,7 @@ class User implements UserInterface, \Serializable
 
         return $this;
 
-    }//end setUsername()
+    }
 
 
     /**
@@ -96,7 +96,7 @@ class User implements UserInterface, \Serializable
     {
         return $this->username;
 
-    }//end getUsername()
+    }
 
 
     /**
@@ -111,7 +111,7 @@ class User implements UserInterface, \Serializable
 
         return $this;
 
-    }//end setPassword()
+    }
 
 
     /**
@@ -123,7 +123,7 @@ class User implements UserInterface, \Serializable
     {
         return $this->password;
 
-    }//end getPassword()
+    }
 
 
     /**
@@ -138,7 +138,7 @@ class User implements UserInterface, \Serializable
 
         return $this;
 
-    }//end setFirstName()
+    }
 
 
     /**
@@ -150,7 +150,7 @@ class User implements UserInterface, \Serializable
     {
         return $this->firstName;
 
-    }//end getFirstName()
+    }
 
 
     /**
@@ -165,7 +165,7 @@ class User implements UserInterface, \Serializable
 
         return $this;
 
-    }//end setLastName()
+    }
 
 
     /**
@@ -177,7 +177,7 @@ class User implements UserInterface, \Serializable
     {
         return $this->lastName;
 
-    }//end getLastName()
+    }
 
 
     /**
@@ -192,7 +192,7 @@ class User implements UserInterface, \Serializable
 
         return $this;
 
-    }//end setEmail()
+    }
 
 
     /**
@@ -204,7 +204,7 @@ class User implements UserInterface, \Serializable
     {
         return $this->email;
 
-    }//end getEmail()
+    }
 
 
     /**
@@ -219,7 +219,7 @@ class User implements UserInterface, \Serializable
 
         return $this;
 
-    }//end setEnabled()
+    }
 
 
     /**
@@ -231,7 +231,7 @@ class User implements UserInterface, \Serializable
     {
         return $this->enabled;
 
-    }//end getEnabled()
+    }
 
 
     /**
@@ -246,7 +246,7 @@ class User implements UserInterface, \Serializable
 
         return $this;
 
-    }//end setCreated()
+    }
 
 
     /**
@@ -258,7 +258,7 @@ class User implements UserInterface, \Serializable
     {
         return $this->created;
 
-    }//end getCreated()
+    }
 
 
     /**
@@ -273,7 +273,7 @@ class User implements UserInterface, \Serializable
 
         return $this;
 
-    }//end setUpdated()
+    }
 
 
     /**
@@ -285,21 +285,21 @@ class User implements UserInterface, \Serializable
     {
         return $this->updated;
 
-    }//end getUpdated()
+    }
 
 
     public function setRoles($role)
     {
         return $this->roles = $role;
 
-    }//end setRoles()
+    }
 
 
     public function getRoles()
     {
         return array($this->roles);
 
-    }//end getRoles()
+    }
 
 
     public function serialize()
@@ -312,7 +312,7 @@ class User implements UserInterface, \Serializable
             )
         );
 
-    }//end serialize()
+    }
 
 
     public function unserialize($serialized)
@@ -323,13 +323,13 @@ class User implements UserInterface, \Serializable
             $this->password,
         ) = unserialize($serialized);
 
-    }//end unserialize()
+    }
 
 
     public function eraseCredentials()
     {
 
-    }//end eraseCredentials()
+    }
 
 
     /**
@@ -349,7 +349,7 @@ class User implements UserInterface, \Serializable
     {
         return null;
 
-    }//end getSalt()
+    }
 
 
     /**
@@ -363,7 +363,7 @@ class User implements UserInterface, \Serializable
         $this->plainPassword = $plainPassword;
         $this->setPassword(null);
 
-    }//end setPlainPassword()
+    }
 
 
     /**
@@ -375,7 +375,7 @@ class User implements UserInterface, \Serializable
     {
         return $this->plainPassword;
 
-    }//end getPlainPassword()
+    }
 
 
     /**
@@ -388,7 +388,7 @@ class User implements UserInterface, \Serializable
     {
         $this->confirmationToken = $confirmationToken;
 
-    }//end setConfirmationToken()
+    }
 
 
     /**
@@ -399,7 +399,7 @@ class User implements UserInterface, \Serializable
     {
         return $this->confirmationToken;
 
-    }//end getConfirmationToken()
+    }
 
 
     /**
@@ -414,7 +414,7 @@ class User implements UserInterface, \Serializable
 
         return $this;
 
-    }//end addImage()
+    }
 
 
     /**
@@ -426,7 +426,7 @@ class User implements UserInterface, \Serializable
     {
         $this->images->removeElement($images);
 
-    }//end removeImage()
+    }
 
 
     /**
@@ -438,7 +438,7 @@ class User implements UserInterface, \Serializable
     {
         return $this->images;
 
-    }//end getImages()
+    }
 
 
     /**

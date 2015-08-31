@@ -35,7 +35,7 @@ class ImageRepository extends EntityRepository
 
       return $query;
 
-    }//end getImages()
+    }
 
 
-}//end class
+}

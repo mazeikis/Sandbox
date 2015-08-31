@@ -19,7 +19,7 @@ class DefaultController extends Controller
 
         return $this->render('AppBundle:Twig:index.html.twig', array('title' => 'sandbox|project', 'recent' => $recent));
 
-    }//end indexAction()
+    }
 
 
     public function aboutAction(Request $request)
@@ -55,7 +55,7 @@ class DefaultController extends Controller
 
         return $this->render('AppBundle:Twig:about.html.twig', array('title' => 'sandbox|about', 'form' => $form->createView()));
 
-    }//end aboutAction()
+    }
 
 
-}//end class
+}

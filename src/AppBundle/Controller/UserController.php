@@ -16,11 +16,11 @@ class UserController extends Controller
 {
     const ITEMS_PER_PAGE = 4;
 
-    public function indexAction(Request $request, $slug)
+    public function indexAction(Request $request, $userId)
     {
         $entityManager = $this->getDoctrine()->getManager();
 
-        $user   = $entityManager->getRepository('AppBundle:User')->findOneBy(array('id' => $slug));
+        $user   = $entityManager->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
         $recent = $entityManager->getRepository('AppBundle:Image')->findBy(array('owner' => $user), array('created' => 'DESC'), self::ITEMS_PER_PAGE);
 
 
@@ -47,7 +47,7 @@ class UserController extends Controller
             )
         );
 
-    }//end indexAction()
+    }
 
     public function registrationAction(Request $request)
     {
@@ -80,7 +80,7 @@ class UserController extends Controller
             $flash->success('Registration submitted, please check Your email and finish registration progress.');
 
             return $this->redirectToRoute('_home');
-        }//end if
+        }
 
         return $this->render(
             'AppBundle:Twig:registration.html.twig',
@@ -90,7 +90,7 @@ class UserController extends Controller
             )
         );
 
-    }//end indexAction()
+    }
 
     public function emailVerificationAction(Request $request, $confirmationToken)
     {
@@ -112,10 +112,10 @@ class UserController extends Controller
 
             $flash->success('User '.$user->getUsername().' verified successfully!');
 
-        }//end if
+        }
         return $this->redirectToRoute('_home');
 
-    }//end emailVerificationAction()
+    }
 
     public function passwordResetRequestAction(Request $request)
     {
@@ -147,9 +147,9 @@ class UserController extends Controller
                 $flash->success('User '.$user->getUsername().' reset email sent successfuly!');
             } else {
                 $flash->error('Oops, no user with matching token found!');
-            }//end if
+            }
             return $this->redirectToRoute('_home');
-        }//end if
+        }
         return $this->render(
             'AppBundle:Twig:reset.html.twig',
             array(
@@ -158,7 +158,7 @@ class UserController extends Controller
             )
         );
 
-    }//end passwordResetRequestAction()
+    }
 
 
     public function passwordResetVerificationAction(Request $request, $confirmationToken)
@@ -170,7 +170,7 @@ class UserController extends Controller
         if ($user === false) {
             $flash->error('Oops, no user with matching token found!');
             return $this->redirectToRoute('_home');
-        }//end if
+        }
 
         $form = $this->createForm(new VerificationFormType());
         $form->handleRequest($request);
@@ -182,7 +182,7 @@ class UserController extends Controller
             $entityManager->flush();
             $flash->success('Password for '.$user->getUsername().' was changed successfully!');
             return $this->redirectToRoute('_user', array('slug' => $user->getId()));
-        }//end if
+        }
 
         return $this->render(
             'AppBundle:Twig:reset.html.twig',
@@ -192,7 +192,7 @@ class UserController extends Controller
             )
         );
 
-    }//end passwordResetVerificationAction()
+    }
 
 
     private function handleForm($emailForm, $passwordForm)
@@ -212,8 +212,8 @@ class UserController extends Controller
             if (empty($error) === false) {
                 $flash->error($error);
                 return true;
-            }//end if
-        }//end if
+            }
+        }
 
 
         if($passwordForm->isValid() === true) {
@@ -227,11 +227,12 @@ class UserController extends Controller
             if (empty($error) === false) {
                 $flash->error($error);
                 return true;
-            }//end if
-        }//end if
+            }
+        }
+
         return false;
 
 
     }
 
-}//end class
+}
