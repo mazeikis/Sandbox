@@ -26,11 +26,13 @@ class GalleryController extends Controller
         $sortBy = $request->query->get('sortBy', 'created');
         if (in_array($sortBy, ['created', 'rating', 'title']) === false) {
                 $request->query->set('sortBy', 'created');
+                $sortBy = 'created';
         }
  
         $order = $request->query->get('order', 'desc');
         if (in_array($order, ['asc', 'desc']) === false) {
             $request->query->set('order', 'desc');
+            $order = 'desc';
         }
  
         $repository = $this->getDoctrine()->getManager()->getRepository('AppBundle:Image');
