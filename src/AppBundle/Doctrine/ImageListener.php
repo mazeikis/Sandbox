@@ -18,7 +18,7 @@ class ImageListener
     }
 
 
-    private function preUpdate(LifecycleEventArgs $args)
+    public function preUpdate(LifecycleEventArgs $args)
     {
         $entity = $args->getEntity();
         if ($entity instanceof Image) {
