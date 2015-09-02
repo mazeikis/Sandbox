@@ -13,6 +13,7 @@ class ImageListener
         $entity = $args->getEntity();
         if ($entity instanceof Image) {
             $entity->setCreated(new \DateTime());
+            $entity->setUpdated(new \DateTime());
         }
 
     }

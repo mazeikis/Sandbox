@@ -35,7 +35,7 @@ class ImageVoter extends AbstractVoter
     }
 
 
-    protected function isGranted($attribute, $image=null, $user=null)
+    protected function isGranted($attribute, $image = null, $user = null)
     {
         // make sure there is a user object (i.e. that the user is logged in)
         if ($user instanceof UserInterface === false) {

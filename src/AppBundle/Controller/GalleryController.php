@@ -131,8 +131,9 @@ class GalleryController extends Controller
         $entityManager = $this->getDoctrine()->getManager();
         $image         = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
         $flash         = $this->get('braincrafted_bootstrap.flash');
+        $user          = $this->getUser();
  
-        if ($this->get('security.authorization_checker')->isGranted('edit', $image) === false) {
+        if ($this->get('security.authorization_checker')->isGranted('edit', $image, $user) === false) {
             $flash->error('Sadly, You were not authorized to edit this image.');
             return $this->redirectToRoute('_image', array('id' => $id));
         }
