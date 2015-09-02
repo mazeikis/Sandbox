@@ -25,48 +25,42 @@ class ImageVoter extends AbstractVoter
     }
 
 
-     protected function getSupportedClasses()
-     {
+    protected function getSupportedClasses()
+    {
         return array(
                 'AppBundle\Entity\Image',
                 'AppBundle\Entity\User',
                );
 
+    }
+
+
+    protected function isGranted($attribute, $image=null, $user=null)
+    {
+        // make sure there is a user object (i.e. that the user is logged in)
+        if ($user instanceof UserInterface === false) {
+            return false;
         }
 
+        // logic to decide if the given user can create
+        // edit and/or delete the given image
+        switch($attribute) {
+            case self::CREATE :
+                return $user->getEnabled() || $user->getRoles() == 'ROLE_ADMIN';
 
-        protected function isGranted($attribute, $image=null, $user=null)
-        {
-            // make sure there is a user object (i.e. that the user is logged in)
-            if ($user instanceof UserInterface === false) {
+            case self::EDIT :
+                return $user->getEnabled() && $user == $image->getOwner() || $user->getRoles() == 'ROLE_ADMIN';
+
+            case self::DELETE :
+                return $user->getEnabled() && $user == $image->getOwner() || $user->getRoles() == 'ROLE_ADMIN';
+
+            case self::VOTE : 
+                return $user->getEnabled() && $image->getOwner() !== $user;
+
+            default:
                 return false;
-            }
-
-            // logic to decide if the given user can create
-            // edit and/or delete the given image
-            switch($attribute) {
-                case 'create':
-                    if ($user->getEnabled() || $user->getRoles() == 'ROLE_ADMIN') {
-                        return true;
-                    }
-
-                case 'edit':
-                    if ($user->getEnabled() && $user == $image->getOwner() || $user->getRoles() == 'ROLE_ADMIN') {
-                        return true;
-                    }
-
-                case 'delete':
-                    if ($user->getEnabled() && $user == $image->getOwner() || $user->getRoles() == 'ROLE_ADMIN') {
-                        return true;
-                    }
-                case 'vote':
-                    if ($user->getEnabled() && $image->getOwner() !== $user) {
-                        return true;
-                    }
-                default:
-                    return false;
-            }
         }
+    }
 
 
 }

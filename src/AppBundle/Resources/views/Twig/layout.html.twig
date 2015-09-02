@@ -40,7 +40,7 @@
 		</ul>
 		<ul class="nav navbar-nav navbar-right">
 			{% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-				<li><a href="{{ path('_user', { slug : app.user.id })}}">{{app.user.username}}</a></li>
+				<li><a href="{{ path('_user', { userId : app.user.id })}}">{{app.user.username}}</a></li>
 				<li class="divider-vertical"></li>
 				<li><a href="{{ path('logout') }}">Logout</a></li>
     		{% else %}

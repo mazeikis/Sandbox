@@ -32,7 +32,7 @@ class UserController extends Controller
             $passwordForm->handleRequest($request);
             
             if($this->handleForm($emailForm, $passwordForm)) {
-                return $this->redirectToRoute('_user', array('slug' => $user->getId()));
+                return $this->redirectToRoute('_user', array('userId' => $user->getId()));
             }
         }
 
@@ -181,7 +181,7 @@ class UserController extends Controller
             $user->setConfirmationToken(0);
             $entityManager->flush();
             $flash->success('Password for '.$user->getUsername().' was changed successfully!');
-            return $this->redirectToRoute('_user', array('slug' => $user->getId()));
+            return $this->redirectToRoute('_user', array('userId' => $user->getId()));
         }
 
         return $this->render(

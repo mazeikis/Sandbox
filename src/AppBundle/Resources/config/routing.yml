@@ -45,7 +45,7 @@ _email_verification:
     defaults: { _controller: AppBundle:User:emailVerification }
     methods: [GET, POST]
 _user:
-    path: /user/{slug}
+    path: /user/{userId}
     defaults: { _controller: AppBundle:User:index }
     requirements:
         slug: \d+

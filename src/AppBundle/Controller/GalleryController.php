@@ -149,7 +149,7 @@ class GalleryController extends Controller
  
         if ($form->isValid() === true) {
             $data = $form->getData();
-            $image->setTitle($data['title'])->setDescription($data['description'])->setUpdated(new \Datetime());
+            $image->setTitle($data['title'])->setDescription($data['description']);
             $entityManager->flush();
             $flash->success('Image details were edited and changes saved.');
  
