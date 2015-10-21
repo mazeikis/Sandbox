@@ -26,7 +26,7 @@ class GalleryController extends Controller
         $sortBy = $request->query->get('sortBy');
         $whiteList = array('created', 'rating', 'title');
         if (in_array($sortBy, $whiteList) === false) {
-                $sortBy = reset($whiteList);
+            $sortBy = reset($whiteList);
         }
  
         $order     = $request->query->get('order');
@@ -72,15 +72,17 @@ class GalleryController extends Controller
  
         $query     = $entityManager->getRepository('AppBundle:Vote')->countVotes($image)->getQuery();
         $votes_sum = $query->getSingleScalarResult();
+
         if ($user !== null) {
             $hasVoted  = $entityManager->getRepository('AppBundle:Vote')->checkForVote($user, $image);
         } else {
             $hasVoted = false;
         }
+
         return $this->render('AppBundle:Twig:image.html.twig', array(
-            'title' => 'sandbox|image',
-            'image' => $image,
-            'hasVoted' =>$hasVoted,
+            'title'     => 'sandbox|image',
+            'image'     => $image,
+            'hasVoted'  =>$hasVoted,
             'votes_sum' =>$votes_sum
             ));
  
@@ -96,24 +98,16 @@ class GalleryController extends Controller
         $form  = $this->createForm(new UploadFormType());
         $form->handleRequest($request);
 
+        if ($this->get('security.authorization_checker')->isGranted('create', $image, $user) === false) {
+            $flash->error('You are not authorized to upload an image.');
+            return $this->redirectToRoute('_gallery');
+        }
+
         if ($form->isValid() === true) {
-            if ($this->get('security.authorization_checker')->isGranted('create', $image, $user) === false) {
-                $flash->error('You are not authorized to upload an image.');
-                return $this->redirectToRoute('_gallery');
-            }
- 
-            $data             = $form->getData();
-            $imageSizeDetails = getimagesize($data['file']->getPathName());
-            $randomFileName   = sha1(uniqid());
-            $image->setFileName($randomFileName)
-                  ->setSize($data['file']->getSize())
-                  ->setResolution(strval($imageSizeDetails[0]).' x '.strval($imageSizeDetails[1]))
-                  ->setExtension($data['file']->getClientOriginalExtension())
-                  ->setTitle($data['title'])
-                  ->setDescription($data['description'])
-                  ->setOwner($user);
-            $imageDir = $this->get('kernel')->getRootDir().'/../web/images'.$this->getRequest()->getBasePath();
-            $data['file']->move($imageDir, $randomFileName.'.'.$data['file']->getClientOriginalExtension());
+            $data = $form->getData();
+            $this->handleUploadedFile($data, $image);
+            $image->setOwner($user);
+
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($image);
             $entityManager->flush();
@@ -164,23 +158,24 @@ class GalleryController extends Controller
  
     public function imageDeleteAction(Request $request, $id)
     {
-        $em    = $this->getDoctrine()->getManager();
-        $image = $em->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
-        $flash = $this->get('braincrafted_bootstrap.flash');
+        $entityManager = $this->getDoctrine()->getManager();
+        $image         = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
+        $flash         = $this->get('braincrafted_bootstrap.flash');
  
         if ($this->get('security.authorization_checker')->isGranted('delete', $image) === false) {
             $flash->error('Sadly, You were not authorized to delete this image.');
-            return $this->redirectToRoute('_image', array('id' => $imageId));
+            return $this->redirectToRoute('_image', array('id' => $id));
         }
  
-        if ($image === false) {
+        if ($image === null) {
             $flash->error('Sadly, I could not find the image with id "' . $id . '"');
             return $this->redirectToRoute('_gallery');
         } else {
-            $em->remove($image);
-            $em->flush();
+            $entityManager->remove($image);
+            $entityManager->flush();
+
             $fileSystem = new Filesystem();
-            $imageDir   = $this->get('kernel')->getRootDir().'/../web/images'.$this->getRequest()->getBasePath();
+            $imageDir   = $this->getImageDir();
             $fileSystem->remove($imageDir.$image->getFileName().'.'.$image->getExtension());
             $fileSystem->remove($imageDir.'/cache/thumb/'.$image->getFileName().'.'.$image->getExtension());
             $flash->alert('Image was successfully deleted.');
@@ -219,5 +214,32 @@ class GalleryController extends Controller
  
     }
  
+
+    public function handleUploadedFile($data, Image $image)
+    {
+        $imageSizeDetails = getimagesize($data['file']->getPathName());
+        $imageResolution  = strval($imageSizeDetails[0]).' x '.strval($imageSizeDetails[1]);
+        $imageTitle       = $data['title'];
+        $imageDescription = $data['description'];
+        $newFileName      = sha1(uniqid());
+        $fileExtension    = $data['file']->getClientOriginalExtension();
+        $fileSize         = $data['file']->getSize();
+            
+        $image->setFileName($newFileName)
+              ->setSize($fileSize)
+              ->setResolution($imageResolution)
+              ->setExtension($fileExtension)
+              ->setTitle($imageTitle)
+              ->setDescription($imageDescription);
+
+        $imageDir = $this->getImageDir();
+        $data['file']->move($imageDir, $newFileName.'.'.$data['file']->getClientOriginalExtension());
+    }
+
+
+    public function getImageDir()
+    {
+        return $this->get('kernel')->getRootDir().'/../web/images'.$this->getRequest()->getBasePath();
+    }
  
 }

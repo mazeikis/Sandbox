@@ -20,8 +20,10 @@ class UserController extends Controller
     {
         $entityManager = $this->getDoctrine()->getManager();
 
-        $user   = $entityManager->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
-        $recent = $entityManager->getRepository('AppBundle:Image')->findBy(array('owner' => $user), array('created' => 'DESC'), self::ITEMS_PER_PAGE);
+        $user   = $entityManager->getRepository('AppBundle:User')
+                                ->findOneBy(array('id' => $userId));
+        $recent = $entityManager->getRepository('AppBundle:Image')
+                                ->findBy(array('owner' => $user), array('created' => 'DESC'), self::ITEMS_PER_PAGE);
 
 
         $passwordForm = $this->createForm(new PasswordChangeFormType());
@@ -178,7 +180,7 @@ class UserController extends Controller
         if ($form->isValid() === true) {
             $data = $form->getData();
             $user->setPlainPassword($data['plainPassword']);
-            $user->setConfirmationToken(0);
+            $user->setConfirmationToken(null);
             $entityManager->flush();
             $flash->success('Password for '.$user->getUsername().' was changed successfully!');
             return $this->redirectToRoute('_user', array('userId' => $user->getId()));
