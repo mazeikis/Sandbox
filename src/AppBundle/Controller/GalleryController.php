@@ -215,7 +215,7 @@ class GalleryController extends Controller
     }
  
 
-    public function handleUploadedFile($data, Image $image)
+    private function handleUploadedFile($data, Image $image)
     {
         $imageSizeDetails = getimagesize($data['file']->getPathName());
         $imageResolution  = strval($imageSizeDetails[0]).' x '.strval($imageSizeDetails[1]);
@@ -237,7 +237,7 @@ class GalleryController extends Controller
     }
 
 
-    public function getImageDir()
+    private function getImageDir()
     {
         return $this->get('kernel')->getRootDir().'/../web/images'.$this->getRequest()->getBasePath();
     }
