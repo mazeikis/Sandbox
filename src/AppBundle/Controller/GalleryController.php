@@ -82,8 +82,8 @@ class GalleryController extends Controller
         return $this->render('AppBundle:Twig:image.html.twig', array(
             'title'     => 'sandbox|image',
             'image'     => $image,
-            'hasVoted'  =>$hasVoted,
-            'votes_sum' =>$votes_sum
+            'hasVoted'  => $hasVoted,
+            'votes_sum' => $votes_sum
             ));
  
     }
@@ -169,7 +169,6 @@ class GalleryController extends Controller
  
         if ($image === null) {
             $flash->error('Sadly, I could not find the image with id "' . $id . '"');
-            return $this->redirectToRoute('_gallery');
         } else {
             $entityManager->remove($image);
             $entityManager->flush();
@@ -178,10 +177,11 @@ class GalleryController extends Controller
             $imageDir   = $this->getImageDir();
             $fileSystem->remove($imageDir.$image->getFileName().'.'.$image->getExtension());
             $fileSystem->remove($imageDir.'/cache/thumb/'.$image->getFileName().'.'.$image->getExtension());
+
             $flash->alert('Image was successfully deleted.');
  
-            return $this->redirectToRoute('_gallery');
         }
+        return $this->redirectToRoute('_gallery');
  
     }
  
