@@ -8,7 +8,7 @@ AppBundle\Entity\Image:
             generator:
                 strategy: AUTO
     fields:
-        fileName:
+        path:
             type: string
             length: 50
         resolution:
@@ -22,9 +22,6 @@ AppBundle\Entity\Image:
         description:
             type: string
             length: 250
-        extension:
-            type: string
-            length: 5
         created:
             type: datetime
         updated:
