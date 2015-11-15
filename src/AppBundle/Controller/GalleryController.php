@@ -170,13 +170,15 @@ class GalleryController extends Controller
         if ($image === null) {
             $flash->error('Sadly, I could not find the image with id "' . $id . '"');
         } else {
-            $entityManager->remove($image);
-            $entityManager->flush();
-
             $fileSystem = new Filesystem();
             $imageDir   = $this->getImageDir();
-            $fileSystem->remove($imageDir.$image->getFileName().'.'.$image->getExtension());
-            $fileSystem->remove($imageDir.'/cache/thumb/'.$image->getFileName().'.'.$image->getExtension());
+            $fileSystem->remove($imageDir.$image->getPath());
+
+            $cacheManager = $this->container->get('liip_imagine.cache.manager');
+            $cacheManager->remove($image->getPath());
+
+            $entityManager->remove($image);
+            $entityManager->flush();
 
             $flash->alert('Image was successfully deleted.');
  
@@ -225,21 +227,20 @@ class GalleryController extends Controller
         $fileExtension    = $data['file']->getClientOriginalExtension();
         $fileSize         = $data['file']->getSize();
             
-        $image->setFileName($newFileName)
+        $image->setPath("images/".$newFileName.".".$fileExtension)
               ->setSize($fileSize)
               ->setResolution($imageResolution)
-              ->setExtension($fileExtension)
               ->setTitle($imageTitle)
               ->setDescription($imageDescription);
 
         $imageDir = $this->getImageDir();
-        $data['file']->move($imageDir, $newFileName.'.'.$data['file']->getClientOriginalExtension());
+        $data['file']->move($imageDir.'images/', $image->getPath());
     }
 
 
     private function getImageDir()
     {
-        return $this->get('kernel')->getRootDir().'/../web/images'.$this->getRequest()->getBasePath();
+        return $this->get('kernel')->getRootDir().'/../web/'.$this->getRequest()->getBasePath();
     }
  
 }

@@ -6,7 +6,7 @@ class Image
 
     protected $id;
 
-    protected $fileName;
+    protected $path;
 
     protected $resolution;
 
@@ -15,8 +15,6 @@ class Image
     protected $title;
 
     protected $description;
-
-    protected $extension;
 
     protected $created;
 
@@ -53,14 +51,14 @@ class Image
 
 
     /**
-     * Set fileName
+     * Set path
      *
-     * @param  string $fileName
+     * @param  string $path
      * @return Images
      */
-    public function setFileName($fileName)
+    public function setPath($path)
     {
-        $this->fileName = $fileName;
+        $this->path = $path;
 
         return $this;
 
@@ -68,13 +66,13 @@ class Image
 
 
     /**
-     * Get originalName
+     * Get Path
      *
      * @return string
      */
-    public function getFileName()
+    public function getPath()
     {
-        return $this->fileName;
+        return $this->path;
 
     }
 
@@ -183,33 +181,6 @@ class Image
     public function getDescription()
     {
         return $this->description;
-
-    }
-
-
-    /**
-     * Set extension
-     *
-     * @param  string $extension
-     * @return Images
-     */
-    public function setExtension($extension)
-    {
-        $this->extension = $extension;
-
-        return $this;
-
-    }
-
-
-    /**
-     * Get extension
-     *
-     * @return string
-     */
-    public function getExtension()
-    {
-        return $this->extension;
 
     }
 

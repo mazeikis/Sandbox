@@ -78,12 +78,12 @@ liip_imagine:
         default:
             web_path:
               web_root: %kernel.root_dir%/../web
-              cache_prefix: media/cache
+              cache_prefix: images
 
     loaders:
         default:
             filesystem:
-                data_root: %kernel.root_dir%/../web/images
+                data_root: %kernel.root_dir%/../web
     filter_sets:
         cache: ~
         thumb:
