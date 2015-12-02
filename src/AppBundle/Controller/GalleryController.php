@@ -58,7 +58,7 @@ class GalleryController extends Controller
     }
  
  
-    public function imageAction(Request $request, $id)
+    public function imageAction($id)
     {
         $user          = $this->getUser();
         $entityManager = $this->getDoctrine()->getManager();
@@ -70,8 +70,8 @@ class GalleryController extends Controller
             return $this->redirectToRoute('_gallery');        
         }
  
-        $query     = $entityManager->getRepository('AppBundle:Vote')->countVotes($image)->getQuery();
-        $votes_sum = $query->getSingleScalarResult();
+        $query  = $entityManager->getRepository('AppBundle:Vote')->countVotes($image)->getQuery();
+        $rating = $query->getSingleScalarResult();
 
         if ($user !== null) {
             $hasVoted  = $entityManager->getRepository('AppBundle:Vote')->checkForVote($user, $image);
@@ -83,7 +83,7 @@ class GalleryController extends Controller
             'title'     => 'sandbox|image',
             'image'     => $image,
             'hasVoted'  => $hasVoted,
-            'votes_sum' => $votes_sum
+            'rating' => $rating
             ));
  
     }
@@ -156,7 +156,7 @@ class GalleryController extends Controller
     }
  
  
-    public function imageDeleteAction(Request $request, $id)
+    public function imageDeleteAction($id)
     {
         $entityManager = $this->getDoctrine()->getManager();
         $image         = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
