@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Pagerfanta\Pagerfanta;
@@ -68,12 +69,14 @@ class ApiController extends Controller
         $entityManager = $this->getDoctrine()->getManager();
         $image         = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
 
+        if(!preg_match('/^\d+$/', $id)){
+            $data = array('error' => 'Id '.$id.' is invalid.');
+            return new JsonResponse($data, Response::HTTP_BAD_REQUEST);
+        }
+
         if ($image === null) {
             $data 	  = array('error' => 'Image file with id "'.$id.'" not found.');
-            //$url  	  = $this->get('router')->generate('_api_image', array('id' => $id), true);
-			$response = new Response(json_encode($data), Response::HTTP_NOT_FOUND);
-        	$response->headers->set('Content-Type', 'application/json');
-        	return $response;
+        	return new JsonResponse($data, Response::HTTP_NOT_FOUND);
         }
  
         $rating = $entityManager->getRepository('AppBundle:Vote')
@@ -95,9 +98,8 @@ class ApiController extends Controller
         			  'owner' 		 => $image->getOwner()->getUsername(),
         			  'rating' 		 => $rating
         			  );
-		$response = new Response(json_encode($data), Response::HTTP_FOUND);
-        //$response->headers->set('Content-Type', 'application/json');
-        return $response;
+
+        return new JsonResponse($data, Response::HTTP_FOUND);
          
     }
 }

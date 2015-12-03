@@ -72,9 +72,6 @@ _api_image:
     path: /api/image/{id}
     defaults: { _controller: AppBundle:Api:image }
     methods: [GET]
-    requirements:
-        id: \d+
-        format: application/json
 login_route:
     path:     /login
     defaults: { _controller: AppBundle:Security:login }
