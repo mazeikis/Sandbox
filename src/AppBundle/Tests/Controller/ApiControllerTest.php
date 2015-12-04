@@ -99,4 +99,28 @@ Class ApiControllerTest extends WebTestCase
         'application/json'
         ));
     }
+    public function testImageDeleteAction()
+    {
+        $method = 'DELETE';
+        $uri    = '/api/image/delete/19';
+        $client = static::createClient();
+
+        $client->request($method, $uri);
+        $response = $client->getResponse();
+        $this->assertEquals(401, $response->getStatusCode());
+        $this->assertTrue($client->getResponse()->headers->contains(
+        'Content-Type',
+        'application/json'
+        ));
+
+        $uri    = '/api/image/delete/xoxo';
+        $client->request($method, $uri);
+        $response = $client->getResponse();
+        $this->assertEquals(404, $response->getStatusCode());
+        $this->assertTrue($client->getResponse()->headers->contains(
+        'Content-Type',
+        'application/json'
+        ));
+
+    }
 }

@@ -123,15 +123,16 @@ class ApiController extends Controller
         $entityManager = $this->getDoctrine()->getManager();
         $image         = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
  
+        if ($image === null) {
+            $data = array('error' => 'Image file with id "'.$id.'" not found.');
+            return new JsonResponse($data, Response::HTTP_NOT_FOUND);
+        } 
         if ($this->get('security.authorization_checker')->isGranted('delete', $image) === false) {
             $data = array('error' => 'You are not authorized to delete this image.');
             return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
         }
  
-        if ($image === null) {
-            $data = array('error' => 'Image file with id "'.$id.'" not found.');
-            return new JsonResponse($data, Response::HTTP_NOT_FOUND);
-        } 
+        
 
         $fileSystem = new Filesystem();
         $imageDir   = $this->getImageDir();
@@ -148,4 +149,10 @@ class ApiController extends Controller
         return new JsonResponse($data, Response::HTTP_OK);
  
     }
+
+    private function getImageDir()
+    {
+        return $this->get('kernel')->getRootDir().'/../web/'.$this->getRequest()->getBasePath();
+    }
+ 
 }
