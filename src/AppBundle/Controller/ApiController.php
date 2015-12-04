@@ -29,7 +29,7 @@ class ApiController extends Controller
         $q = $request->query->get('q');
 
         $currentPage = $request->query->get('page', 1);
-        if(!is_int($currentPage) or $currentPage < 1) {
+        if(!is_int($currentPage) || $currentPage < 1) {
             $data = array('error' => 'Invalid request parameter "page".');
             return new JsonResponse($data, Response::HTTP_BAD_REQUEST);
         }
