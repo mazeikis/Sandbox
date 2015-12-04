@@ -10,7 +10,7 @@ Class ApiControllerTest extends WebTestCase
 	public function testDefaultAction()
     {
         $method 	= 'GET';
-        $uri 		= '/api';
+        $uri 		= '/api/';
         $parameters = array();
         $files 		= array();
         $server 	= array();
@@ -27,12 +27,11 @@ Class ApiControllerTest extends WebTestCase
     	$method = 'GET';
     	$uri 	= '/api/gallery/';
     	$parameters = array();
-        $files 		= array();
-        $server 	= array();
-        $content 	= array();
+
 
         $client = static::createClient();
-        $client->request($method, $uri, $parameters, $files, $server, $content);
+
+        $client->request($method, $uri, $parameters);
         $response = $client->getResponse();
 
         $this->assertTrue($response->isOk());
@@ -40,6 +39,33 @@ Class ApiControllerTest extends WebTestCase
         'Content-Type',
         'application/json'
     	));
+
+        $parameters = array('page' => -1);
+        $client->request($method, $uri, $parameters);
+        $response = $client->getResponse();
+        $this->assertEquals(400, $response->getStatusCode());
+
+        $parameters = array('page' => 'xoxo');
+        $client->request($method, $uri, $parameters);
+        $response = $client->getResponse();
+        $this->assertEquals(400, $response->getStatusCode());
+
+        $parameters = array('page' => 1);
+        $client->request($method, $uri, $parameters);
+        $response = $client->getResponse();
+        $this->assertEquals(200, $response->getStatusCode());
+
+        $parameters = array('sortBy' => 'xoxo');
+        $client->request($method, $uri, $parameters);
+        $response = $client->getResponse();
+        $this->assertEquals(400, $response->getStatusCode());
+
+        $parameters = array('order' => 'xoxo');
+        $client->request($method, $uri, $parameters);
+        $response = $client->getResponse();
+        $this->assertEquals(400, $response->getStatusCode());
+
+
     }
     public function testImageAction()
     {
@@ -49,7 +75,7 @@ Class ApiControllerTest extends WebTestCase
 
         $client->request($method, $uri);
         $response = $client->getResponse();
-        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertEquals(200, $response->getStatusCode());
         $this->assertTrue($client->getResponse()->headers->contains(
         'Content-Type',
         'application/json'

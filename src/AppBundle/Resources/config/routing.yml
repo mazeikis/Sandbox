@@ -61,7 +61,7 @@ _password_reset_verification:
     defaults: { _controller: AppBundle:User:passwordResetVerification }
     methods:  [GET, POST]
 _api_default:
-    path: /api
+    path: /api/
     defaults: { _controller: AppBundle:Api:default }
     methods: [GET]
 _api_gallery:

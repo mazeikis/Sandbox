@@ -8,30 +8,44 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Pagerfanta\Pagerfanta;
+use Symfony\Component\Filesystem\Filesystem;
+
 
 class ApiController extends Controller
 {
+
+
+    const MAX_PER_PAGE = 8;
+
+
 	public function defaultAction(Request $request)
 	{
-        return new Response('', Response::HTTP_OK);
+        $data = array('message'=> 'Welcome to CodeSandbox API.');
+        return new JsonResponse($data, Response::HTTP_OK);
 	}
-	const MAX_PER_PAGE = 8;
  
     public function galleryAction(Request $request)
     {
-        $q           = $request->query->get('q');
-        $currentPage = max( 1, $request->query->get('page'));
- 
-        $sortBy = $request->query->get('sortBy');
-        $whiteList = array('created', 'rating', 'title');
-        if (in_array($sortBy, $whiteList) === false) {
-            $sortBy = reset($whiteList);
+        $q = $request->query->get('q');
+
+        $currentPage = $request->query->get('page', 1);
+        if(!is_int($currentPage) or $currentPage < 1) {
+            $data = array('error' => 'Invalid request parameter "page".');
+            return new JsonResponse($data, Response::HTTP_BAD_REQUEST);
         }
  
-        $order     = $request->query->get('order');
+        $sortBy    = $request->query->get('sortBy', 'created');
+        $whiteList = array('created', 'rating', 'title');
+        if (in_array($sortBy, $whiteList) === false) {
+            $data = array('error' => 'Invalid request parameter "sortBy".');
+            return new JsonResponse($data, Response::HTTP_BAD_REQUEST);
+        }
+ 
+        $order     = $request->query->get('order', 'desc');
         $whiteList = array('desc', 'asc');
         if (in_array($order, $whiteList) === false) {
-            $order = reset($whiteList);
+            $data = array('error' => 'Invalid request parameter "order".');
+            return new JsonResponse($data, Response::HTTP_BAD_REQUEST);
         }
  
         $repository = $this->getDoctrine()->getManager()->getRepository('AppBundle:Image');
@@ -40,9 +54,10 @@ class ApiController extends Controller
         $adapter    = new DoctrineORMAdapter($query);
         $pagerfanta = new Pagerfanta($adapter);
         $pagerfanta->setMaxPerPage(self::MAX_PER_PAGE)->setCurrentPage($currentPage);
-		$result 	= $pagerfanta->getCurrentPageResults();
+
+		$result 	  = $pagerfanta->getCurrentPageResults();
         $cacheManager = $this->container->get('liip_imagine.cache.manager');
-        $gallery = array();
+        $gallery      = array();
 
         foreach($result as $image){
         	$gallery[] = array(
@@ -75,7 +90,7 @@ class ApiController extends Controller
         }
 
         if ($image === null) {
-            $data 	  = array('error' => 'Image file with id "'.$id.'" not found.');
+            $data = array('error' => 'Image file with id "'.$id.'" not found.');
         	return new JsonResponse($data, Response::HTTP_NOT_FOUND);
         }
  
@@ -85,7 +100,7 @@ class ApiController extends Controller
         						->getSingleScalarResult();
 
         if ($user !== null) {
-            $data['votePresent']  = $entityManager->getRepository('AppBundle:Vote')->checkForVote($user, $image);
+            $data['votePresent'] = $entityManager->getRepository('AppBundle:Vote')->checkForVote($user, $image);
         } 
 
         $data = array('imageId' 	 => $image->getId(), 
@@ -99,7 +114,38 @@ class ApiController extends Controller
         			  'rating' 		 => $rating
         			  );
 
-        return new JsonResponse($data, Response::HTTP_FOUND);
+        return new JsonResponse($data, Response::HTTP_OK);
          
+    }
+
+    public function imageDeleteAction($id)
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $image         = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
+ 
+        if ($this->get('security.authorization_checker')->isGranted('delete', $image) === false) {
+            $data = array('error' => 'You are not authorized to delete this image.');
+            return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
+        }
+ 
+        if ($image === null) {
+            $data = array('error' => 'Image file with id "'.$id.'" not found.');
+            return new JsonResponse($data, Response::HTTP_NOT_FOUND);
+        } 
+
+        $fileSystem = new Filesystem();
+        $imageDir   = $this->getImageDir();
+        $fileSystem->remove($imageDir.$image->getPath());
+
+        $cacheManager = $this->container->get('liip_imagine.cache.manager');
+        $cacheManager->remove($image->getPath());
+
+        $entityManager->remove($image);
+        $entityManager->flush();
+
+        $data = array('message' => 'Image was successfully deleted.');
+ 
+        return new JsonResponse($data, Response::HTTP_OK);
+ 
     }
 }
