@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Pagerfanta\Pagerfanta;
 use Symfony\Component\Filesystem\Filesystem;
+use AppBundle\Entity\Vote;
 
 
 class ApiController extends Controller
@@ -145,7 +146,47 @@ class ApiController extends Controller
         $entityManager->flush();
 
         $data = array('message' => 'Image was successfully deleted.');
+        return new JsonResponse($data, Response::HTTP_OK);
  
+    }
+
+    public function imageVoteAction(Request $request)
+    {
+        $voteValue     = $request->request->get('voteValue');
+        $id       = $request->request->get('id');
+        $entityManager = $this->getDoctrine()->getManager();
+        $user          = $this->getUser();
+
+        $image         = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
+        if($image === null){
+            $data = array('error' => 'Image file with id "'.$id.'" not found.');
+            return new JsonResponse($data, Response::HTTP_NOT_FOUND);
+        }
+
+        $voteWhiteList = array(-1, 1);
+        if(in_array($voteValue, $voteWhiteList) === false){
+            $data = array('error' => 'Vote value of "'.$voteValue.'" is invalid. Use "1" to upvote or "-1"to downvote an image.');
+            return new JsonResponse($data, Response::HTTP_BAD_REQUEST);
+        }
+ 
+        $voteCheck = $entityManager->getRepository('AppBundle:Vote')->findOneBy(array('user' => $user, 'image' => $image));        
+        if($voteCheck !== null){
+            $data = array('error' => 'User '.$user->getUsername().' has already voted on image '.$image->getId());
+            return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
+        }
+
+        if ($this->get('security.authorization_checker')->isGranted('vote', $image, $user) === false) {
+                $data = array('error' => 'Voting access unauthorized, sorry!');
+                return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
+        }
+ 
+        $vote = new Vote();
+        $vote->setImage($image)->setUser($user)->setVote($voteValue);
+        $entityManager->persist($vote);
+        $entityManager->flush();
+
+ 
+        $data = array('message' => 'Vote recorded successfully.');
         return new JsonResponse($data, Response::HTTP_OK);
  
     }

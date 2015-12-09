@@ -17,7 +17,7 @@ _image:
         id: \d+
     methods:  [GET]
 _image_vote:
-    path:    /gallery
+    path:    /gallery/image/vote
     defaults: { _controller: AppBundle:Gallery:ImageVote }
     methods: [POST]
 _image_edit:
@@ -72,6 +72,10 @@ _api_image:
     path: /api/image/{id}
     defaults: { _controller: AppBundle:Api:image }
     methods: [GET]
+_api_image_vote:
+    path: /api/image/vote/
+    defaults: { _controller: AppBundle:Api:imageVote }
+    methods: [POST]
 _api_image_delete:
     path: /api/image/delete/{id}
     defaults: { _controller: AppBundle:Api:imageDelete }
