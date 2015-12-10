@@ -3,11 +3,25 @@
 namespace AppBundle\Controller\Tests;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-
+use AppBundle\DataFixtures\ORM\LoadUserData;
+use AppBundle\DataFixtures\ORM\LoadImageData;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\Console\Input\ArrayInput;
 
 Class ApiControllerTest extends WebTestCase
 {
-	public function testDefaultAction()
+    public function setUp()
+    {
+        $client = static::createClient();
+        $kernel = $client->getContainer()->get('kernel');
+        $application = new Application($kernel);
+        $application->setAutoExit(false);
+
+        $input = new ArrayInput(array('command' => 'doctrine:fixtures:load', '-n'));
+        $application->run($input);
+    }
+
+    public function testDefaultAction()
     {
         $method 	= 'GET';
         $uri 		= '/api/';
@@ -70,7 +84,7 @@ Class ApiControllerTest extends WebTestCase
     public function testImageAction()
     {
         $method = 'GET';
-        $uri    = '/api/image/19';
+        $uri    = '/api/image/1';
         $client = static::createClient();
 
         $client->request($method, $uri);
@@ -102,7 +116,7 @@ Class ApiControllerTest extends WebTestCase
     public function testImageDeleteAction()
     {
         $method = 'DELETE';
-        $uri    = '/api/image/delete/19';
+        $uri    = '/api/image/delete/1';
         $client = static::createClient();
 
         $client->request($method, $uri);
