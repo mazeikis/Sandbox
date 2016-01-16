@@ -3,8 +3,8 @@
 namespace AppBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Pagerfanta\Pagerfanta;
@@ -71,8 +71,7 @@ class ApiController extends Controller
 		$url  = $this->get('router')->generate('_api_gallery', array(), true);
         $data = array( 'currentPage' => $currentPage, 'sortedBy' => $sortBy, 'order' => $order, 'gallery' => $gallery);
 
-        $response = new Response(json_encode($data), Response::HTTP_OK);
-        $response->headers->set('Content-Type', 'application/json');
+        $response = new JsonResponse($data, Response::HTTP_OK);
         $response->headers->set('Location', $url);
 
         return $response;
@@ -86,12 +85,12 @@ class ApiController extends Controller
         $image         = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
 
         if(!preg_match('/^\d+$/', $id)){
-            $data = array('error' => 'Id '.$id.' is invalid.');
+            $data = array('error' => 'Id '.strval($id).' is invalid.');
             return new JsonResponse($data, Response::HTTP_BAD_REQUEST);
         }
 
         if ($image === null) {
-            $data = array('error' => 'Image file with id "'.$id.'" not found.');
+            $data = array('error' => 'Image file with id "'.strval($id).'" not found.');
         	return new JsonResponse($data, Response::HTTP_NOT_FOUND);
         }
  
@@ -101,7 +100,7 @@ class ApiController extends Controller
         						->getSingleScalarResult();
 
         if ($user !== null) {
-            $data['votePresent'] = $entityManager->getRepository('AppBundle:Vote')->checkForVote($user, $image);
+            $data['hasUserVoted'] = $entityManager->getRepository('AppBundle:Vote')->checkForVote($user, $image);
         } 
 
         $data = array('imageId' 	 => $image->getId(), 
@@ -125,7 +124,7 @@ class ApiController extends Controller
         $image         = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
  
         if ($image === null) {
-            $data = array('error' => 'Image file with id "'.$id.'" not found.');
+            $data = array('error' => 'Image file with id "'.strval($id).'" not found.');
             return new JsonResponse($data, Response::HTTP_NOT_FOUND);
         } 
         if ($this->get('security.authorization_checker')->isGranted('delete', $image) === false) {
@@ -153,19 +152,18 @@ class ApiController extends Controller
     public function imageVoteAction(Request $request)
     {
         $voteValue     = $request->request->get('voteValue');
-        $id       = $request->request->get('id');
+        $id            = $request->request->get('id', 'xoxoxoxo');
         $entityManager = $this->getDoctrine()->getManager();
         $user          = $this->getUser();
 
-        $image         = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
+        $image = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
         if($image === null){
             $data = array('error' => 'Image file with id "'.$id.'" not found.');
             return new JsonResponse($data, Response::HTTP_NOT_FOUND);
         }
 
-        $voteWhiteList = array(-1, 1);
-        if(in_array($voteValue, $voteWhiteList) === false){
-            $data = array('error' => 'Vote value of "'.$voteValue.'" is invalid. Use "1" to upvote or "-1"to downvote an image.');
+        if($voteValue != 1 && $voteValue != -1){
+            $data = array('error' => 'Vote value of "'.strval($voteValue).'" is invalid. Use "1" to upvote or "-1"to downvote an image.');
             return new JsonResponse($data, Response::HTTP_BAD_REQUEST);
         }
  
@@ -176,8 +174,8 @@ class ApiController extends Controller
         }
 
         if ($this->get('security.authorization_checker')->isGranted('vote', $image, $user) === false) {
-                $data = array('error' => 'Voting access unauthorized, sorry!');
-                return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
+            $data = array('error' => 'Voting access unauthorized, sorry!');
+            return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
         }
  
         $vote = new Vote();

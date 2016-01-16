@@ -10,7 +10,7 @@ AppBundle\Entity\Image:
     fields:
         path:
             type: string
-            length: 50
+            length: 100
         resolution:
             type: string
             length: 100

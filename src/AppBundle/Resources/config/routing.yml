@@ -60,25 +60,25 @@ _password_reset_verification:
     path: /reset/{confirmationToken}
     defaults: { _controller: AppBundle:User:passwordResetVerification }
     methods:  [GET, POST]
-_api_default:
-    path: /api/
-    defaults: { _controller: AppBundle:Api:default }
+_api_demo:
+    path: /rest/
+    defaults: { _controller: AppBundle:Default:apiDemo }
     methods: [GET]
 _api_gallery:
     path: /api/gallery/
-    defaults: { _controller: AppBundle:Api:gallery }
+    defaults: { _controller: AppBundle:Api:gallery, _format: json }
     methods: [GET]
 _api_image:
     path: /api/image/{id}
-    defaults: { _controller: AppBundle:Api:image }
+    defaults: { _controller: AppBundle:Api:image, id: null, _format: json }
     methods: [GET]
 _api_image_vote:
     path: /api/image/vote/
-    defaults: { _controller: AppBundle:Api:imageVote }
+    defaults: { _controller: AppBundle:Api:imageVote, _format: json }
     methods: [POST]
 _api_image_delete:
     path: /api/image/delete/{id}
-    defaults: { _controller: AppBundle:Api:imageDelete }
+    defaults: { _controller: AppBundle:Api:imageDelete, _format: json }
     methods: [DELETE]
 login_route:
     path:     /login

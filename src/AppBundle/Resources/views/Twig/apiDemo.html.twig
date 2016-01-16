@@ -1,0 +1,123 @@
+{% extends "AppBundle:Twig:layout.html.twig" %}
+{% block content %}
+<div class="container" style="padding-top: 70px">
+    <div class="row">
+        <div class="col-lg-12">
+            <h1>REST</h1>
+        </div>
+    </div>
+    <div class="row">
+        <h3>Requests:</h3>
+        <div class="col-lg-5">
+            <div class="row form-group form-group-sm">
+                <label for="image-id"><span class="http-method">GET</span> {{ url('_api_image') }}/<label><input id="image-id" class="form-control" placeholder=":image id" style="width: 7em">
+            </div>
+            <div class="row form-group form-group-sm">
+                <label><span class="http-method">GET</span> {{ url('_api_gallery') }}</label>
+            </div>
+            <div class="row form-inline form-group form-group-sm">
+                <label for="vote-id"><span class="http-method">POST</span> {{ url('_api_image_vote') }}<input id="vote-id" class="form-control" placeholder=":image id" style="width: 7em"><input id="vote-value" class="form-control" placeholder=":vote value" style="width: 7em"></label>
+            </div>
+        </div>
+        <div class="col-lg-2">
+            <div class="row form-group form-group-sm">
+                <a class="btn btn-sm btn-success" id="get-image">Request</a>
+            </div>
+            <div class="row form-group form-group-sm">
+                <a class="btn btn-sm btn-success" id="get-gallery">Request</a>
+            </div>
+            <div class="row form-group form-group-sm">
+                <a class="btn btn-sm btn-success" id="post-vote">Request</a>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="row">
+                <p>GET request for a single image by "id".
+            </div>
+            <div class="row">
+                <p>GET request for a page of gallery. Accepts page number and sort criteria with direction.
+            </div>
+            <div class="row">
+                <p>POST request for voting on image. Requires image id and vote value.
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <h3>Response goes here:</h3>
+        <div class="col-lg-12">
+            <div class="highlight">
+                <pre class="geo pre-scrollable" id="response">No Response Yet</pre>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+        $("#get-image").click(function(){
+            var id = +$("#image-id").val();
+            if(typeof id !== 'undefined'){
+                id = '/'+ id;
+            };
+            var response;
+            console.log(id);
+            $.ajax("{{url('_api_image')}}" + id, 
+                {
+                    method: "GET",
+                    async: false,
+                    contentType: 'application/json',
+                    success: function(result){
+                        response = JSON.stringify(result, null, '\t');
+                    },
+                    error: function(result){
+                        response = JSON.stringify(result.responseJSON, null, '\t');
+                    }
+                }
+                );
+            $("#response").fadeOut('fast', function(){
+                $("#response").text(response);
+                $("#response").fadeIn('fast');
+            });
+        });
+        $("#get-gallery").click(function(){
+            $.ajax("{{url('_api_gallery')}}",
+                {
+                    method: "GET",
+                    async: false,
+                    contentType: 'application/json',
+                    success: function(result){
+                        response = JSON.stringify(result, null, '\t');
+                    },
+                    error: function(result){
+                        response = JSON.stringify(result.responseJSON, null, '\t');
+                    }
+                });
+            $("#response").fadeOut('fast', function(){ 
+                            $("#response").text(response);
+                            $("#response").fadeIn('fast');
+                        });
+        });
+        $("#post-vote").click(function(){
+            var voteId = $("#vote-id").val();
+            var voteValue = $("#vote-value").val();
+            $.ajax("{{url('_api_image_vote')}}",
+                {
+                    method: "POST",
+                    async: false,
+                    data: { "id" : voteId, "voteValue" : voteValue },
+                    dataType: "json",
+                    success: function(result){
+                        response = JSON.stringify(result, null, '\t');
+                    },
+                    error: function(result){
+                        response = decodeURI(JSON.stringify(result.responseJSON, null, '\t'));
+                    }
+                });
+            $("#response").fadeOut('fast', function(){ 
+                            $("#response").text(response);
+                            $("#response").fadeIn('fast');
+                        });
+        });
+        
+        });
+    </script>
+{% endblock %}

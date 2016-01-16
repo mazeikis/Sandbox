@@ -1,41 +1,12 @@
 <?php
 
-namespace AppBundle\Controller\Tests;
+namespace AppBundle\Tests\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use AppBundle\DataFixtures\ORM\LoadUserData;
-use AppBundle\DataFixtures\ORM\LoadImageData;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
-use Symfony\Component\Console\Input\ArrayInput;
+use AppBundle\Tests\FixturesAwareWebTestCase;
 
-Class ApiControllerTest extends WebTestCase
+Class ApiControllerTest extends FixturesAwareWebTestCase
 {
-    public function setUp()
-    {
-        $client = static::createClient();
-        $kernel = $client->getContainer()->get('kernel');
-        $application = new Application($kernel);
-        $application->setAutoExit(false);
 
-        $input = new ArrayInput(array('command' => 'doctrine:fixtures:load', '-n'));
-        $application->run($input);
-    }
-
-    public function testDefaultAction()
-    {
-        $method 	= 'GET';
-        $uri 		= '/api/';
-        $parameters = array();
-        $files 		= array();
-        $server 	= array();
-        $content 	= array();
-
-        $client = static::createClient();
-        $client->request($method, $uri, $parameters, $files, $server, $content);
-        $response = $client->getResponse();
-
-        $this->assertTrue($response->isOk());
-    }
     public function testGalleryAction()
     {
     	$method = 'GET';
@@ -58,26 +29,46 @@ Class ApiControllerTest extends WebTestCase
         $client->request($method, $uri, $parameters);
         $response = $client->getResponse();
         $this->assertEquals(400, $response->getStatusCode());
+        $this->assertTrue($client->getResponse()->headers->contains(
+        'Content-Type',
+        'application/json'
+        ));
 
         $parameters = array('page' => 'xoxo');
         $client->request($method, $uri, $parameters);
         $response = $client->getResponse();
         $this->assertEquals(400, $response->getStatusCode());
+        $this->assertTrue($client->getResponse()->headers->contains(
+        'Content-Type',
+        'application/json'
+        ));
 
         $parameters = array('page' => 1);
         $client->request($method, $uri, $parameters);
         $response = $client->getResponse();
         $this->assertEquals(200, $response->getStatusCode());
+        $this->assertTrue($client->getResponse()->headers->contains(
+        'Content-Type',
+        'application/json'
+        ));
 
         $parameters = array('sortBy' => 'xoxo');
         $client->request($method, $uri, $parameters);
         $response = $client->getResponse();
         $this->assertEquals(400, $response->getStatusCode());
+        $this->assertTrue($client->getResponse()->headers->contains(
+        'Content-Type',
+        'application/json'
+        ));
 
         $parameters = array('order' => 'xoxo');
         $client->request($method, $uri, $parameters);
         $response = $client->getResponse();
         $this->assertEquals(400, $response->getStatusCode());
+        $this->assertTrue($client->getResponse()->headers->contains(
+        'Content-Type',
+        'application/json'
+        ));
 
 
     }
@@ -131,6 +122,40 @@ Class ApiControllerTest extends WebTestCase
         $client->request($method, $uri);
         $response = $client->getResponse();
         $this->assertEquals(404, $response->getStatusCode());
+        $this->assertTrue($client->getResponse()->headers->contains(
+        'Content-Type',
+        'application/json'
+        ));
+
+    }
+    public function testImageVoteAction()
+    {
+        $method = 'POST';
+        $uri    = '/api/image/vote/';
+        $client = static::createClient();
+
+        $parameters = array('id' => 1, 'voteValue' => 'xoxo');
+        $client->request($method, $uri, $parameters);
+        $response = $client->getResponse();
+        $this->assertEquals(400, $response->getStatusCode());
+        $this->assertTrue($client->getResponse()->headers->contains(
+        'Content-Type',
+        'application/json'
+        ));
+
+        $parameters = array('id' => 12345, 'voteValue' => '1');
+        $client->request($method, $uri, $parameters);
+        $response = $client->getResponse();
+        $this->assertEquals(404, $response->getStatusCode());
+        $this->assertTrue($client->getResponse()->headers->contains(
+        'Content-Type',
+        'application/json'
+        ));
+
+        $parameters = array('id' => 1, 'voteValue' => '1');
+        $client->request($method, $uri, $parameters);
+        $response = $client->getResponse();
+        $this->assertEquals(401, $response->getStatusCode());
         $this->assertTrue($client->getResponse()->headers->contains(
         'Content-Type',
         'application/json'

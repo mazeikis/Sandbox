@@ -22,11 +22,12 @@ class LoadTestData implements FixtureInterface
 
         $image = new Image();
         $image->setPath('/test/path/to/image/');
-        $image->setsize(12345);
+        $image->setSize(12345);
         $image->setTitle('Test Image Title 1');
         $image->setDescription('Test Image 1 description');
         $image->setResolution('test X test');
         $image->setOwner($user);
+
 
         $manager->persist($image);
         $manager->flush();

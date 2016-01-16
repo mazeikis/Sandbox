@@ -37,7 +37,11 @@ AppBundle\Entity\User:
         confirmationToken:
             type: string
             length: 100
-            nullable: TRUE
+            nullable: true
+        apiKey:
+            type: string
+            length: 100
+            unique: true
     oneToMany:
         images:
             targetEntity: Image
