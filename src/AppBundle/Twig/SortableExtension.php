@@ -55,7 +55,7 @@ class SortableExtension extends \Twig_Extension
           $parameters['q'] = $q;
       }
 
-      $link    = $this->router->generate('_gallery', $parameters, true);
+      $link    = $this->router->generate('_gallery', $parameters, "ABSOLUTE_PATH");
       $iconKey = $order === 'desc' ? 'up' : 'down';
 
       return $twig->render('AppBundle:Twig:sortButtons.html.twig', 

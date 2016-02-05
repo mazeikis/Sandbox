@@ -127,7 +127,7 @@ class ApiController extends Controller
             $data = array('error' => 'Image file with id "'.strval($id).'" not found.');
             return new JsonResponse($data, Response::HTTP_NOT_FOUND);
         } 
-        if ($this->get('security.authorization_checker')->isGranted('delete', $image) === false) {
+        if ($this->isGranted('delete', $image) === false) {
             $data = array('error' => 'You are not authorized to delete this image.');
             return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
         }
@@ -152,7 +152,7 @@ class ApiController extends Controller
     public function imageVoteAction(Request $request)
     {
         $voteValue     = $request->request->get('voteValue');
-        $id            = $request->request->get('id', 'xoxoxoxo');
+        $id            = $request->request->get('id');
         $entityManager = $this->getDoctrine()->getManager();
         $user          = $this->getUser();
 
@@ -173,7 +173,7 @@ class ApiController extends Controller
             return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
         }
 
-        if ($this->get('security.authorization_checker')->isGranted('vote', $image, $user) === false) {
+        if ($this->isGranted('vote', $image) === false) {
             $data = array('error' => 'Voting access unauthorized, sorry!');
             return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
         }
