@@ -98,7 +98,7 @@ class GalleryController extends Controller
         $form  = $this->createForm(new UploadFormType());
         $form->handleRequest($request);
 
-        if ($this->isGranted('create', $image, $user) === false) {
+        if ($this->isGranted('create', $image) === false) {
             $flash->error('You are not authorized to upload an image.');
             return $this->redirectToRoute('_gallery');
         }
@@ -127,9 +127,11 @@ class GalleryController extends Controller
         $flash         = $this->get('braincrafted_bootstrap.flash');
         $user          = $this->getUser();
  
-        if ($this->isGranted('edit', $image, $user) === false) {
+        if ($this->isGranted('edit', $image) === false) {
             $flash->error('Sadly, You were not authorized to edit this image.');
             return $this->redirectToRoute('_image', array('id' => $id));
+        } else {
+            $hasVoted  = $entityManager->getRepository('AppBundle:Vote')->checkForVote($user, $image);
         }
  
         $form = $this->createFormBuilder()
@@ -147,14 +149,7 @@ class GalleryController extends Controller
             $image->setTitle($data['title'])->setDescription($data['description']);
             $entityManager->flush();
             $flash->success('Image details were edited and changes saved.');
- 
             return $this->redirectToRoute('_image', array('id' => $id));
-        }
-        
-        if ($user !== null) {
-            $hasVoted  = $entityManager->getRepository('AppBundle:Vote')->checkForVote($user, $image);
-        } else {
-            $hasVoted = false;
         }
 
         return $this->render('AppBundle:Twig:image.html.twig', array(

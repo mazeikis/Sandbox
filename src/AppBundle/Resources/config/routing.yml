@@ -81,12 +81,12 @@ _api_image_delete:
     defaults: { _controller: AppBundle:Api:imageDelete, _format: json }
     methods: [DELETE]
 login_route:
-    path:     /login
+    path:    /login
     defaults: { _controller: AppBundle:Security:login }
     methods:  [GET, POST]
 login_check:
-    path: /login_check
+    path:   /login_check
     methods:  [GET, POST]
 logout:
-    pattern: /logout
+    path:   /logout
     methods:  [GET, POST]
