@@ -31,21 +31,21 @@ class ApiController extends Controller
 
         $currentPage = $request->query->get('page', 1);
         if(!is_int($currentPage) || $currentPage < 1) {
-            $data = array('error' => 'Invalid request parameter "page".');
+            $data = array('error' => "Invalid request parameter 'page'.");
             return new JsonResponse($data, Response::HTTP_BAD_REQUEST);
         }
  
         $sortBy    = $request->query->get('sortBy', 'created');
         $whiteList = array('created', 'rating', 'title');
         if (in_array($sortBy, $whiteList) === false) {
-            $data = array('error' => 'Invalid request parameter "sortBy".');
+            $data = array('error' => "Invalid request parameter 'sortBy'.");
             return new JsonResponse($data, Response::HTTP_BAD_REQUEST);
         }
  
         $order     = $request->query->get('order', 'desc');
         $whiteList = array('desc', 'asc');
         if (in_array($order, $whiteList) === false) {
-            $data = array('error' => 'Invalid request parameter "order".');
+            $data = array('error' => "Invalid request parameter 'order'.");
             return new JsonResponse($data, Response::HTTP_BAD_REQUEST);
         }
  
@@ -84,13 +84,13 @@ class ApiController extends Controller
         $entityManager = $this->getDoctrine()->getManager();
         $image         = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
 
-        if(!preg_match('/^\d+$/', $id)){
-            $data = array('error' => 'Id '.strval($id).' is invalid.');
+        if(!preg_match('/^\d+$/', $id)) {
+            $data = array('error' => "id value is invalid, only positive integers are accepted.");
             return new JsonResponse($data, Response::HTTP_BAD_REQUEST);
         }
 
         if ($image === null) {
-            $data = array('error' => 'Image file with id "'.strval($id).'" not found.');
+            $data = array('error' => "Image file with id $id not found.");
         	return new JsonResponse($data, Response::HTTP_NOT_FOUND);
         }
  
@@ -124,11 +124,11 @@ class ApiController extends Controller
         $image         = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
  
         if ($image === null) {
-            $data = array('error' => 'Image file with id "'.strval($id).'" not found.');
+            $data = array('error' => "Image file with id $id not found.");
             return new JsonResponse($data, Response::HTTP_NOT_FOUND);
         } 
         if ($this->isGranted('delete', $image) === false) {
-            $data = array('error' => 'You are not authorized to delete this image.');
+            $data = array('error' => "You are not authorized to delete this image.");
             return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
         }
  
@@ -144,7 +144,7 @@ class ApiController extends Controller
         $entityManager->remove($image);
         $entityManager->flush();
 
-        $data = array('message' => 'Image was successfully deleted.');
+        $data = array('message' => "Image was successfully deleted.");
         return new JsonResponse($data, Response::HTTP_OK);
  
     }
@@ -158,23 +158,23 @@ class ApiController extends Controller
 
         $image = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
         if($image === null){
-            $data = array('error' => 'Image file with id "'.$id.'" not found.');
+            $data = array('error' => "Image file with id $id not found.");
             return new JsonResponse($data, Response::HTTP_NOT_FOUND);
         }
 
         if($voteValue != 1 && $voteValue != -1){
-            $data = array('error' => 'Vote value of "'.strval($voteValue).'" is invalid. Use "1" to upvote or "-1"to downvote an image.');
+            $data = array('error' => "Vote value of $voteValue is invalid. Use '1' to upvote or '-1' to downvote an image.");
             return new JsonResponse($data, Response::HTTP_BAD_REQUEST);
         }
  
         $voteCheck = $entityManager->getRepository('AppBundle:Vote')->findOneBy(array('user' => $user, 'image' => $image));        
         if($voteCheck !== null){
-            $data = array('error' => 'User '.$user->getUsername().' has already voted on image '.$image->getId());
+            $data = array('error' => "User ".$user->getUsername()." has already voted on image ".$image->getId());
             return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
         }
 
         if ($this->isGranted('vote', $image) === false) {
-            $data = array('error' => 'Voting access unauthorized, sorry!');
+            $data = array('error' => "Voting access unauthorized, sorry!");
             return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
         }
  
@@ -184,7 +184,7 @@ class ApiController extends Controller
         $entityManager->flush();
 
  
-        $data = array('message' => 'Vote recorded successfully.');
+        $data = array('message' => "Vote recorded successfully.");
         return new JsonResponse($data, Response::HTTP_OK);
  
     }
