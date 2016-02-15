@@ -17,7 +17,7 @@ _image:
         id: \d+
     methods:  [GET]
 _image_vote:
-    path:    /gallery
+    path:    /gallery/image/vote
     defaults: { _controller: AppBundle:Gallery:ImageVote }
     methods: [POST]
 _image_edit:
@@ -60,13 +60,33 @@ _password_reset_verification:
     path: /reset/{confirmationToken}
     defaults: { _controller: AppBundle:User:passwordResetVerification }
     methods:  [GET, POST]
+_api_demo:
+    path: /rest/
+    defaults: { _controller: AppBundle:Default:apiDemo }
+    methods: [GET]
+_api_gallery:
+    path: /api/gallery/
+    defaults: { _controller: AppBundle:Api:gallery, _format: json }
+    methods: [GET]
+_api_image:
+    path: /api/image/{id}
+    defaults: { _controller: AppBundle:Api:image, id: null, _format: json }
+    methods: [GET]
+_api_image_vote:
+    path: /api/image/vote/
+    defaults: { _controller: AppBundle:Api:imageVote, _format: json }
+    methods: [POST]
+_api_image_delete:
+    path: /api/image/delete/{id}
+    defaults: { _controller: AppBundle:Api:imageDelete, _format: json }
+    methods: [DELETE]
 login_route:
-    path:     /login
+    path:    /login
     defaults: { _controller: AppBundle:Security:login }
     methods:  [GET, POST]
 login_check:
-    path: /login_check
+    path:   /login_check
     methods:  [GET, POST]
 logout:
-    pattern: /logout
+    path:   /logout
     methods:  [GET, POST]

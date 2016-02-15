@@ -2,10 +2,12 @@
 
 namespace AppBundle\Security;
 
-use Symfony\Component\Security\Core\Authorization\Voter\AbstractVoter;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use AppBundle\Entity\Image;
 
-class ImageVoter extends AbstractVoter
+class ImageVoter extends Voter
 {
     const CREATE = 'create';
     const EDIT   = 'edit';
@@ -13,46 +15,33 @@ class ImageVoter extends AbstractVoter
     const VOTE   = 'vote';
 
 
-    protected function getSupportedAttributes()
+    public function supports($attribute, $subject)
     {
-         return array(
-                 self::CREATE,
-                 self::EDIT,
-                 self::DELETE,
-                 self::VOTE,
-                );
-
+        return $subject instanceof Image && in_array($attribute, array(
+            self::CREATE, 
+            self::EDIT, 
+            self::DELETE, 
+            self::VOTE)
+        );
     }
 
 
-    protected function getSupportedClasses()
+    public function voteOnAttribute($attribute, $image, TokenInterface $token)
     {
-        return array(
-                'AppBundle\Entity\Image',
-                'AppBundle\Entity\User',
-               );
-
-    }
-
-
-    protected function isGranted($attribute, $image = null, $user = null)
-    {
-        // make sure there is a user object (i.e. that the user is logged in)
+        $user = $token->getUser();
         if ($user instanceof UserInterface === false) {
             return false;
         }
 
-        // logic to decide if the given user can create
-        // edit and/or delete the given image
         switch($attribute) {
             case self::CREATE :
-                return $user->getEnabled() || $user->getRoles() == 'ROLE_ADMIN';
+                return $user->getEnabled() || in_array('ROLE_ADMIN', $user->getRoles());
 
             case self::EDIT :
-                return $user->getEnabled() && $user == $image->getOwner() || $user->getRoles() == 'ROLE_ADMIN';
+                return $user->getEnabled() && $user == $image->getOwner() || in_array('ROLE_ADMIN', $user->getRoles());
 
             case self::DELETE :
-                return $user->getEnabled() && $user == $image->getOwner() || $user->getRoles() == 'ROLE_ADMIN';
+                return $user->getEnabled() && $user == $image->getOwner() || in_array('ROLE_ADMIN', $user->getRoles());
 
             case self::VOTE : 
                 return $user->getEnabled() && $image->getOwner() !== $user;

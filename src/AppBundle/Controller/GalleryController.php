@@ -58,7 +58,7 @@ class GalleryController extends Controller
     }
  
  
-    public function imageAction(Request $request, $id)
+    public function imageAction($id)
     {
         $user          = $this->getUser();
         $entityManager = $this->getDoctrine()->getManager();
@@ -70,8 +70,8 @@ class GalleryController extends Controller
             return $this->redirectToRoute('_gallery');        
         }
  
-        $query     = $entityManager->getRepository('AppBundle:Vote')->countVotes($image)->getQuery();
-        $votes_sum = $query->getSingleScalarResult();
+        $query  = $entityManager->getRepository('AppBundle:Vote')->countVotes($image)->getQuery();
+        $rating = $query->getSingleScalarResult();
 
         if ($user !== null) {
             $hasVoted  = $entityManager->getRepository('AppBundle:Vote')->checkForVote($user, $image);
@@ -83,7 +83,7 @@ class GalleryController extends Controller
             'title'     => 'sandbox|image',
             'image'     => $image,
             'hasVoted'  => $hasVoted,
-            'votes_sum' => $votes_sum
+            'rating' => $rating
             ));
  
     }
@@ -98,7 +98,7 @@ class GalleryController extends Controller
         $form  = $this->createForm(new UploadFormType());
         $form->handleRequest($request);
 
-        if ($this->get('security.authorization_checker')->isGranted('create', $image, $user) === false) {
+        if ($this->isGranted('create', $image) === false) {
             $flash->error('You are not authorized to upload an image.');
             return $this->redirectToRoute('_gallery');
         }
@@ -127,9 +127,11 @@ class GalleryController extends Controller
         $flash         = $this->get('braincrafted_bootstrap.flash');
         $user          = $this->getUser();
  
-        if ($this->get('security.authorization_checker')->isGranted('edit', $image, $user) === false) {
+        if ($this->isGranted('edit', $image) === false) {
             $flash->error('Sadly, You were not authorized to edit this image.');
             return $this->redirectToRoute('_image', array('id' => $id));
+        } else {
+            $hasVoted  = $entityManager->getRepository('AppBundle:Vote')->checkForVote($user, $image);
         }
  
         $form = $this->createFormBuilder()
@@ -147,22 +149,25 @@ class GalleryController extends Controller
             $image->setTitle($data['title'])->setDescription($data['description']);
             $entityManager->flush();
             $flash->success('Image details were edited and changes saved.');
- 
             return $this->redirectToRoute('_image', array('id' => $id));
         }
- 
-        return $this->render('AppBundle:Twig:image.html.twig', array('title' => 'sandbox|image', 'image' => $image, 'form' => $form->createView()));
+
+        return $this->render('AppBundle:Twig:image.html.twig', array(
+            'title'    => 'sandbox|image', 
+            'image'    => $image, 
+            'hasVoted' => $hasVoted,
+            'form'     => $form->createView()));
  
     }
  
  
-    public function imageDeleteAction(Request $request, $id)
+    public function imageDeleteAction($id)
     {
         $entityManager = $this->getDoctrine()->getManager();
         $image         = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
         $flash         = $this->get('braincrafted_bootstrap.flash');
  
-        if ($this->get('security.authorization_checker')->isGranted('delete', $image) === false) {
+        if ($this->isGranted('delete', $image) === false) {
             $flash->error('Sadly, You were not authorized to delete this image.');
             return $this->redirectToRoute('_image', array('id' => $id));
         }
@@ -201,7 +206,7 @@ class GalleryController extends Controller
  
         $voteCheck = $entityManager->getRepository('AppBundle:Vote')->findOneBy(array('user' => $user, 'image' => $image));
  
-        if ($this->get('security.authorization_checker')->isGranted('vote', $image, $user) === false || $voteCheck !== null || in_array($voteValue, $voteWhiteList) === false) {
+        if ($this->isGranted('vote', $image) === false || $voteCheck !== null || in_array($voteValue, $voteWhiteList) === false) {
                 $flash->error('Voting access unauthorized, sorry!');
                 return $this->redirectToRoute('_gallery');
         }

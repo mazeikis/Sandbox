@@ -59,4 +59,10 @@ class DefaultController extends Controller
     }
 
 
+    public function apiDemoAction()
+    {
+        return $this->render('AppBundle:Twig:apiDemo.html.twig', array('title' => "REST'ful API Demo"));
+    }
+
+
 }

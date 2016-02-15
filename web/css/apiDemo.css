@@ -1,0 +1,10 @@
+.top-buffer { margin-top:20px; }
+.http-method {
+    margin-right: 1em;
+    text-decoration: none;
+    background-color: #d9edf7;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 80%;
+    display: inline-block;
+}

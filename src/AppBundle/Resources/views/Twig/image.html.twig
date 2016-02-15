@@ -24,7 +24,7 @@
                 <img class="img-responsive" src="{{asset(image.getpath)}}" alt="">
             </div>
             <div class="col-md-4">
-                <p><strong>Current Image Rating:</strong>  {{votes_sum|default('None :(')}}</p>
+                <p><strong>Current Image Rating:</strong>  {{rating|default('None :(')}}</p>
                 {% if is_granted('IS_AUTHENTICATED_REMEMBERED') and image.getowner != app.user and hasVoted == false %}
                     <div class="btn-group" role="group" aria-label="...">
                         <form action="{{ path('_image_vote')}}" method="post">
@@ -67,7 +67,7 @@
                         </ul>
                     </div>
                 </div>
-                {% if image.getowner == app.user %}
+                {% if image.getowner == app.user or app.user.getroles[0] == 'ROLE_ADMIN'%}
                     <p><strong>Image owner control panel:</strong></p>
                     {% if form is defined %}
                         {{ form_start(form, { 'style': 'horizontal', 'label_col': 4, 'widget_col': 8, 'col_size': 'sm' }) }}

@@ -29,6 +29,8 @@ class User implements UserInterface, \Serializable
 
     protected $plainPassword;
 
+    protected $apiKey;
+
     /**
      * @var \Doctrine\Common\Collections\Collection
      */
@@ -41,6 +43,7 @@ class User implements UserInterface, \Serializable
         $this->setUpdated(new \Datetime);
         $this->setRoles('ROLE_USER');
         $this->setConfirmationToken(null);
+        $this->generateApiKey();
 
     }
 
@@ -478,5 +481,40 @@ class User implements UserInterface, \Serializable
     public function getVotes()
     {
         return $this->votes;
+    }
+
+    /**
+     * Set apiKey
+     *
+     * @param string $apiKey
+     * @return User
+     */
+    public function setApiKey($apiKey)
+    {
+        $this->apiKey = $apiKey;
+
+        return $this;
+    }
+
+    /**
+     * Get apiKey
+     *
+     * @return string 
+     */
+    public function getApiKey()
+    {
+        return $this->apiKey;
+    }
+
+    /**
+    * Generate unique apiKey
+    *
+    * @return User
+    */
+    public function generateApiKey()
+    {
+        $this->apiKey = rtrim(strtr(base64_encode(hash('sha256', uniqid(), true)), '+/', '-_'), '=');
+
+        return $this;
     }
 }

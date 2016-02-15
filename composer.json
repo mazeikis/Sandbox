@@ -4,11 +4,11 @@
     "type": "project",
     "description": "The \"Symfony Standard Edition\" distribution",
     "autoload": {
-        "psr-0": { "": "src/", "SymfonyStandard": "app/" }
+        "psr-0": { "AppBundle\\": "src/", "SymfonyStandard": "app/" }
     },
     "require": {
         "php": ">=5.3.3",
-        "symfony/symfony": "2.7.*",
+        "symfony/symfony": "2.8.*",
         "doctrine/orm": "~2.2,>=2.2.3,<2.5",
         "doctrine/dbal": "<2.5",
         "doctrine/doctrine-bundle": "~1.2",
@@ -24,7 +24,9 @@
         "braincrafted/bootstrap-bundle": "2.1.*"
     },
     "require-dev": {
-        "sensio/generator-bundle": "~2.3"
+        "sensio/generator-bundle": "~2.3",
+        "phpunit/phpunit": "~5.0",
+        "doctrine/doctrine-fixtures-bundle": "^2.3"
     },
     "scripts": {
         "post-root-package-install": [

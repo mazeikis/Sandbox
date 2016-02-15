@@ -5,11 +5,11 @@
         <div class="col-md-3 portfolio-item">
             <div class="image-box">
               <a href='{{path('_image', { 'id' : image[0].id })}}' target="_blank">
-                <img src='{{ (image[0].path) | imagine_filter('thumb')}}' class="img-responsive">
+                <img src='{{ (image[0].getpath) | imagine_filter('thumb')}}' class="img-responsive">
               </a>
             </div>
             <div class="rating-box text-center">
-                {{image[0].title}} | {{image['votes_sum']|default('Not yet rated')}}
+                {{image[0].title}} | {{image['rating']|default('Not yet rated')}}
             </div>
         </div>
     {% else %}

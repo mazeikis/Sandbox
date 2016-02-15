@@ -1,0 +1,155 @@
+{% extends "AppBundle:Twig:layout.html.twig" %}
+{% block style %}
+{% spaceless %}
+    {{parent()}}
+    <link rel="stylesheet" href="{{ asset('css/apiDemo.css') }}"/>
+{% endspaceless %}
+{% endblock %}
+{% block content %}
+<div class="container" style="padding-top: 70px">
+    <div class="row">
+        <div class="col-xs-12">
+            <h1>RESTful API Demo page.</h1>
+        </div>
+    </div>
+    <div class="row">
+        <h3>Requests</h3>
+    </div>
+    <div class="row center-block">
+        <div class="col-md-8">
+            <h4>GET request for a single image by "id".<br>
+            <small>Positive integers are accepted as "id" value.</small></h4>
+            <div class="form-inline form-group-sm">
+                <label for="image-id"><span class="http-method">GET</span> {{ url('_api_image') }}/
+                </label>
+                <input id="image-id" class="form-control" placeholder=":image id" style="width: 7em">
+                <a class="btn btn-sm btn-success pull-xs-left pull-md-right pull-lg-right" id="get-image">Request</a>
+            </div>
+        </div>
+    </div>
+    <div class="row center-block top-buffer">
+        <div class="col-md-8">
+            <h4>GET request for a page of gallery.<br>
+            <small>Accepts page number and sort criteria with direction. Available sort criteria is "created" (default), "rating" and "title". 
+            Available sort direction is "asc" for ascending and "desc" for descending (default).</small></h4>
+            <div class="form-inline form-group-sm">
+                <label><span class="http-method">GET</span> {{ url('_api_gallery') }}
+                </label>
+                <input type="text" id="gallery-page" class="form-control" placeholder=":page" style="width: 7em">
+                <input type="text" id="gallery-sortBy" class="form-control" placeholder=":sort by" style="width: 7em">
+                <input type="text" id="gallery-order" class="form-control" placeholder=":order" style="width: 7em">
+                <a class="btn btn-sm btn-success pull-xs-left pull-md-right pull-lg-right" id="get-gallery">Request</a>
+            </div>
+        </div>
+    </div>
+    <div class="row center-block top-buffer">
+        <div class="col-md-8">
+            <h4>POST request for voting on image.<br> 
+            <small>Requires image id and vote value. For vote value use "1" to upvote, "-1" to downvote.</small></h4>
+            <div class="form-inline form-group form-group-sm">
+                <label for="vote-id"><span class="http-method">POST</span> {{ url('_api_image_vote') }}
+                </label>
+                <input id="vote-id" class="form-control" placeholder=":image id" style="width: 7em">
+                <input id="vote-value" class="form-control" placeholder=":vote value" style="width: 7em">
+                <a class="btn btn-sm btn-success pull-xs-left pull-md-right pull-lg-right" id="post-vote">Request</a>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <h3>Response goes here:</h3>
+        <div class="col-lg-12">
+            <div class="highlight">
+                <pre class="geo pre-scrollable" id="response">No Response Yet</pre>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+        $("#get-image").click(function(){
+            var id = +$("#image-id").val();
+            if(typeof id !== 'undefined'){
+                id = '/'+ id;
+            };
+            var response;
+            $.ajax("{{url('_api_image')}}" + id, 
+                {
+                    method: "GET",
+                    async: false,
+                    contentType: 'application/json',
+                    success: function(result){
+                        response = JSON.stringify(result, null, '\t');
+                    },
+                    error: function(result){
+                        response = JSON.stringify(result.responseJSON, null, '\t');
+                    }
+                }
+                );
+            $("#response").fadeOut('fast', function(){
+                $("#response").text(response);
+                $("#response").fadeIn('fast');
+            });
+        });
+        $("#get-gallery").click(function(){
+            var page   = $("#gallery-page").val();
+            console.log(page);
+            var sortBy = $("#gallery-sortBy").val();
+            console.log(sortBy);
+            var order  = $("#gallery-order").val();
+            console.log(order);
+            var url    = "{{url('_api_gallery')}}";
+
+            if (page !== '' || sortBy !== '' || order !== ''){
+                url+="?";
+            }
+            if (page !== '') {
+                url+="page=" + page + "&";
+            }
+            if (sortBy !== '') {
+                url+="sortBy=" + sortBy + "&";
+            }
+            if (order !== '') {
+                url+="order=" + order;
+            };
+            $.ajax(url,
+                {
+                    method: "GET",
+                    async: false,
+                    contentType: 'application/json',
+                    success: function(result){
+                        response = JSON.stringify(result, null, '\t');
+                    },
+                    error: function(result){
+                        response = JSON.stringify(result.responseJSON, null, '\t');
+                    }
+                });
+            $("#response").fadeOut('fast', function(){ 
+                            $("#response").text(response);
+                            $("#response").fadeIn('fast');
+                        });
+        });
+        $("#post-vote").click(function(){
+            var voteId = $("#vote-id").val();
+            var voteValue = $("#vote-value").val();
+            $.ajax("{{url('_api_image_vote')}}",
+                {
+                    method: "POST",
+                    async: false,
+                    data: { "id" : voteId, "voteValue" : voteValue },
+                    dataType: "json",
+                    success: function(result){
+                        response = JSON.stringify(result, null, '\t');
+                    },
+                    error: function(result){
+                        response = decodeURI(JSON.stringify(result.responseJSON, null, '\t'));
+                    }
+                });
+            $("#response").fadeOut('fast', function(){ 
+                            $("#response").text(response);
+                            $("#response").fadeIn('fast');
+                        });
+        });
+        
+        });
+    </script>
+{% endblock %}
