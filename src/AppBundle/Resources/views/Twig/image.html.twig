@@ -67,7 +67,7 @@
                         </ul>
                     </div>
                 </div>
-                {% if image.getowner == app.user or app.user.getroles[0] == 'ROLE_ADMIN'%}
+                {% if image.getowner == app.user %}
                     <p><strong>Image owner control panel:</strong></p>
                     {% if form is defined %}
                         {{ form_start(form, { 'style': 'horizontal', 'label_col': 4, 'widget_col': 8, 'col_size': 'sm' }) }}
