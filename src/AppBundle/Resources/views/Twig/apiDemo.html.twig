@@ -75,7 +75,6 @@
             $.ajax("{{url('_api_image')}}" + id, 
                 {
                     method: "GET",
-                    async: false,
                     contentType: 'application/json',
                     success: function(result){
                         response = JSON.stringify(result, null, '\t');
@@ -92,11 +91,8 @@
         });
         $("#get-gallery").click(function(){
             var page   = $("#gallery-page").val();
-            console.log(page);
             var sortBy = $("#gallery-sortBy").val();
-            console.log(sortBy);
             var order  = $("#gallery-order").val();
-            console.log(order);
             var url    = "{{url('_api_gallery')}}";
 
             if (page !== '' || sortBy !== '' || order !== ''){
@@ -114,7 +110,6 @@
             $.ajax(url,
                 {
                     method: "GET",
-                    async: false,
                     contentType: 'application/json',
                     success: function(result){
                         response = JSON.stringify(result, null, '\t');
@@ -134,7 +129,6 @@
             $.ajax("{{url('_api_image_vote')}}",
                 {
                     method: "POST",
-                    async: false,
                     data: { "id" : voteId, "voteValue" : voteValue },
                     dataType: "json",
                     success: function(result){
