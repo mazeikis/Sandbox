@@ -78,16 +78,20 @@
                     contentType: 'application/json',
                     success: function(result){
                         response = JSON.stringify(result, null, '\t');
+                        $("#response").fadeOut('fast', function(){ 
+                            $("#response").text(response);
+                            $("#response").fadeIn('fast');
+                        });
                     },
                     error: function(result){
                         response = JSON.stringify(result.responseJSON, null, '\t');
+                        $("#response").fadeOut('fast', function(){ 
+                            $("#response").text(response);
+                            $("#response").fadeIn('fast');
+                        });
                     }
                 }
                 );
-            $("#response").fadeOut('fast', function(){
-                $("#response").text(response);
-                $("#response").fadeIn('fast');
-            });
         });
         $("#get-gallery").click(function(){
             var page   = $("#gallery-page").val();
@@ -113,15 +117,19 @@
                     contentType: 'application/json',
                     success: function(result){
                         response = JSON.stringify(result, null, '\t');
-                    },
-                    error: function(result){
-                        response = JSON.stringify(result.responseJSON, null, '\t');
-                    }
-                });
-            $("#response").fadeOut('fast', function(){ 
+                        $("#response").fadeOut('fast', function(){ 
                             $("#response").text(response);
                             $("#response").fadeIn('fast');
                         });
+                    },
+                    error: function(result){
+                        response = JSON.stringify(result.responseJSON, null, '\t');
+                        $("#response").fadeOut('fast', function(){ 
+                            $("#response").text(response);
+                            $("#response").fadeIn('fast');
+                        });
+                    }
+                });
         });
         $("#post-vote").click(function(){
             var voteId = $("#vote-id").val();
@@ -133,17 +141,20 @@
                     dataType: "json",
                     success: function(result){
                         response = JSON.stringify(result, null, '\t');
-                    },
-                    error: function(result){
-                        response = decodeURI(JSON.stringify(result.responseJSON, null, '\t'));
-                    }
-                });
-            $("#response").fadeOut('fast', function(){ 
+                        $("#response").fadeOut('fast', function(){ 
                             $("#response").text(response);
                             $("#response").fadeIn('fast');
                         });
-        });
-        
+                    },
+                    error: function(result){
+                        response = decodeURI(JSON.stringify(result.responseJSON, null, '\t'));
+                        $("#response").fadeOut('fast', function(){ 
+                            $("#response").text(response);
+                            $("#response").fadeIn('fast');
+                        });
+                    }
+                });
+            });        
         });
     </script>
 {% endblock %}
