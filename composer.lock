@@ -1047,16 +1047,16 @@
         },
         {
             "name": "liip/imagine-bundle",
-            "version": "1.5.0",
+            "version": "1.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/liip/LiipImagineBundle.git",
-                "reference": "708785a70160280b10fb48533e49c084b2fe6da5"
+                "reference": "3be0322e0007b54dbffd5a96faf1c11f6f91cf46"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/liip/LiipImagineBundle/zipball/708785a70160280b10fb48533e49c084b2fe6da5",
-                "reference": "708785a70160280b10fb48533e49c084b2fe6da5",
+                "url": "https://api.github.com/repos/liip/LiipImagineBundle/zipball/3be0322e0007b54dbffd5a96faf1c11f6f91cf46",
+                "reference": "3be0322e0007b54dbffd5a96faf1c11f6f91cf46",
                 "shasum": ""
             },
             "require": {
@@ -1117,7 +1117,7 @@
                 "image",
                 "imagine"
             ],
-            "time": "2016-02-12 10:32:15"
+            "time": "2016-02-16 19:35:14"
         },
         {
             "name": "monolog/monolog",
@@ -3067,16 +3067,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "5.2.5",
+            "version": "5.2.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "db79855b229d4bbcdc055ad74c5dc20ad3f5c5fe"
+                "reference": "98f5f048c0c20b823a897eca14f0b57ca47d8066"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/db79855b229d4bbcdc055ad74c5dc20ad3f5c5fe",
-                "reference": "db79855b229d4bbcdc055ad74c5dc20ad3f5c5fe",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/98f5f048c0c20b823a897eca14f0b57ca47d8066",
+                "reference": "98f5f048c0c20b823a897eca14f0b57ca47d8066",
                 "shasum": ""
             },
             "require": {
@@ -3137,7 +3137,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2016-02-13 06:58:29"
+            "time": "2016-02-16 17:42:12"
         },
         {
             "name": "phpunit/phpunit-mock-objects",

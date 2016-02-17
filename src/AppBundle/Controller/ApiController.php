@@ -29,11 +29,7 @@ class ApiController extends Controller
     {
         $q = $request->query->get('q');
 
-        $currentPage = $request->query->get('page', 1);
-        if(!is_int($currentPage) || $currentPage < 1) {
-            $data = array('error' => "Invalid request parameter 'page'.");
-            return new JsonResponse($data, Response::HTTP_BAD_REQUEST);
-        }
+        $currentPage = max( 1, $request->query->getInt('page'));
  
         $sortBy    = $request->query->get('sortBy', 'created');
         $whiteList = array('created', 'rating', 'title');
@@ -54,8 +50,15 @@ class ApiController extends Controller
  
         $adapter    = new DoctrineORMAdapter($query);
         $pagerfanta = new Pagerfanta($adapter);
-        $pagerfanta->setMaxPerPage(self::MAX_PER_PAGE)->setCurrentPage($currentPage);
+        
 
+        if($currentPage > $pagerfanta->getNbPages()) {
+            $data = array('error' => "Page $currentPage not found.");
+            return new JsonResponse($data, Response::HTTP_NOT_FOUND);
+        }
+        
+        $pagerfanta->setMaxPerPage(self::MAX_PER_PAGE)->setCurrentPage($currentPage);
+        
 		$result 	  = $pagerfanta->getCurrentPageResults();
         $cacheManager = $this->container->get('liip_imagine.cache.manager');
         $gallery      = array();
