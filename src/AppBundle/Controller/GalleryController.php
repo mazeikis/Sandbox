@@ -232,7 +232,7 @@ class GalleryController extends Controller
         $fileExtension    = $data['file']->getClientOriginalExtension();
         $fileSize         = $data['file']->getSize();
             
-        $image->setPath("images/".$newFileName.".".$fileExtension)
+        $image->setPath("/images/".$newFileName.".".$fileExtension)
               ->setSize($fileSize)
               ->setResolution($imageResolution)
               ->setTitle($imageTitle)

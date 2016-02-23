@@ -59,23 +59,26 @@ class ApiController extends Controller
         
         $pagerfanta->setMaxPerPage(self::MAX_PER_PAGE)->setCurrentPage($currentPage);
         
-		$result 	  = $pagerfanta->getCurrentPageResults();
+        $result       = $pagerfanta->getCurrentPageResults();
         $cacheManager = $this->container->get('liip_imagine.cache.manager');
         $gallery      = array();
 
         foreach($result as $image){
         	$gallery[] = array(
-        	'thumbLink'        => $cacheManager->getBrowserPath($image[0]->getPath(), 'thumb'),
-        	'imageTitle'       => $image[0]->getTitle(),
-        	'imageRating'      => $image['votes_sum']
+        	'thumbLink'   => $cacheManager->getBrowserPath($image[0]->getPath(), 'thumb'),
+        	'imageTitle'  => $image[0]->getTitle(),
+        	'imageRating' => $image['votes_sum']
         	);
         }
 
-		$url  = $this->get('router')->generate('_api_gallery', array(), true);
-        $data = array( 'currentPage' => $currentPage, 'sortedBy' => $sortBy, 'order' => $order, 'gallery' => $gallery);
+        $data = array(
+            'currentPage' => $currentPage, 
+            'sortedBy' => $sortBy, 
+            'order' => $order, 
+            'gallery' => $gallery
+            );
 
         $response = new JsonResponse($data, Response::HTTP_OK);
-        $response->headers->set('Location', $url);
 
         return $response;
 

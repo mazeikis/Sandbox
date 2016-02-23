@@ -28,7 +28,7 @@ Class ApiControllerTest extends FixturesAwareWebTestCase
         $parameters = array('page' => -1);
         $client->request($method, $uri, $parameters);
         $response = $client->getResponse();
-        $this->assertEquals(400, $response->getStatusCode());
+        $this->assertEquals(200, $response->getStatusCode());
         $this->assertTrue($client->getResponse()->headers->contains(
         'Content-Type',
         'application/json'
@@ -37,7 +37,7 @@ Class ApiControllerTest extends FixturesAwareWebTestCase
         $parameters = array('page' => 'xoxo');
         $client->request($method, $uri, $parameters);
         $response = $client->getResponse();
-        $this->assertEquals(400, $response->getStatusCode());
+        $this->assertEquals(200, $response->getStatusCode());
         $this->assertTrue($client->getResponse()->headers->contains(
         'Content-Type',
         'application/json'
