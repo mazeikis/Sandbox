@@ -65,6 +65,7 @@ class ApiController extends Controller
 
         foreach($result as $image){
         	$gallery[] = array(
+            'id'          => $image[0]->getId(),
         	'thumbLink'   => $cacheManager->getBrowserPath($image[0]->getPath(), 'thumb'),
         	'imageTitle'  => $image[0]->getTitle(),
         	'imageRating' => $image['votes_sum']
