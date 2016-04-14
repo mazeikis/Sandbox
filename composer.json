@@ -4,7 +4,8 @@
     "type": "project",
     "description": "The \"Symfony Standard Edition\" distribution",
     "autoload": {
-        "psr-0": { "AppBundle\\": "src/", "SymfonyStandard": "app/" }
+        "psr-0": { "AppBundle\\": "src/", "SymfonyStandard": "app/", "Tests\\": "tests/" },
+        "files": ["app/AppKernel.php"]
     },
     "require": {
         "php": ">=5.3.3",
@@ -50,12 +51,14 @@
         ]
     },
     "config": {
-        "bin-dir": "bin",
         "components-dir": "web/components"
     },
     "extra": {
         "symfony-app-dir": "app",
         "symfony-web-dir": "web",
+        "symfony-var-dir": "var",
+        "symfony-bin-dir": "bin",
+        "symfony-tests-dir": "tests",
         "symfony-assets-install": "relative",
         "incenteev-parameters": {
             "file": "app/config/parameters.yml"

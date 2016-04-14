@@ -1,8 +1,8 @@
 <?php
 
-namespace AppBundle\Tests\Controller;
+namespace Tests\AppBundle\Controller;
 
-use AppBundle\Tests\FixturesAwareWebTestCase;
+use Tests\AppBundle\FixturesAwareWebTestCase;
 
 Class GalleryControllerTest extends FixturesAwareWebTestCase
 {

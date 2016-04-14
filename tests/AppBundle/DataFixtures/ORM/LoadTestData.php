@@ -1,12 +1,13 @@
 <?php
 
-namespace AppBundle\DataFixtures\ORM;
+namespace Tests\AppBundle\DataFixtures\ORM;
 
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use AppBundle\Entity\Image;
 use AppBundle\Entity\User;
 
-class LoadUserData implements FixtureInterface
+class LoadTestData implements FixtureInterface
 {
     public function load(ObjectManager $manager)
     {
@@ -18,6 +19,17 @@ class LoadUserData implements FixtureInterface
         $user->setEmail('jon.doe@test.com');
 
         $manager->persist($user);
+
+        $image = new Image();
+        $image->setPath('/test/path/to/image/');
+        $image->setSize(12345);
+        $image->setTitle('Test Image Title 1');
+        $image->setDescription('Test Image 1 description');
+        $image->setResolution('test X test');
+        $image->setOwner($user);
+
+
+        $manager->persist($image);
         $manager->flush();
 
     }
