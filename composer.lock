@@ -4,12 +4,12 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "a967b122522668a42a9c2920b9dee4aa",
-    "content-hash": "751916135ccf73dced0bdfd615c4cee4",
+    "hash": "cf08f95e0c33abad8e84a101862a78c3",
+    "content-hash": "ecf757cf6c23d93319f277d479b20fd3",
     "packages": [
         {
             "name": "braincrafted/bootstrap-bundle",
-            "version": "dev-master",
+            "version": "v2.2.0",
             "target-dir": "Braincrafted/Bundle/BootstrapBundle",
             "source": {
                 "type": "git",
@@ -2521,9 +2521,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "braincrafted/bootstrap-bundle": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
