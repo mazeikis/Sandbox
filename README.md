@@ -1,68 +1,28 @@
-Symfony Standard Edition
-========================
+<h3>This is repository for image gallery application built with Symfony Framework.</h3>
 
-Welcome to the Symfony Standard Edition - a fully-functional Symfony
-application that you can use as the skeleton for your new applications.
+Originally built on Symfony 2 with a recent update to Symfony 3.
+User information and encrypted passwords, image details ant votes are stored in SQL database using Doctrine as ORM. Login and encryption features are provided by Symfony 2 built-in tools.
+Passwords are encrypted automaticly with custom Doctrine Event listeners.
+Front end built with Bootstrap v3 (and jQuery as a part of it) and BraincraftedBootstrapBundle, using free templates.
+Thanks to Bootstrap v3 mobile first approach, website works at mobile device resolutions just as well as at desktop ones.
 
-For details on how to download and get started with Symfony, see the
-[Installation][1] chapter of the Symfony Documentation.
+If for some reason one would like to try and install this website, here's the short <strong>installation guide</strong>:
+<ol>
+<li> Clone this repository in a destination directory.</li>
+<li> Install composer and run <code>composer install</code> in the root directory of the cloned repository.</li>
+<li> Edit app/config.yml and app/parameters.yml to Your requirements, make sure Your SQL credentials are setup and server is running.</li>
+<li> In the root directory of cloned repository run <code>php app/console doctrine:schema:update --force</code> command to create SQL schema.</li>
+<li> To start Symfony 2 just run <code>php app/console server:run</code> in the root directory of the repository.</li>
+</ol>
 
-What's inside?
---------------
+Links to bundles used:
+<ul>
+<li><a href="https://github.com/whiteoctober/WhiteOctoberPagerfantaBundle">WhiteOctoberPagerfantaBundle</a></li>
+<li><a href="https://github.com/braincrafted/bootstrap-bundle">BraincraftedBootstrapBundle</a></li>
+<li><a href="https://github.com/liip/LiipImagineBundle">LiipImagineBundle</a></li>
+</ul>
 
-The Symfony Standard Edition is configured with the following defaults:
+Also, some badges:<br>
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/d17fdef0-e292-4c1b-b002-9b2eebfb1ebe/big.png)](https://insight.sensiolabs.com/projects/d17fdef0-e292-4c1b-b002-9b2eebfb1ebe)
 
-  * An AppBundle you can use to start coding;
-
-  * Twig as the only configured template engine;
-
-  * Doctrine ORM/DBAL;
-
-  * Swiftmailer;
-
-  * Annotations enabled for everything.
-
-It comes pre-configured with the following bundles:
-
-  * **FrameworkBundle** - The core Symfony framework bundle
-
-  * [**SensioFrameworkExtraBundle**][6] - Adds several enhancements, including
-    template and routing annotation capability
-
-  * [**DoctrineBundle**][7] - Adds support for the Doctrine ORM
-
-  * [**TwigBundle**][8] - Adds support for the Twig templating engine
-
-  * [**SecurityBundle**][9] - Adds security by integrating Symfony's security
-    component
-
-  * [**SwiftmailerBundle**][10] - Adds support for Swiftmailer, a library for
-    sending emails
-
-  * [**MonologBundle**][11] - Adds support for Monolog, a logging library
-
-  * **WebProfilerBundle** (in dev/test env) - Adds profiling functionality and
-    the web debug toolbar
-
-  * **SensioDistributionBundle** (in dev/test env) - Adds functionality for
-    configuring and working with Symfony distributions
-
-  * [**SensioGeneratorBundle**][13] (in dev/test env) - Adds code generation
-    capabilities
-
-  * **DebugBundle** (in dev/test env) - Adds Debug and VarDumper component
-    integration
-
-All libraries and bundles included in the Symfony Standard Edition are
-released under the MIT or BSD license.
-
-Enjoy!
-
-[1]:  https://symfony.com/doc/3.0/book/installation.html
-[6]:  https://symfony.com/doc/current/bundles/SensioFrameworkExtraBundle/index.html
-[7]:  https://symfony.com/doc/3.0/book/doctrine.html
-[8]:  https://symfony.com/doc/3.0/book/templating.html
-[9]:  https://symfony.com/doc/3.0/book/security.html
-[10]: https://symfony.com/doc/3.0/cookbook/email.html
-[11]: https://symfony.com/doc/3.0/cookbook/logging/monolog.html
-[13]: https://symfony.com/doc/3.0/bundles/SensioGeneratorBundle/index.html
+<a href="https://codeclimate.com/github/mazeikis/Sandbox"><img src="https://codeclimate.com/github/mazeikis/Sandbox/badges/gpa.svg" /></a>
