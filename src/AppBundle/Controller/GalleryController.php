@@ -95,7 +95,7 @@ class GalleryController extends Controller
         $user  = $this->getUser();
         $flash = $this->get('braincrafted_bootstrap.flash');
 
-        $form  = $this->createForm(new UploadFormType());
+        $form  = $this->createForm(UploadFormType::class);
         $form->handleRequest($request);
 
         if ($this->isGranted('create', $image) === false) {
@@ -105,7 +105,7 @@ class GalleryController extends Controller
 
         if ($form->isValid() === true) {
             $data = $form->getData();
-            $this->handleUploadedFile($data, $image);
+            $this->handleUploadedFile($data, $image, $request);
             $image->setOwner($user);
 
             $entityManager = $this->getDoctrine()->getManager();
@@ -161,7 +161,7 @@ class GalleryController extends Controller
     }
  
  
-    public function imageDeleteAction($id)
+    public function imageDeleteAction(Request $request, $id)
     {
         $entityManager = $this->getDoctrine()->getManager();
         $image         = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
@@ -176,7 +176,7 @@ class GalleryController extends Controller
             $flash->error('Sadly, I could not find the image with id "' . $id . '"');
         } else {
             $fileSystem = new Filesystem();
-            $imageDir   = $this->getImageDir();
+            $imageDir   = $this->get('kernel')->getRootDir().'/../web/';
             $fileSystem->remove($imageDir.$image->getPath());
 
             $cacheManager = $this->container->get('liip_imagine.cache.manager');
@@ -222,7 +222,7 @@ class GalleryController extends Controller
     }
  
 
-    private function handleUploadedFile($data, Image $image)
+    private function handleUploadedFile($data, Image $image, Request $request)
     {
         $imageSizeDetails = getimagesize($data['file']->getPathName());
         $imageResolution  = strval($imageSizeDetails[0]).' x '.strval($imageSizeDetails[1]);
@@ -238,14 +238,8 @@ class GalleryController extends Controller
               ->setTitle($imageTitle)
               ->setDescription($imageDescription);
 
-        $imageDir = $this->getImageDir();
+        $imageDir = $this->get('kernel')->getRootDir().'/../web/';
         $data['file']->move($imageDir.'images/', $image->getPath());
     }
 
-
-    private function getImageDir()
-    {
-        return $this->get('kernel')->getRootDir().'/../web/'.$this->getRequest()->getBasePath();
-    }
- 
 }

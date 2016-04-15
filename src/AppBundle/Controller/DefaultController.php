@@ -25,8 +25,7 @@ class DefaultController extends Controller
 
     public function aboutAction(Request $request)
     {
-        $formType = new ContactFormType();
-        $form     = $this->createForm($formType);
+        $form     = $this->createForm(ContactFormType::class);
 
         $form->handleRequest($request);
 

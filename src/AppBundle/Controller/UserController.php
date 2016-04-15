@@ -10,6 +10,8 @@ use AppBundle\Form\Type\RegistrationFormType;
 use AppBundle\Form\Type\VerificationFormType;
 use AppBundle\Form\Type\PasswordChangeFormType;
 use AppBundle\Form\Type\EmailChangeFormType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 
 class UserController extends Controller
@@ -26,8 +28,8 @@ class UserController extends Controller
                                 ->findBy(array('owner' => $user), array('created' => 'DESC'), self::ITEMS_PER_PAGE);
 
 
-        $passwordForm = $this->createForm(new PasswordChangeFormType());
-        $emailForm    = $this->createForm(new EmailChangeFormType());
+        $passwordForm = $this->createForm(PasswordChangeFormType::class);
+        $emailForm    = $this->createForm(EmailChangeFormType::class);
 
         if($user === $this->getUser()) {
             $emailForm->handleRequest($request);
@@ -54,7 +56,7 @@ class UserController extends Controller
     public function registrationAction(Request $request)
     {
         $user = new User();
-        $form = $this->createForm(new RegistrationFormType(), $user);
+        $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isValid() === true) {
@@ -122,8 +124,8 @@ class UserController extends Controller
     public function passwordResetRequestAction(Request $request)
     {
         $form = $this->createFormBuilder()
-                     ->add('username', 'text', array('label' => 'Your username: ', 'required' => true))
-                     ->add('reset password', 'submit')
+                     ->add('username', TextType::class, array('label' => 'Your username: ', 'required' => true))
+                     ->add('reset password', SubmitType::class)
                      ->getForm();
 
         $form->handleRequest($request);
