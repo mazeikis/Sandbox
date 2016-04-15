@@ -12,6 +12,9 @@ use AppBundle\Entity\Image;
 use AppBundle\Entity\Vote;
 use AppBundle\Form\Type\UploadFormType;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
  
 class GalleryController extends Controller
 {
@@ -135,11 +138,11 @@ class GalleryController extends Controller
         }
  
         $form = $this->createFormBuilder()
-                     ->add('title', 'text', array(
+                     ->add('title', TextType::class, array(
                                                    'data' => $image->getTitle(),
                                                    'constraints' => new Length(array('min' => 3), new NotBlank)))
-                     ->add('description', 'textarea', array( 'data' => $image->getDescription(), 'required' => true))
-                     ->add('Save', 'submit')
+                     ->add('description', TextareaType::class, array( 'data' => $image->getDescription(), 'required' => true))
+                     ->add('Save', SubmitType::class)
                      ->getForm();
  
         $form->handleRequest($request);
