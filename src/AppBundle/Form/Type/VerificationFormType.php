@@ -6,6 +6,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class VerificationFormType extends AbstractType
 {
@@ -22,14 +25,14 @@ class VerificationFormType extends AbstractType
     {
         $builder->add(
             'plainPassword',
-            'repeated',
+            RepeatedType::class,
             array(
              'first_name'  => 'password',
              'second_name' => 'confirm',
-             'type'        => 'password',
+             'type'        => PasswordType::class,
              'constraints' => new Length(array('min' => 6, 'max' => 4096), new NotBlank),
             )
-        )->add('save', 'submit', array('label' => 'Submit'));
+        )->add('save', SubmitType::class, array('label' => 'Submit'));
 
     }
 

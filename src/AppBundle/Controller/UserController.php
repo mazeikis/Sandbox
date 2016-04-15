@@ -176,7 +176,7 @@ class UserController extends Controller
             return $this->redirectToRoute('_home');
         }
 
-        $form = $this->createForm(new VerificationFormType());
+        $form = $this->createForm(VerificationFormType::class);
         $form->handleRequest($request);
 
         if ($form->isValid() === true) {
