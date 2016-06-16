@@ -9,22 +9,13 @@ services:
         public:     false
         tags:
            - { name: security.voter }
-    doctrine.image_listener:
-        class: AppBundle\Doctrine\ImageListener
-        arguments: []
-        tags:
-            - { name: doctrine.event_listener, event: prePersist }
-    doctrine.user_listener:
-        class: AppBundle\Doctrine\UserListener
-        arguments: ["@security.password_encoder", "@security.token_storage"]
-        tags:
-            - { name: doctrine.event_listener, event: prePersist }
-            - { name: doctrine.event_listener, event: preUpdate }
-            - { name: doctrine.event_listener, event: postUpdate }
-            - { name: doctrine.event_listener, event: postPersist }
     sortable.twig.event_extension:
-        class: AppBundle\Twig\SortableExtension
-        public: false
+        class:      AppBundle\Twig\SortableExtension
+        public:     false
         arguments: [ "@router", "@request_stack", "@twig" ]
         tags:
-          - { name: twig.extension }
+           - { name: twig.extension }
+    login_authenticator:
+        class: AppBundle\Security\LoginAuthenticator
+        arguments: [ "@doctrine.orm.entity_manager", "@router", "@security.password_encoder" ] 
+        autowire: true

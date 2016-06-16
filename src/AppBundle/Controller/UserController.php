@@ -59,9 +59,15 @@ class UserController extends Controller
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 
-        if ($form->isValid() === true) {
+        if ($form->isSubmitted() && $form->isValid() === true) {
             $confirmationTokenManager = new ConfirmationTokenGenerator();
             $user->setConfirmationToken($confirmationTokenManager->generateConfirmationToken());
+
+            $encoder = $this->get('security.password_encoder');
+            $password = $encoder->encodePassword($user, $user->getPlainPassword());
+            $user->setPlainPassword(null);
+            $user->setPassword($password);
+
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($user);
@@ -183,6 +189,7 @@ class UserController extends Controller
             $data = $form->getData();
             $user->setPlainPassword($data['plainPassword']);
             $user->setConfirmationToken(null);
+            $user->setUpdated(new \Datetime());
             $entityManager->flush();
             $flash->success('Password for '.$user->getUsername().' was changed successfully!');
             return $this->redirectToRoute('_user', array('userId' => $user->getId()));
@@ -208,6 +215,7 @@ class UserController extends Controller
         if($emailForm->isValid() === true){
             $data = $emailForm->getData();
             $user->setEmail($data['email']);
+            $user->setUpdated(new \Datetime());
             $flash->success('User '.$user->getUsername().' email was changed successfully!');
             $entityManager->flush();
             return true;
@@ -222,7 +230,10 @@ class UserController extends Controller
 
         if($passwordForm->isValid() === true) {
             $data = $passwordForm->getData();
-            $user->setPlainPassword($data['plainPassword']);
+            $encoder = $this->get('security.password_encoder');
+            $password = $encoder->encodePassword($user, $data['plainPassword']);
+            $user->setPassword($password);
+            $user->setUpdated(new \Datetime());
             $flash->success('User '.$user->getUsername().' password was changed successfully!');
             $entityManager->flush();
             return true;

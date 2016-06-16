@@ -18,23 +18,18 @@ security:
 
     # the main part of the security, where you can set up firewalls
     # for specific sections of your app
-    # the main part of the security, where you can set up firewalls
-    # for specific sections of your app
     firewalls:
-        default:
+        main:
             anonymous: ~
-            form_login:
-                login_path: /login
-                check_path: /login_check
+            guard:
+                authenticators:
+                    - login_authenticator
             logout: { path: /logout, target: / }
         secured_area:
             pattern: ^/
             anonymous: true
             provider: user_db
             security: true
-            form_login:
-                check_path: security_login_check
-                login_path: security_login_form
             logout:
                 path: /logout
                 target: /

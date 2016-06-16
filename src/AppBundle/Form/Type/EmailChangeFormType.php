@@ -24,7 +24,7 @@ class EmailChangeFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('email', EmailType::class, array('label' => 'Your email address: ', 'required' => true, 'constraints' => new NotBlank))
-                ->add('save', SubmitType::class, array('label' => 'Register'))
+                ->add('save', SubmitType::class, array('label' => 'Save'))
                 ->add('Cancel', ButtonType::class, array('attr' => array('data-dismiss' => 'modal')));
 
 
