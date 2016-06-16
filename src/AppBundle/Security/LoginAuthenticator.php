@@ -4,7 +4,6 @@ namespace AppBundle\Security;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoder;
@@ -13,6 +12,7 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Security;
+use Braincrafted\Bundle\BootstrapBundle\Session\FlashMessage;
 use Doctrine\ORM\EntityManager;
 
 
@@ -23,12 +23,14 @@ class LoginAuthenticator extends AbstractGuardAuthenticator
     private $em;
     private $router;
     private $encoder;
+    private $flash;
 
-    public function __construct(EntityManager $em, RouterInterface $router, UserPasswordEncoder $encoder)
+    public function __construct(EntityManager $em, RouterInterface $router, UserPasswordEncoder $encoder, FlashMessage $flash)
     {
         $this->em      = $em;
         $this->router  = $router;
         $this->encoder = $encoder;
+        $this->flash   = $flash;
     }
 
     public function getCredentials(Request $request)
@@ -63,14 +65,14 @@ class LoginAuthenticator extends AbstractGuardAuthenticator
         if(!$isValid){
             return false;
         }
-        
+
         return true;
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
         $request->getSession()->set(Security::AUTHENTICATION_ERROR, $exception);
-
+        $this->flash->error('Password does not match the username. Wrong password entered or the user does not exist. Please try again or use password reset.');
         $url = $this->router->generate('_home');
         return new RedirectResponse($url);
     }

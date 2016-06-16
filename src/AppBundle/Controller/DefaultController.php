@@ -63,18 +63,5 @@ class DefaultController extends Controller
         return $this->render('AppBundle:Twig:apiDemo.html.twig', array('title' => "REST'ful API Demo"));
     }
 
-    public function loginAction()
-    {
-        $error = $this->get('security.authentication_utils')
-            ->getLastAuthenticationError();
-        return $this->redirectToRoute('_about');
-
-    }
-
-
-    public function logoutAction()
-    {
-    }
-
 
 }

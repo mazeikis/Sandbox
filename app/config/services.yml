@@ -17,5 +17,5 @@ services:
            - { name: twig.extension }
     login_authenticator:
         class: AppBundle\Security\LoginAuthenticator
-        arguments: [ "@doctrine.orm.entity_manager", "@router", "@security.password_encoder" ] 
+        arguments: [ "@doctrine.orm.entity_manager", "@router", "@security.password_encoder", "@braincrafted_bootstrap.flash" ] 
         autowire: true

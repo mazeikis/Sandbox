@@ -40,6 +40,9 @@ _registration:
     path:    /registration/
     defaults: { _controller: AppBundle:User:registration }
     methods:  [GET, POST]
+_send_verification:
+    path:   /send/
+    defaults: { _controller: AppBundle:User:sendVerification }
 _email_verification:
     path:    /verify/{confirmationToken}
     defaults: { _controller: AppBundle:User:emailVerification }
@@ -82,7 +85,6 @@ _api_image_delete:
     methods: [DELETE]
 login:
     path:    /login
-    defaults: { _controller: AppBundle:Default:login }
     methods:  [GET, POST]
 logout:
     path:   /logout

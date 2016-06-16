@@ -25,7 +25,7 @@ class GalleryController extends Controller
     {
         $q           = $request->query->get('q');
         $currentPage = max( 1, $request->query->get('page'));
- 
+
         $sortBy = $request->query->get('sortBy');
         $whiteList = array('created', 'rating', 'title');
         if (in_array($sortBy, $whiteList) === false) {
@@ -97,7 +97,6 @@ class GalleryController extends Controller
         $image = new Image();
         $user  = $this->getUser();
         $flash = $this->get('braincrafted_bootstrap.flash');
-
         $form  = $this->createForm(UploadFormType::class);
         $form->handleRequest($request);
 
@@ -147,10 +146,11 @@ class GalleryController extends Controller
  
         $form->handleRequest($request);
  
-        if ($form->isValid() === true) {
+        if ($form->isValid() === true && $form->isSubmitted() === true) {
             $data = $form->getData();
-            $image->setTitle($data['title'])->setDescription($data['description']);
-            $image->setUpdated(new \DateTime());
+            $image->setTitle($data['title'])
+                  ->setDescription($data['description'])
+                  ->setUpdated(new \DateTime());;
             $entityManager->flush();
             $flash->success('Image details were edited and changes saved.');
             return $this->redirectToRoute('_image', array('id' => $id));

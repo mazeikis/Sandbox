@@ -32,6 +32,11 @@ class UserController extends Controller
         $emailForm    = $this->createForm(EmailChangeFormType::class);
 
         if($user === $this->getUser()) {
+            if($user->getEnabled() === false){
+                $flash = $this->get('braincrafted_bootstrap.flash');
+                $flash->error('This user account has not been verified yet. Please check Your email for verification link or use "Resend Verification Link" button bellow!');
+            }
+
             $emailForm->handleRequest($request);
             $passwordForm->handleRequest($request);
             
@@ -73,18 +78,7 @@ class UserController extends Controller
             $entityManager->persist($user);
             $entityManager->flush();
 
-            $message = \Swift_Message::newInstance()
-            ->setContentType("text/html")
-            ->setSubject('codeSandbox Verification Email')
-            ->setFrom('robot@codesandbox.info')
-            ->setTo($user->getEmail())
-            ->setBody(
-                $this->renderView(
-                    'AppBundle:Email:registration.txt.twig',
-                    array('link' => $user->getConfirmationToken())
-                )
-            );
-            $this->get('mailer')->send($message);
+            #placeholder for message
             
             $flash = $this->get('braincrafted_bootstrap.flash');
             $flash->success('Registration submitted, please check Your email and finish registration progress.');
@@ -246,8 +240,30 @@ class UserController extends Controller
         }
 
         return false;
+    }
 
-
+    public function sendVerificationAction()
+    {
+        $user = $this->getUser();
+        $this->sendVerificationEmail($user);
+        $flash = $this->get('braincrafted_bootstrap.flash');
+        $flash->success('Email containing Verification Link has been successfully sent to' . $user->getEmail());
+        return $this->redirectToRoute('_home');   
+    }
+    private function sendVerificationEmail($user)
+    {
+        $message = \Swift_Message::newInstance()
+            ->setContentType("text/html")
+            ->setSubject('codeSandbox Verification Email')
+            ->setFrom('robot@codesandbox.info')
+            ->setTo($user->getEmail())
+            ->setBody(
+                $this->renderView(
+                    'AppBundle:Email:registration.txt.twig',
+                    array('link' => $user->getConfirmationToken())
+                )
+            );
+            $this->get('mailer')->send($message);
     }
 
 }
