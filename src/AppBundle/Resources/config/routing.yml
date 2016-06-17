@@ -43,6 +43,7 @@ _registration:
 _send_verification:
     path:   /send/
     defaults: { _controller: AppBundle:User:sendVerification }
+    methods: [GET]
 _email_verification:
     path:    /verify/{confirmationToken}
     defaults: { _controller: AppBundle:User:emailVerification }
