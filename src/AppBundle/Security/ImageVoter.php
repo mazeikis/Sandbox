@@ -34,16 +34,16 @@ class ImageVoter extends Voter
         }
 
         switch($attribute) {
-            case self::CREATE :
+            case self::CREATE:
                 return $user->getEnabled() || in_array('ROLE_ADMIN', $user->getRoles());
 
-            case self::EDIT :
+            case self::EDIT:
                 return $user->getEnabled() && $user == $image->getOwner() || in_array('ROLE_ADMIN', $user->getRoles());
 
-            case self::DELETE :
+            case self::DELETE:
                 return $user->getEnabled() && $user == $image->getOwner() || in_array('ROLE_ADMIN', $user->getRoles());
 
-            case self::VOTE : 
+            case self::VOTE: 
                 return $user->getEnabled() && $image->getOwner() !== $user;
 
             default:

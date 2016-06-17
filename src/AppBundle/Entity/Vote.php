@@ -68,7 +68,7 @@ class Vote
      * @param \AppBundle\Entity\User $user
      * @return Vote
      */
-    public function setUser(\AppBundle\Entity\User $user = null)
+    public function setUser(\AppBundle\Entity\User $user)
     {
         $this->user = $user;
 
@@ -91,7 +91,7 @@ class Vote
      * @param \AppBundle\Entity\Image $image
      * @return Vote
      */
-    public function setImage(\AppBundle\Entity\Image $image = null)
+    public function setImage(\AppBundle\Entity\Image $image)
     {
         $this->image = $image;
 

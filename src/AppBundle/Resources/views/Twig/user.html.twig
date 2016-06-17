@@ -26,7 +26,9 @@
                 {% if passwordForm is defined and app.user == user %}
                 <button type="button" name="btn" class="btn btn-info btn-sm" data-toggle="modal" data-target="#changePassword">Change Password</button>
                 <button type="button" name="btn" class="btn btn-info btn-sm" data-toggle="modal" data-target="#changeEmail">Change Email</button>
+                {% if app.user.getEnabled == false %}
                 <a class="btn btn-sm btn-danger" href="{{path('_send_verification')}}">Resend Verification Link</a>
+                {% endif %}
                 <div class="modal fade" id="changeEmail" tabindex="-1" rolde="dialog" aria-labeledby="myModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">

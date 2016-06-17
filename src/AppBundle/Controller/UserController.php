@@ -78,7 +78,7 @@ class UserController extends Controller
             $entityManager->persist($user);
             $entityManager->flush();
 
-            $this->sendVerificationEmail($user, 'AppBundle:Email:registration.txt.twig');
+            $this->sendEmail($user, 'AppBundle:Email:registration.txt.twig');
             
             $flash = $this->get('braincrafted_bootstrap.flash');
             $flash->success('Registration submitted, please check Your email and finish registration progress.');
@@ -96,7 +96,7 @@ class UserController extends Controller
 
     }
 
-    public function emailVerificationAction(Request $request, $confirmationToken)
+    public function emailVerificationAction($confirmationToken)
     {
         $entityManager = $this->getDoctrine()->getManager();
         $flash         = $this->get('braincrafted_bootstrap.flash');
@@ -240,9 +240,11 @@ class UserController extends Controller
     public function resendVerificationAction()
     {
         $user = $this->getUser();
-        $this->sendEmail($user, 'AppBundle:Email:verify.txt.twig');
-        $flash = $this->get('braincrafted_bootstrap.flash');
-        $flash->success('Email containing Verification Link has been successfully sent to' . $user->getEmail());
+        if($user->getEnabled() === false){
+            $this->sendEmail($user, 'AppBundle:Email:verify.txt.twig');
+            $flash = $this->get('braincrafted_bootstrap.flash');
+            $flash->success('Email containing Verification Link has been successfully sent to' . $user->getEmail());
+        }
         return $this->redirectToRoute('_home');   
     }
     private function sendEmail($user, $messageTemplate)

@@ -250,7 +250,7 @@ class Image
      * @param  \AppBundle\Entity\User $owner
      * @return Image
      */
-    public function setOwner(\AppBundle\Entity\User $owner=null)
+    public function setOwner(\AppBundle\Entity\User $owner)
     {
         $this->owner = $owner;
 

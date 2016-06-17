@@ -165,7 +165,7 @@ class GalleryController extends Controller
     }
  
  
-    public function imageDeleteAction(Request $request, $id)
+    public function imageDeleteAction($id)
     {
         $entityManager = $this->getDoctrine()->getManager();
         $image         = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
@@ -226,7 +226,7 @@ class GalleryController extends Controller
     }
  
 
-    private function handleUploadedFile($data, Image $image, Request $request)
+    private function handleUploadedFile($data, Image $image)
     {
         $imageSizeDetails = getimagesize($data['file']->getPathName());
         $imageResolution  = strval($imageSizeDetails[0]).' x '.strval($imageSizeDetails[1]);
@@ -240,7 +240,9 @@ class GalleryController extends Controller
               ->setSize($fileSize)
               ->setResolution($imageResolution)
               ->setTitle($imageTitle)
-              ->setDescription($imageDescription);
+              ->setDescription($imageDescription)
+              ->setUpdated(new \DateTime())
+              ->setCreated(new \DateTime());
 
         $imageDir = $this->get('kernel')->getRootDir().'/../web/';
         $data['file']->move($imageDir.'images/', $image->getPath());

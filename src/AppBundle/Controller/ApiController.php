@@ -19,7 +19,7 @@ class ApiController extends Controller
     const MAX_PER_PAGE = 8;
 
 
-	public function defaultAction(Request $request)
+	public function defaultAction()
 	{
         $data = array('message'=> 'Welcome to CodeSandbox API.');
         return new JsonResponse($data, Response::HTTP_OK);
@@ -110,7 +110,8 @@ class ApiController extends Controller
             $data['hasUserVoted'] = $entityManager->getRepository('AppBundle:Vote')->checkForVote($user, $image);
         } 
 
-        $data = array('imageId' 	 => $image->getId(), 
+        $data = array(
+                      'imageId' 	 => $image->getId(), 
         			  'fullSizeLink' => $request->getUriForPath($image->getPath()),
         			  'title' 		 => $image->getTitle(),
         			  'description'  => $image->getDescription(),
@@ -198,7 +199,7 @@ class ApiController extends Controller
 
     private function getImageDir()
     {
-        return $this->get('kernel')->getRootDir().'/../web/'.$this->getRequest()->getBasePath();
+        return $this->get('kernel')->getRootDir().'/../web';
     }
  
 }
