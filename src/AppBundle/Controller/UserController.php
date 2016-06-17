@@ -64,7 +64,7 @@ class UserController extends Controller
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid() === true) {
+        if ($form->isSubmitted() === true && $form->isValid() === true) {
             $confirmationTokenManager = new ConfirmationTokenGenerator();
             $user->setConfirmationToken($confirmationTokenManager->generateConfirmationToken());
 
@@ -78,7 +78,7 @@ class UserController extends Controller
             $entityManager->persist($user);
             $entityManager->flush();
 
-            #placeholder for message
+            $this->sendVerificationEmail($user, 'AppBundle:Email:registration.txt.twig');
             
             $flash = $this->get('braincrafted_bootstrap.flash');
             $flash->success('Registration submitted, please check Your email and finish registration progress.');
@@ -140,13 +140,7 @@ class UserController extends Controller
                 $user->setConfirmationToken($confirmationTokenManager->generateConfirmationToken());
                 $entityManager->flush();
 
-                $message = \Swift_Message::newInstance()
-                    ->setContentType("text/html")
-                    ->setSubject('codeSandbox Password reset Email')
-                    ->setFrom('robot@codesandbox.info')
-                    ->setTo($user->getEmail())
-                    ->setBody($this->renderView('AppBundle:Email:reset.txt.twig', array('link' => $user->getConfirmationToken())));
-                $this->get('mailer')->send($message);
+                $this->sendEmail($user, 'AppBundle:Email:reset.txt.twig');
 
                 $flash->success('User '.$user->getUsername().' reset email sent successfuly!');
             } else {
@@ -186,6 +180,7 @@ class UserController extends Controller
             $user->setUpdated(new \Datetime());
             $entityManager->flush();
             $flash->success('Password for '.$user->getUsername().' was changed successfully!');
+
             return $this->redirectToRoute('_user', array('userId' => $user->getId()));
         }
 
@@ -242,24 +237,24 @@ class UserController extends Controller
         return false;
     }
 
-    public function sendVerificationAction()
+    public function resendVerificationAction()
     {
         $user = $this->getUser();
-        $this->sendVerificationEmail($user);
+        $this->sendEmail($user, 'AppBundle:Email:verify.txt.twig');
         $flash = $this->get('braincrafted_bootstrap.flash');
         $flash->success('Email containing Verification Link has been successfully sent to' . $user->getEmail());
         return $this->redirectToRoute('_home');   
     }
-    private function sendVerificationEmail($user)
+    private function sendEmail($user, $messageTemplate)
     {
         $message = \Swift_Message::newInstance()
             ->setContentType("text/html")
-            ->setSubject('codeSandbox Verification Email')
+            ->setSubject('codeSandbox Email Robot')
             ->setFrom('robot@codesandbox.info')
             ->setTo($user->getEmail())
             ->setBody(
                 $this->renderView(
-                    'AppBundle:Email:registration.txt.twig',
+                    $messageTemplate,
                     array('link' => $user->getConfirmationToken())
                 )
             );
