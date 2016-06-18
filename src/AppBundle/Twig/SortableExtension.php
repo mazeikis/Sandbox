@@ -17,8 +17,8 @@ class SortableExtension extends \Twig_Extension
 
   public function getFunctions()
   {
-      return array('sortable' => new \Twig_SimpleFunction('sortable', array($this, 'sortable'), array('is_safe' => array('html'), 'needs_environment' => 'true')),
-                   'isSorted' => new \Twig_SimpleFunction('isSorted', array($this, 'isSorted')));
+      return array(new \Twig_SimpleFunction('sortable', array($this, 'sortable'), array('is_safe' => array('html'), 'needs_environment' => 'true')),
+                   new \Twig_SimpleFunction('isSorted', array($this, 'isSorted')));
   
   }
 

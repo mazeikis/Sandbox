@@ -1,12 +1,11 @@
 $(document).ready(function(){
     $("#get-image").click(function(){
+            var response;
             var id = +$("#image-id").val();
             if(typeof id !== 'undefined'){
                 id = '/'+ id;
-            };
-            var response;
-            console.log(id);
-            $.ajax("{{url('_api_image')}}" + id, 
+            }
+            $.ajax("{{url('_api_image')}}" + id,
                 {
                     method: "GET",
                     async: false,
@@ -15,7 +14,7 @@ $(document).ready(function(){
                         response = JSON.stringify(result, null, '\t');
                     },
                     error: function(result){
-                        response = JSON.stringify(result, null, '\t');;
+                        response = JSON.stringify(result, null, '\t');
                     }
                 }
                 );
@@ -25,6 +24,7 @@ $(document).ready(function(){
             });
         });
     $("#get-gallery").click(function(){
+            var response;
             $.ajax("{{url('_api_gallery')}}",
                 {
                     method: "GET",
@@ -37,12 +37,13 @@ $(document).ready(function(){
                         response = JSON.stringify(result, null, '\t');
                     }
                 });
-            $("#response").fadeOut('fast', function(){ 
+            $("#response").fadeOut('fast', function(){
                             $("#response").text(response);
                             $("#response").fadeIn('fast');
                         });
         });
     $("#post-vote").click(function(){
+            var response;
             var voteId = $("#vote-id").val();
             var voteValue = $("#vote-value").val();
             $.ajax("{{url('_api_image_vote')}}",
@@ -58,7 +59,7 @@ $(document).ready(function(){
                         response = JSON.stringify(result, null, '\t');
                     }
                 });
-            $("#response").fadeOut('fast', function(){ 
+            $("#response").fadeOut('fast', function(){
                             $("#response").text(response);
                             $("#response").fadeIn('fast');
                         });

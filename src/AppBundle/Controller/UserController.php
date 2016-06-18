@@ -129,7 +129,7 @@ class UserController extends Controller
                      ->getForm();
 
         $form->handleRequest($request);
-        if ($form->isValid() === true) {
+        if ($form->isValid() === true && $form->isSubmitted() === true) {
             $entityManager = $this->getDoctrine()->getManager();
             $data          = $form->getData();
             $user          = $entityManager->getRepository('AppBundle:User')->findOneBy(array('username' => $data['username']));

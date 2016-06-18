@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "6276b2c64af613e949e32f004e718556",
+    "hash": "05e9ddabac622def8682626b22327711",
     "content-hash": "ecf757cf6c23d93319f277d479b20fd3",
     "packages": [
         {
@@ -2470,7 +2470,7 @@
         },
         {
             "name": "symfony/phpunit-bridge",
-            "version": "v3.1.0",
+            "version": "v3.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/phpunit-bridge.git",
