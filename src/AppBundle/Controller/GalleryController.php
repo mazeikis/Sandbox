@@ -23,7 +23,7 @@ class GalleryController extends Controller
  
     public function indexAction(Request $request)
     {
-        $q           = $request->query->get('q');
+        $keyword     = $request->query->get('q');
         $currentPage = max( 1, $request->query->get('page'));
 
         $sortBy = $request->query->get('sortBy');
@@ -39,7 +39,7 @@ class GalleryController extends Controller
         }
  
         $repository = $this->getDoctrine()->getManager()->getRepository('AppBundle:Image');
-        $query      = $repository->getImages($sortBy, $order, $q);
+        $query      = $repository->getImages($sortBy, $order, $keyword);
  
         $adapter    = new DoctrineORMAdapter($query);
         $pagerfanta = new Pagerfanta($adapter);
@@ -61,15 +61,15 @@ class GalleryController extends Controller
     }
  
  
-    public function imageAction($id)
+    public function imageAction($imageId)
     {
         $user          = $this->getUser();
         $entityManager = $this->getDoctrine()->getManager();
-        $image         = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
+        $image         = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $imageId));
 
         if ($image === null) {
             $flash = $this->get('braincrafted_bootstrap.flash');
-            $flash->error('Sadly, I could not find the image with id "' . $id . '"');
+            $flash->error('Sadly, I could not find the image with id "' . $imageId . '"');
             return $this->redirectToRoute('_gallery');        
         }
  
@@ -122,16 +122,16 @@ class GalleryController extends Controller
     }
  
  
-    public function imageEditAction(Request $request, $id)
+    public function imageEditAction(Request $request, $imageId)
     {
         $entityManager = $this->getDoctrine()->getManager();
-        $image         = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
+        $image         = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $imageId));
         $flash         = $this->get('braincrafted_bootstrap.flash');
         $user          = $this->getUser();
  
         if ($this->isGranted('edit', $image) === false) {
             $flash->error('Sadly, You were not authorized to edit this image.');
-            return $this->redirectToRoute('_image', array('id' => $id));
+            return $this->redirectToRoute('_image', array('id' => $imageId));
         } else {
             $hasVoted  = $entityManager->getRepository('AppBundle:Vote')->checkForVote($user, $image);
         }
@@ -153,7 +153,7 @@ class GalleryController extends Controller
                   ->setUpdated(new \DateTime());;
             $entityManager->flush();
             $flash->success('Image details were edited and changes saved.');
-            return $this->redirectToRoute('_image', array('id' => $id));
+            return $this->redirectToRoute('_image', array('id' => $imageId));
         }
 
         return $this->render('AppBundle:Twig:image.html.twig', array(
@@ -165,19 +165,19 @@ class GalleryController extends Controller
     }
  
  
-    public function imageDeleteAction($id)
+    public function imageDeleteAction($imageId)
     {
         $entityManager = $this->getDoctrine()->getManager();
-        $image         = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
+        $image         = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $imageId));
         $flash         = $this->get('braincrafted_bootstrap.flash');
  
         if ($this->isGranted('delete', $image) === false) {
             $flash->error('Sadly, You were not authorized to delete this image.');
-            return $this->redirectToRoute('_image', array('id' => $id));
+            return $this->redirectToRoute('_image', array('id' => $imageId));
         }
  
         if ($image === null) {
-            $flash->error('Sadly, I could not find the image with id "' . $id . '"');
+            $flash->error('Sadly, I could not find the image with id "' . $imageId . '"');
         } else {
             $fileSystem = new Filesystem();
             $imageDir   = $this->get('kernel')->getRootDir().'/../web/';
