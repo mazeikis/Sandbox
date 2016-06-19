@@ -50,23 +50,20 @@
                     <p><strong>Image Details <span class="caret"></span></strong></h4>
                 </a>
                 <div class="collapse in" id="detailsCollapse">
-                    <div class="col-xs-6">
-                        <ul class="list-unstyled text-right">
-                            <li>image resolution</li>
-                            <li>file size</li>
-                            <li>file uploaded</li>
-                            <li>file edited</li>
-                        </ul>
+                    <div class="col-xs-12">
+                        <div class="row">
+                            <dl class="dl-horizontal">
+                                <dt>image resolution</dt>
+                                <dd>{{image.getresolution}}<dd>
+                                <dt>file size</dt>
+                                <dd>{{(image.getsize/1024/1024)|number_format(3, '.', ',') ~ ' MB'}}</dd>
+                                <dt>file uploaded</dt>
+                                <dd>{{image.getcreated|date('g:ia / m-j-Y')}}</dd>
+                                <dt>file edited</dt>
+                                <dd>{{image.getupdated|date('g:ia / m-j-Y')}}</dd>
+                            </dl>
+                        </div>
                     </div>
-                    <div class="col-xs-6">
-                        <ul class="list-unstyled text-left">
-                            <li>{{image.getresolution}}</li>
-                            <li>{{(image.getsize/1024/1024)|number_format(3, '.', ',') ~ ' MB'}}</li>
-                            <li>{{image.getcreated|date('g:ia / m-j-Y')}}</li>
-                            <li>{{image.getupdated|date('g:ia / m-j-Y')}}</li>
-                        </ul>
-                    </div>
-                </div>
                 {% if image.getowner == app.user %}
                     <p><strong>Image owner control panel:</strong></p>
                     {% if form is defined %}
