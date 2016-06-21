@@ -38,10 +38,10 @@ class ImageVoter extends Voter
                 return $user->getEnabled() || in_array('ROLE_ADMIN', $user->getRoles());
 
             case self::EDIT:
-                return $user->getEnabled() && $user == $image->getOwner() || in_array('ROLE_ADMIN', $user->getRoles());
+                return $user->getEnabled() && $user === $image->getOwner() || in_array('ROLE_ADMIN', $user->getRoles());
 
             case self::DELETE:
-                return $user->getEnabled() && $user == $image->getOwner() || in_array('ROLE_ADMIN', $user->getRoles());
+                return $user->getEnabled() && $user === $image->getOwner() || in_array('ROLE_ADMIN', $user->getRoles());
 
             case self::VOTE: 
                 return $user->getEnabled() && $image->getOwner() !== $user;

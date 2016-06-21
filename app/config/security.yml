@@ -25,18 +25,6 @@ security:
                 authenticators:
                     - login_authenticator
             logout: { path: /logout, target: / }
-        secured_area:
-            pattern: ^/
-            anonymous: true
-            provider: user_db
-            security: true
-            logout:
-                path: /logout
-                target: /
-                invalidate_session: true
-        login_firewall:
-            pattern:    ^/login$
-            anonymous:  ~
         dev:
             pattern:  ^/(_(profiler|wdt)|css|images|js)/
             security: false

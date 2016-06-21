@@ -86,6 +86,7 @@ _api_image_delete:
     methods: [DELETE]
 login:
     path:    /login
+    defaults: { _controller: AppBundle:Default:login }
     methods:  [GET, POST]
 logout:
     path:   /logout

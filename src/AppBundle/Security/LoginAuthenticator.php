@@ -52,7 +52,7 @@ class LoginAuthenticator extends AbstractGuardAuthenticator
             return $user;
         }else{ 
             throw new CustomUserMessageAuthenticationException(
-                'password'
+                'Password does not match.'
             );
         }
     }

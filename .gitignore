@@ -18,7 +18,5 @@
 /vendor/
 /bin/
 /composer.phar
-
 *.php~
-
 app/test.db

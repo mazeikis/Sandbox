@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Form\Type\ContactFormType;
+use AppBundle\Form\Type\LoginFormType;
 
 
 class DefaultController extends Controller
@@ -63,5 +64,20 @@ class DefaultController extends Controller
         return $this->render('AppBundle:Twig:apiDemo.html.twig', array('title' => "REST'ful API Demo"));
     }
 
+
+    public function loginAction()
+    {
+        $form    = $this->createForm(LoginFormType::class);
+        $helper  = $this->get('security.authentication_utils');
+        $message = $helper->getLastAuthenticationError();
+        if($message){
+            $flash   = $this->get('braincrafted_bootstrap.flash');
+            $flash->error($message);
+        }
+        return $this->render('AppBundle:Twig:login.html.twig', [
+            'form'          => $form->createView(),
+            'last_username' => $helper->getLastUsername(),
+        ]);
+    }
 
 }
