@@ -74,6 +74,10 @@ class DefaultController extends Controller
             $flash   = $this->get('braincrafted_bootstrap.flash');
             $flash->error($message);
         }
+        $form->handleRequest();
+        if($form->isValid() === true && $form->isSubmitted() === true){
+            return $this->redirectToRoute('_home');
+        }
         return $this->render('AppBundle:Twig:login.html.twig', [
             'form'          => $form->createView(),
             'last_username' => $helper->getLastUsername(),
