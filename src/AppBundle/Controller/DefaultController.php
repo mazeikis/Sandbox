@@ -65,7 +65,7 @@ class DefaultController extends Controller
     }
 
 
-    public function loginAction()
+    public function loginAction(Request $request)
     {
         $form    = $this->createForm(LoginFormType::class);
         $helper  = $this->get('security.authentication_utils');
@@ -74,7 +74,7 @@ class DefaultController extends Controller
             $flash   = $this->get('braincrafted_bootstrap.flash');
             $flash->error($message);
         }
-        $form->handleRequest();
+        $form->handleRequest($request);
         if($form->isValid() === true && $form->isSubmitted() === true){
             return $this->redirectToRoute('_home');
         }

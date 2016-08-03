@@ -23,4 +23,9 @@ swiftmailer:
 security:
     firewalls:
         main:
-            http_basic: ~
+            anonymous: ~
+            guard:
+                authenticators:
+                    - test_login_authenticator
+                entry_point: test_login_authenticator
+            logout: { path: /logout, target: / }

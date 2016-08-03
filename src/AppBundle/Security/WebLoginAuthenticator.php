@@ -14,11 +14,12 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Security;
 use Braincrafted\Bundle\BootstrapBundle\Session\FlashMessage;
 use Doctrine\ORM\EntityManager;
+use AppBundle\Entity\User;
 
 
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 
-class LoginAuthenticator extends AbstractGuardAuthenticator
+class WebLoginAuthenticator extends AbstractGuardAuthenticator
 {
     private $em;
     private $router;
@@ -47,7 +48,7 @@ class LoginAuthenticator extends AbstractGuardAuthenticator
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
         $user = $this->em->getRepository('AppBundle:User')
-            ->findOneBy(['username' => $credentials['username']]);
+            ->findOneBy(array('username' => $credentials['username']));
         if($user){
             return $user;
         }else{ 
@@ -62,11 +63,11 @@ class LoginAuthenticator extends AbstractGuardAuthenticator
         $plainPassword = $credentials['password'];
         $isValid       = $this->encoder->isPasswordValid($user, $plainPassword);
 
-        if(!$isValid){
-            return false;
+        if($isValid){
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)

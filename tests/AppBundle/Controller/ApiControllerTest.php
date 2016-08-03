@@ -16,17 +16,17 @@ Class ApiControllerTest extends FixturesAwareWebTestCase
 
         $client = static::createClient();
 
-        $client->request($method, $uri, $parameters);
+        $client->request($method, $uri, $parameters, array(), array('HTTP_X-Token' => 'TestApiKey1'));
         $response = $client->getResponse();
 
-        $this->assertTrue($response->isOk());
+        $this->assertEquals(200, $response->getStatusCode());
         $this->assertTrue($response->headers->contains(
             'Content-Type',
             'application/json'
     	));
 
         $parameters = array('page' => -1);
-        $client->request($method, $uri, $parameters);
+        $client->request($method, $uri, $parameters, array(), array('HTTP_X-Token' => 'TestApiKey1'));
         $response = $client->getResponse();
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertTrue($response->headers->contains(
@@ -35,7 +35,7 @@ Class ApiControllerTest extends FixturesAwareWebTestCase
         ));
 
         $parameters = array('page' => 'xoxo');
-        $client->request($method, $uri, $parameters);
+        $client->request($method, $uri, $parameters, array(), array('HTTP_X-Token' => 'TestApiKey1'));
         $response = $client->getResponse();
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertTrue($response->headers->contains(
@@ -44,7 +44,7 @@ Class ApiControllerTest extends FixturesAwareWebTestCase
         ));
 
         $parameters = array('page' => 1);
-        $client->request($method, $uri, $parameters);
+        $client->request($method, $uri, $parameters, array(), array('HTTP_X-Token' => 'TestApiKey1'));
         $response = $client->getResponse();
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertTrue($response->headers->contains(
@@ -53,7 +53,7 @@ Class ApiControllerTest extends FixturesAwareWebTestCase
         ));
 
         $parameters = array('sortBy' => 'xoxo');
-        $client->request($method, $uri, $parameters);
+        $client->request($method, $uri, $parameters, array(), array('HTTP_X-Token' => 'TestApiKey1'));
         $response = $client->getResponse();
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertTrue($response->headers->contains(
@@ -62,7 +62,7 @@ Class ApiControllerTest extends FixturesAwareWebTestCase
         ));
 
         $parameters = array('order' => 'xoxo');
-        $client->request($method, $uri, $parameters);
+        $client->request($method, $uri, $parameters, array(), array('HTTP_X-Token' => 'TestApiKey1'));
         $response = $client->getResponse();
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertTrue($response->headers->contains(
@@ -79,7 +79,7 @@ Class ApiControllerTest extends FixturesAwareWebTestCase
         $client = static::createClient();
 
         //Correct and existing image id
-        $client->request($method, $uri);
+        $client->request($method, $uri, array(), array(), array('HTTP_X-Token' => 'TestApiKey1'));
         $response = $client->getResponse();
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertTrue($response->headers->contains(
@@ -89,7 +89,7 @@ Class ApiControllerTest extends FixturesAwareWebTestCase
 
         //Incorrect and non existant image id
         $uri    = '/api/image/xoxo';
-        $client->request($method, $uri);
+        $client->request($method, $uri, array(), array(), array('HTTP_X-Token' => 'TestApiKey1'));
         $response = $client->getResponse();
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertTrue($response->headers->contains(
@@ -99,7 +99,7 @@ Class ApiControllerTest extends FixturesAwareWebTestCase
 
         //Correct, but non existant image id
         $uri    = '/api/image/191919';
-        $client->request($method, $uri);
+        $client->request($method, $uri, array(), array(), array('HTTP_X-Token' => 'TestApiKey1'));
         $response = $client->getResponse();
         $this->assertEquals(404, $response->getStatusCode());
         $this->assertTrue($response->headers->contains(
@@ -123,8 +123,7 @@ Class ApiControllerTest extends FixturesAwareWebTestCase
         ));
 
         //With authorised user logged in, but no 'delete' rights
-        $client->request($method, $uri, array(), array(), array('PHP_AUTH_USER' => 'TestUsername2',
-            'PHP_AUTH_PW' => 'TestPassword2'));
+        $client->request($method, $uri, array(), array(), array('HTTP_X-Token' => 'TestApiKey2'));
         $response = $client->getResponse();
         $this->assertEquals(401, $response->getStatusCode());
         $this->assertTrue($response->headers->contains(
@@ -133,8 +132,7 @@ Class ApiControllerTest extends FixturesAwareWebTestCase
         ));
 
         //With authorised user logged in
-        $client->request($method, $uri, array(), array(), array('PHP_AUTH_USER' => 'TestUsername1',
-            'PHP_AUTH_PW' => 'TestPassword1'));
+        $client->request($method, $uri, array(), array(), array('HTTP_X-Token' => 'TestApiKey1'));
         $response = $client->getResponse();
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertTrue($response->headers->contains(
@@ -144,7 +142,7 @@ Class ApiControllerTest extends FixturesAwareWebTestCase
 
         //Non existing and incorrect format of id with value of 'xoxo'
         $uri    = '/api/image/delete/xoxo';
-        $client->request($method, $uri);
+        $client->request($method, $uri, array(), array(), array('HTTP_X-Token' => 'TestApiKey1'));
         $response = $client->getResponse();
         $this->assertEquals(404, $response->getStatusCode());
         $this->assertTrue($response->headers->contains(
@@ -161,7 +159,7 @@ Class ApiControllerTest extends FixturesAwareWebTestCase
 
         //Wrong value
         $parameters = array('id' => 1, 'voteValue' => 'xoxo');
-        $client->request($method, $uri, $parameters);
+        $client->request($method, $uri, $parameters, array(), array('HTTP_X-Token' => 'TestApiKey2'));
         $response = $client->getResponse();
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertTrue($response->headers->contains(
@@ -171,7 +169,7 @@ Class ApiControllerTest extends FixturesAwareWebTestCase
 
         //Non existing id
         $parameters = array('id' => 12345, 'voteValue' => '1');
-        $client->request($method, $uri, $parameters);
+        $client->request($method, $uri, $parameters, array(), array('HTTP_X-Token' => 'TestApiKey2'));
         $response = $client->getResponse();
         $this->assertEquals(404, $response->getStatusCode());
         $this->assertTrue($response->headers->contains(
@@ -181,7 +179,7 @@ Class ApiControllerTest extends FixturesAwareWebTestCase
 
         //Existing id and correct value, but no authorised user.
         $parameters = array('id' => 1, 'voteValue' => '1');
-        $client->request($method, $uri, $parameters);
+        $client->request($method, $uri, $parameters, array(), array('HTTP_X-Token' => 'TestApiKey1'));
         $response = $client->getResponse();
         $this->assertEquals(401, $response->getStatusCode());
         $this->assertTrue($response->headers->contains(
@@ -190,8 +188,7 @@ Class ApiControllerTest extends FixturesAwareWebTestCase
         ));
         
         //With user logged in, but has no rights to vote
-        $client->request($method, $uri, $parameters, array(), array('PHP_AUTH_USER' => 'TestUsername1',
-            'PHP_AUTH_PW' => 'TestPassword1'));
+        $client->request($method, $uri, $parameters, array(), array('HTTP_X-Token' => 'TestApiKey1'));
         $response = $client->getResponse();
         $this->assertEquals(401, $response->getStatusCode());
         $this->assertTrue($response->headers->contains(
@@ -200,8 +197,7 @@ Class ApiControllerTest extends FixturesAwareWebTestCase
         ));
 
         //With authorised user logged in, that has rights to vote
-        $client->request($method, $uri, $parameters, array(), array('PHP_AUTH_USER' => 'TestUsername2',
-            'PHP_AUTH_PW' => 'TestPassword2'));
+        $client->request($method, $uri, $parameters, array(), array('HTTP_X-Token' => 'TestApiKey2'));
         $response = $client->getResponse();
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertTrue($response->headers->contains(

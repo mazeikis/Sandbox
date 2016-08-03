@@ -1,0 +1,95 @@
+<?php
+
+namespace AppBundle\Security;
+
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoder;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\User\UserProviderInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Security;
+use Braincrafted\Bundle\BootstrapBundle\Session\FlashMessage;
+use Doctrine\ORM\EntityManager;
+use AppBundle\Entity\User;
+
+
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
+
+class TestLoginAuthenticator extends AbstractGuardAuthenticator
+{
+    private $em;
+    private $router;
+    private $encoder;
+    private $flash;
+
+    public function __construct(EntityManager $em, RouterInterface $router, UserPasswordEncoder $encoder, FlashMessage $flash)
+    {
+        $this->em      = $em;
+        $this->router  = $router;
+        $this->encoder = $encoder;
+        $this->flash   = $flash;
+    }
+
+    public function getCredentials(Request $request)
+    {
+        return [
+            'username' => $request->getUser(),
+            'password' => $request->getPassword()
+        ];
+    }
+
+    public function getUser($credentials, UserProviderInterface $userProvider)
+    {
+        $user = $this->em->getRepository('AppBundle:User')
+            ->findOneBy(array('username' => $credentials['username']));
+        if($user){
+            return $user;
+        }else{ 
+            throw new CustomUserMessageAuthenticationException(
+                'Password does not match, eh== '.$credentials['username']
+            );
+        }
+    }
+
+    public function checkCredentials($credentials, UserInterface $user)
+    {
+        $plainPassword = $credentials['password'];
+        $isValid       = $this->encoder->isPasswordValid($user, $plainPassword);
+
+        if($isValid){
+            return true;
+        }
+
+        return false;
+    }
+
+    public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
+    {
+        $request->getSession()->set(Security::AUTHENTICATION_ERROR, $exception);
+        $this->flash->error('Password does not match the username. Wrong password entered or the user does not exist. Please try again or use password reset.');
+        $url = $this->router->generate('_home');
+        return new RedirectResponse($url);
+    }
+
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
+    {
+        //$url = $this->router->generate('_gallery');
+        //return new RedirectResponse($url);
+        return true;
+    }
+
+    public function start(Request $request, AuthenticationException $authException = null)
+    {
+        $url = $this->router->generate('login');
+        return new RedirectResponse($url);
+    }
+
+    public function supportsRememberMe()
+    {
+        return false;
+    }
+}

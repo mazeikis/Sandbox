@@ -15,7 +15,13 @@ services:
         arguments: [ "@router", "@request_stack", "@twig" ]
         tags:
            - { name: twig.extension }
-    login_authenticator:
-        class: AppBundle\Security\LoginAuthenticator
+    web_login_authenticator:
+        class: AppBundle\Security\WebLoginAuthenticator
         arguments: [ "@doctrine.orm.entity_manager", "@router", "@security.password_encoder", "@braincrafted_bootstrap.flash" ] 
         autowire: true
+    api_key_authenticator:
+        class: AppBundle\Security\ApiKeyAuthenticator
+        arguments: [ "@doctrine.orm.entity_manager" ] 
+    test_login_authenticator:
+        class: AppBundle\Security\TestLoginAuthenticator
+        arguments: [ "@doctrine.orm.entity_manager", "@router", "@security.password_encoder", "@braincrafted_bootstrap.flash" ] 

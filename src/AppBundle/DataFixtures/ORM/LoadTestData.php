@@ -22,6 +22,7 @@ class LoadTestData implements FixtureInterface, ContainerAwareInterface
     public function load(ObjectManager $manager)
     {
         $user = new User();
+        $user->setId(1);
         $user->setUserName('TestUsername1');
         $encoder  = $this->container->get('security.password_encoder');
         $password = $encoder->encodePassword($user, 'TestPassword1');
@@ -30,11 +31,13 @@ class LoadTestData implements FixtureInterface, ContainerAwareInterface
         $user->setLastName('Doe');
         $user->setRoles('ROLE_USER');
         $user->setEnabled(true);
+        $user->setApiKey('TestApiKey1');
         $user->setEmail('jon.doe@test.com');
 
         $manager->persist($user);
 
         $image = new Image();
+        $image->setId(1);
         $image->setPath('/test/path/to/image/');
         $image->setSize(12345);
         $image->setTitle('Test Image Title 1');
@@ -48,6 +51,7 @@ class LoadTestData implements FixtureInterface, ContainerAwareInterface
         $manager->persist($image);
 
         $user = new User();
+        $user->setId(2);
         $user->setUserName('TestUsername2');
         $encoder  = $this->container->get('security.password_encoder');
         $password = $encoder->encodePassword($user, 'TestPassword2');
@@ -56,6 +60,7 @@ class LoadTestData implements FixtureInterface, ContainerAwareInterface
         $user->setLastName('Doe');
         $user->setRoles('ROLE_USER');
         $user->setEnabled(true);
+        $user->setApiKey('TestApiKey2');
         $user->setEmail('jon.doe2@test.com');
 
         $manager->persist($user);
