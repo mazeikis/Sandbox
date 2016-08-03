@@ -14,7 +14,6 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Security;
 use Braincrafted\Bundle\BootstrapBundle\Session\FlashMessage;
 use Doctrine\ORM\EntityManager;
-use AppBundle\Entity\User;
 
 
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
@@ -77,9 +76,8 @@ class TestLoginAuthenticator extends AbstractGuardAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-        //$url = $this->router->generate('_gallery');
-        //return new RedirectResponse($url);
-        return true;
+        $url = $this->router->generate('_gallery');
+        return new RedirectResponse($url);
     }
 
     public function start(Request $request, AuthenticationException $authException = null)

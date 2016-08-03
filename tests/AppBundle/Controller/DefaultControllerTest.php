@@ -21,6 +21,6 @@ Class DefaultControllerTest extends FixturesAwareWebTestCase
             'PHP_AUTH_PW'   => 'TestPassword1'));
         $response = $client->getResponse();
         //This will fail, as Guard uses "redirect" HTTP method on both successful authentication and failed one.
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(302, $response->getStatusCode());
     }
 }

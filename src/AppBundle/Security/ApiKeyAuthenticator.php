@@ -10,11 +10,8 @@ use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundE
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Security;
 use Doctrine\ORM\EntityManager;
 
-
-use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 
 class ApiKeyAuthenticator extends AbstractGuardAuthenticator
 {
