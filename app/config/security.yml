@@ -21,6 +21,7 @@ security:
     # for specific sections of your app
     firewalls:
         api:
+            anonymous: ~
             pattern: ^/api/
             guard:
                 authenticators:
