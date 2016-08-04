@@ -24,4 +24,4 @@ services:
         arguments: [ "@doctrine.orm.entity_manager" ] 
     test_login_authenticator:
         class: AppBundle\Security\TestLoginAuthenticator
-        arguments: [ "@doctrine.orm.entity_manager", "@router", "@security.password_encoder", "@braincrafted_bootstrap.flash" ] 
+        arguments: [ "@doctrine.orm.entity_manager", "@router", "@security.password_encoder" ] 

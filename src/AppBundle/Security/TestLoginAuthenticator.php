@@ -21,12 +21,11 @@ class TestLoginAuthenticator extends AbstractGuardAuthenticator
     private $encoder;
     private $flash;
 
-    public function __construct(EntityManager $em, RouterInterface $router, UserPasswordEncoder $encoder, FlashMessage $flash)
+    public function __construct(EntityManager $em, RouterInterface $router, UserPasswordEncoder $encoder)
     {
         $this->em      = $em;
         $this->router  = $router;
         $this->encoder = $encoder;
-        $this->flash   = $flash;
     }
 
     public function getCredentials(Request $request)

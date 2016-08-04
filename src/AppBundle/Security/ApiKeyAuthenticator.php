@@ -25,8 +25,7 @@ class ApiKeyAuthenticator extends AbstractGuardAuthenticator
     public function getCredentials(Request $request)
     {
         if (!$token = $request->headers->get('X-Token')) {
-            // no token? Return null and no other methods will be called
-            return;
+            return null;
         }
         return array('apiKey' => $token);
     }

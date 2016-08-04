@@ -8,6 +8,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use AppBundle\Entity\Image;
 use AppBundle\Entity\User;
+use AppBundle\Entity\Vote;
 
 class LoadTestData implements FixtureInterface, ContainerAwareInterface
 {
@@ -50,6 +51,16 @@ class LoadTestData implements FixtureInterface, ContainerAwareInterface
 
         $manager->persist($image);
 
+
+        $vote = new Vote();
+        $vote->setUser($user);
+        $vote->setImage($image);
+        $vote->setVote(1);
+
+
+        $manager->persist($vote);
+
+
         $user = new User();
         $user->setId(2);
         $user->setUserName('TestUsername2');
@@ -64,6 +75,7 @@ class LoadTestData implements FixtureInterface, ContainerAwareInterface
         $user->setEmail('jon.doe2@test.com');
 
         $manager->persist($user);
+
 
         $manager->flush();
 

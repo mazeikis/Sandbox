@@ -20,7 +20,3 @@
 /composer.phar
 *.php~
 app/test.db
-
-*.cache
-
-app/test.db
