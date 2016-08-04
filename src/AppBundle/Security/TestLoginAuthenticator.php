@@ -49,7 +49,7 @@ class TestLoginAuthenticator extends AbstractGuardAuthenticator
             return $user;
         }else{ 
             throw new CustomUserMessageAuthenticationException(
-                'Password does not match, eh== '.$credentials['username']
+                'Password does not match the user '.$credentials['username']
             );
         }
     }
@@ -59,19 +59,13 @@ class TestLoginAuthenticator extends AbstractGuardAuthenticator
         $plainPassword = $credentials['password'];
         $isValid       = $this->encoder->isPasswordValid($user, $plainPassword);
 
-        if($isValid){
-            return true;
-        }
-
-        return false;
+        return $isValid;
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
-        $request->getSession()->set(Security::AUTHENTICATION_ERROR, $exception);
-        $this->flash->error('Password does not match the username. Wrong password entered or the user does not exist. Please try again or use password reset.');
-        $url = $this->router->generate('_home');
-        return new RedirectResponse($url);
+        throw new CustomUserMessageAuthenticationException(
+                'Authentication failure');
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)

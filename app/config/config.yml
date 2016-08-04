@@ -79,13 +79,13 @@ liip_imagine:
     resolvers:
         default:
             web_path:
-              web_root: %kernel.root_dir%/../web
+              web_root: "%kernel.root_dir%/../web"
               cache_prefix: images
 
     loaders:
         default:
             filesystem:
-                data_root: %kernel.root_dir%/../web
+                data_root: "%kernel.root_dir%/../web"
     filter_sets:
         cache: ~
         thumb:
@@ -94,9 +94,9 @@ liip_imagine:
                 thumbnail: { size: [375, 225], mode: outbound }
 braincrafted_bootstrap:
     output_dir:
-    assets_dir: %kernel.root_dir%/../vendor/twbs/bootstrap
-    jquery_path: %kernel.root_dir%/../vendor/jquery/jquery/jquery-1.10.2.js
-    fonts_dir: %kernel.root_dir%/../web/fonts
+    assets_dir: "%kernel.root_dir%/../vendor/twbs/bootstrap"
+    jquery_path: "%kernel.root_dir%/../vendor/jquery/jquery/jquery-1.10.2.js"
+    fonts_dir: "%kernel.root_dir%/../web/fonts"
     css_preprocessor: none
     auto_configure:
         assetic: true
@@ -105,5 +105,5 @@ braincrafted_bootstrap:
         knp_paginator: false
     customize:
         variables_file: ~
-        bootstrap_output: %kernel.root_dir%/Resources/less/bootstrap.less
+        bootstrap_output: "%kernel.root_dir%/Resources/less/bootstrap.less"
         bootstrap_template: BraincraftedBootstrapBundle:Bootstrap:bootstrap.less.twig
