@@ -19,7 +19,6 @@ class TestLoginAuthenticator extends AbstractGuardAuthenticator
     private $em;
     private $router;
     private $encoder;
-    private $flash;
 
     public function __construct(EntityManager $em, RouterInterface $router, UserPasswordEncoder $encoder)
     {

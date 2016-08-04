@@ -19,4 +19,5 @@
 /bin/
 /composer.phar
 *.php~
-app/test.db
+
+var/bootstrap.php.cache
