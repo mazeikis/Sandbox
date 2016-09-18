@@ -9,6 +9,7 @@
 namespace AppBundle\EventListener;
 
 
+use AppBundle\Entity\User;
 use AppBundle\Event\UserEvent;
 
 
@@ -62,10 +63,10 @@ class UserEventListener
 
     /**
      * Helper method for sending email, DRY.
-     * @param $user
+     * @param User $user
      * @param $template
      */
-    private function sendEmail($user, $template){
+    private function sendEmail(User $user, $template){
         $message = \Swift_Message::newInstance()
             ->setContentType("text/html")
             ->setSubject('codeSandbox Email Robot')

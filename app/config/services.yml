@@ -35,3 +35,13 @@ services:
         arguments: [ "@service_container" ]
         tags:
             - { name: kernel.event_listener, event: user.verification.event, method: 'onUserVerificationAction' }
+    kernel.listener.image.delete.event:
+        class: AppBundle\EventListener\ImageEventListener
+        arguments: [ "@service_container" ]
+        tags:
+            - { name: kernel.event_listener, event: image.delete.event, method: 'onImageDeleteAction' }
+    kernel.listener.image.create.event:
+        class: AppBundle\EventListener\ImageEventListener
+        arguments: [ "@service_container"]
+        tags:
+            - { name: kernel.event_listener, event: image.create.event, method: 'onImageCreateAction' }

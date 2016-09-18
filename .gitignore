@@ -19,5 +19,16 @@
 /bin/
 /composer.phar
 *.php~
-.idea/
 var/bootstrap.php.cache
+
+.idea/copyright/profiles_settings.xml
+
+.idea/modules.xml
+
+.idea/Sandbox.iml
+
+.idea/symfony2.xml
+
+.idea/vcs.xml
+
+.idea/workspace.xml

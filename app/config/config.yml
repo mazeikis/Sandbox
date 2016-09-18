@@ -87,7 +87,6 @@ liip_imagine:
             filesystem:
                 data_root: "%kernel.root_dir%/../web"
     filter_sets:
-        cache: ~
         thumb:
             quality: 75
             filters:

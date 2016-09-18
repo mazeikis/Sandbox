@@ -10,7 +10,7 @@ namespace AppBundle\Event;
 
 use Symfony\Component\EventDispatcher\Event;
 use AppBundle\Entity\User;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * Class UserCreatedEvent
@@ -20,20 +20,21 @@ class UserEvent extends Event
 {
     const USER_CREATED_EVENT = 'user.created.event';
     const USER_VERIFICATION_EVENT = 'user.verification.event';
+
     private $user;
     private $session;
 
     /**
      * @param User $user
-     * @param Session $session
+     * @param SessionInterface $session
      */
-    public function __construct(User $user, Session $session){
+    public function __construct(User $user, SessionInterface $session){
         $this->user    = $user;
         $this->session = $session;
     }
 
     /**
-     * @return Session
+     * @return SessionInterface
      */
     public function getSession()
     {

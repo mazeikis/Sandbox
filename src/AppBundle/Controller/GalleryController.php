@@ -2,6 +2,7 @@
  
 namespace AppBundle\Controller;
  
+use AppBundle\Event\ImageEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -162,7 +163,6 @@ class GalleryController extends Controller
             'image'    => $image, 
             'hasVoted' => $hasVoted,
             'form'     => $form->createView()));
- 
     }
  
  
@@ -180,18 +180,10 @@ class GalleryController extends Controller
         if ($image === null) {
             $flash->error('Sadly, I could not find the image with id "' . $id . '"');
         } else {
-            $fileSystem = new Filesystem();
-            $imageDir   = $this->get('kernel')->getRootDir().'/../web/';
-            $fileSystem->remove($imageDir.$image->getPath());
-
-            $cacheManager = $this->container->get('liip_imagine.cache.manager');
-            $cacheManager->remove($image->getPath());
 
             $entityManager->remove($image);
             $entityManager->flush();
 
-            $flash->alert('Image was successfully deleted.');
- 
         }
         return $this->redirectToRoute('_gallery');
  
@@ -244,9 +236,6 @@ class GalleryController extends Controller
               ->setDescription($imageDescription)
               ->setUpdated(new \DateTime())
               ->setCreated(new \DateTime());
-
-        $imageDir = $this->get('kernel')->getRootDir().'/../web/';
-        $data['file']->move($imageDir.'images/', $image->getPath());
     }
 
 }
