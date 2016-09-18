@@ -25,3 +25,13 @@ services:
     test_login_authenticator:
         class: AppBundle\Security\TestLoginAuthenticator
         arguments: [ "@doctrine.orm.entity_manager", "@router", "@security.password_encoder" ] 
+    kernel.listener.user.created.event:
+        class: AppBundle\EventListener\UserEventListener
+        arguments: [ "@service_container" ]
+        tags:
+            - { name: kernel.event_listener, event: user.created.event, method: 'onUserCreatedAction' }
+    kernel.listener.user.verification.event:
+        class: AppBundle\EventListener\UserEventListener
+        arguments: [ "@service_container" ]
+        tags:
+            - { name: kernel.event_listener, event: user.verification.event, method: 'onUserVerificationAction' }

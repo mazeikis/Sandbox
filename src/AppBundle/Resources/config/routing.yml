@@ -44,9 +44,9 @@ _send_verification:
     path:   /send/
     defaults: { _controller: AppBundle:User:resendVerification }
     methods: [GET]
-_email_verification:
+_user_verification:
     path:    /verify/{confirmationToken}
-    defaults: { _controller: AppBundle:User:emailVerification }
+    defaults: { _controller: AppBundle:User:verifyUser }
     methods: [GET, POST]
 _user:
     path: /user/{userId}

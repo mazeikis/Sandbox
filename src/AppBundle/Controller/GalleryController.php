@@ -86,7 +86,7 @@ class GalleryController extends Controller
             'title'     => 'sandbox|image',
             'image'     => $image,
             'hasVoted'  => $hasVoted,
-            'rating' => $rating
+            'rating'    => $rating
             ));
  
     }
@@ -97,17 +97,18 @@ class GalleryController extends Controller
         $image = new Image();
         $user  = $this->getUser();
         $flash = $this->get('braincrafted_bootstrap.flash');
-        $form  = $this->createForm(UploadFormType::class);
-        $form->handleRequest($request);
 
         if ($this->isGranted('create', $image) === false) {
             $flash->error('You are not authorized to upload an image.');
             return $this->redirectToRoute('_gallery');
         }
 
+        $form  = $this->createForm(UploadFormType::class);
+        $form->handleRequest($request);
+
         if ($form->isValid() === true) {
             $data = $form->getData();
-            $this->handleUploadedFile($data, $image, $request);
+            $this->handleUploadedFile($data, $image);
             $image->setOwner($user);
 
             $entityManager = $this->getDoctrine()->getManager();
@@ -199,18 +200,18 @@ class GalleryController extends Controller
  
     public function imageVoteAction(Request $request)
     {
-        $voteValue     = $request->request->get('voteValue');
-        $imageId       = $request->request->get('id');
-        $entityManager = $this->getDoctrine()->getManager();
-        $image         = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $imageId));
-        $user          = $this->getUser();
-        $voteWhiteList = array(-1, 1);
-        $flash         = $this->get('braincrafted_bootstrap.flash');
+        $voteValue          = $request->request->get('voteValue');
+        $imageId            = $request->request->get('id');
+        $entityManager      = $this->getDoctrine()->getManager();
+        $image              = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $imageId));
+        $user               = $this->getUser();
+        $allowedVoteValues  = array(-1, 1);
+        $flash              = $this->get('braincrafted_bootstrap.flash');
 
  
         $voteCheck = $entityManager->getRepository('AppBundle:Vote')->findOneBy(array('user' => $user, 'image' => $image));
  
-        if ($this->isGranted('vote', $image) === false || $voteCheck !== null || in_array($voteValue, $voteWhiteList) === false) {
+        if ($this->isGranted('vote', $image) === false || $voteCheck !== null || in_array($voteValue, $allowedVoteValues) === false) {
                 $flash->error('Voting access unauthorized, sorry!');
                 return $this->redirectToRoute('_gallery');
         }

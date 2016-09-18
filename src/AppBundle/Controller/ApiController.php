@@ -19,12 +19,19 @@ class ApiController extends Controller
     const MAX_PER_PAGE = 8;
 
 
-	public function defaultAction()
+    /**
+     * @return JsonResponse
+     */
+    public function defaultAction()
 	{
         $message = array('message'=> 'Welcome to CodeSandbox API.');
         return new JsonResponse($message, Response::HTTP_OK);
 	}
- 
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function galleryAction(Request $request)
     {
         $q = $request->query->get('q');
@@ -85,6 +92,11 @@ class ApiController extends Controller
 
     }
 
+    /**
+     * @param Request $request
+     * @param $id
+     * @return JsonResponse
+     */
     public function imageAction(Request $request, $id)
     {
     	$user          = $this->getUser();
@@ -126,6 +138,10 @@ class ApiController extends Controller
          
     }
 
+    /**
+     * @param $id
+     * @return JsonResponse
+     */
     public function imageDeleteAction($id)
     {
         $entityManager = $this->getDoctrine()->getManager();
@@ -157,6 +173,10 @@ class ApiController extends Controller
  
     }
 
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function imageVoteAction(Request $request)
     {
         $voteValue     = $request->request->get('voteValue');
@@ -197,6 +217,9 @@ class ApiController extends Controller
  
     }
 
+    /**
+     * @return string
+     */
     private function getImageDir()
     {
         return $this->get('kernel')->getRootDir().'/../web';

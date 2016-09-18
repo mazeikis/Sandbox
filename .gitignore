@@ -19,5 +19,5 @@
 /bin/
 /composer.phar
 *.php~
-
+.idea/
 var/bootstrap.php.cache
