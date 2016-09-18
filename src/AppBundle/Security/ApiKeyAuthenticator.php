@@ -55,7 +55,7 @@ class ApiKeyAuthenticator extends AbstractGuardAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-        return;
+        return null;
     }
 
     public function start(Request $request, AuthenticationException $authException = null)

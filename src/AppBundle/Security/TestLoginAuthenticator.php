@@ -58,14 +58,13 @@ class TestLoginAuthenticator extends AbstractGuardAuthenticator
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
-        throw new CustomUserMessageAuthenticationException(
-                'Authentication failure');
+        return null;
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-        $url = $this->router->generate('_gallery');
-        return new RedirectResponse($url);
+        //$url = $this->router->generate('_gallery');
+        return null;
     }
 
     public function start(Request $request, AuthenticationException $authException = null)

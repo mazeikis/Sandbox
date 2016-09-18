@@ -12,7 +12,6 @@ use Pagerfanta\Pagerfanta;
 use AppBundle\Entity\Image;
 use AppBundle\Entity\Vote;
 use AppBundle\Form\Type\UploadFormType;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -97,9 +96,9 @@ class GalleryController extends Controller
     {
         $image = new Image();
         $user  = $this->getUser();
-        $flash = $this->get('braincrafted_bootstrap.flash');
 
         if ($this->isGranted('create', $image) === false) {
+            $flash = $this->get('braincrafted_bootstrap.flash');
             $flash->error('You are not authorized to upload an image.');
             return $this->redirectToRoute('_gallery');
         }
@@ -108,15 +107,17 @@ class GalleryController extends Controller
         $form->handleRequest($request);
 
         if ($form->isValid() === true) {
-            $data = $form->getData();
-            $this->handleUploadedFile($data, $image);
+            $data  = $form->getData();
+            $image = $this->handleUploadedFile($data, $image);
             $image->setOwner($user);
 
+            $event = new ImageEvent($image, $data);
+            $dispatcher = $this->get('event_dispatcher');
+            $dispatcher->dispatch(ImageEvent::IMAGE_CREATE_EVENT, $event);
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($image);
             $entityManager->flush();
  
-            $flash->success('Image sucessfully uploaded!');
             return $this->redirectToRoute('_gallery');
         }
         return $this->render('AppBundle:Twig:upload.html.twig', array('title' => 'sandbox|project', 'form' => $form->createView()));
@@ -155,6 +156,7 @@ class GalleryController extends Controller
                   ->setUpdated(new \DateTime());;
             $entityManager->flush();
             $flash->success('Image details were edited and changes saved.');
+
             return $this->redirectToRoute('_image', array('id' => $id));
         }
 
@@ -180,6 +182,9 @@ class GalleryController extends Controller
         if ($image === null) {
             $flash->error('Sadly, I could not find the image with id "' . $id . '"');
         } else {
+            $event = new ImageEvent($image);
+            $dispatcher = $this->get('event_dispatcher');
+            $dispatcher->dispatch(ImageEvent::IMAGE_DELETE_EVENT, $event);
 
             $entityManager->remove($image);
             $entityManager->flush();
@@ -236,6 +241,7 @@ class GalleryController extends Controller
               ->setDescription($imageDescription)
               ->setUpdated(new \DateTime())
               ->setCreated(new \DateTime());
+        return $image;
     }
 
 }

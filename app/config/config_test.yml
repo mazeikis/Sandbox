@@ -24,6 +24,7 @@ security:
     firewalls:
         main:
             anonymous: ~
+            http_basic: ~
             guard:
                 authenticators:
                     - test_login_authenticator
