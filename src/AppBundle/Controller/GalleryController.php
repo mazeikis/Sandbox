@@ -2,6 +2,7 @@
  
 namespace AppBundle\Controller;
  
+use AppBundle\Event\ImageEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -11,7 +12,6 @@ use Pagerfanta\Pagerfanta;
 use AppBundle\Entity\Image;
 use AppBundle\Entity\Vote;
 use AppBundle\Form\Type\UploadFormType;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -24,7 +24,7 @@ class GalleryController extends Controller
     public function indexAction(Request $request)
     {
         $q           = $request->query->get('q');
-        $currentPage = max( 1, $request->query->get('page'));
+        $currentPage = max(1, $request->query->get('page'));
 
         $sortBy = $request->query->get('sortBy');
         $whiteList = array('created', 'rating', 'title');
@@ -50,7 +50,7 @@ class GalleryController extends Controller
         $template = $request->isXmlHttpRequest() ? 'AppBundle:Twig:gallery-content.html.twig' 
                                                  : 'AppBundle:Twig:gallery.html.twig';
 
-        return $this->render( $template,
+        return $this->render($template,
                 array(
                  'title'   => 'sandbox|gallery',
                  'content' => $result,
@@ -69,7 +69,7 @@ class GalleryController extends Controller
 
         if ($image === null) {
             $flash = $this->get('braincrafted_bootstrap.flash');
-            $flash->error('Sadly, I could not find the image with id "' . $id . '"');
+            $flash->error('Sadly, I could not find the image with id "'.$id.'"');
             return $this->redirectToRoute('_gallery');        
         }
  
@@ -77,7 +77,7 @@ class GalleryController extends Controller
         $rating = $query->getSingleScalarResult();
 
         if ($user !== null) {
-            $hasVoted  = $entityManager->getRepository('AppBundle:Vote')->checkForVote($user, $image);
+            $hasVoted = $entityManager->getRepository('AppBundle:Vote')->checkForVote($user, $image);
         } else {
             $hasVoted = false;
         }
@@ -86,7 +86,7 @@ class GalleryController extends Controller
             'title'     => 'sandbox|image',
             'image'     => $image,
             'hasVoted'  => $hasVoted,
-            'rating' => $rating
+            'rating'    => $rating
             ));
  
     }
@@ -95,26 +95,27 @@ class GalleryController extends Controller
     public function uploadAction(Request $request)
     {
         $image = new Image();
-        $user  = $this->getUser();
-        $flash = $this->get('braincrafted_bootstrap.flash');
-        $form  = $this->createForm(UploadFormType::class);
-        $form->handleRequest($request);
 
         if ($this->isGranted('create', $image) === false) {
+            $flash = $this->get('braincrafted_bootstrap.flash');
             $flash->error('You are not authorized to upload an image.');
             return $this->redirectToRoute('_gallery');
         }
 
-        if ($form->isValid() === true) {
-            $data = $form->getData();
-            $this->handleUploadedFile($data, $image, $request);
-            $image->setOwner($user);
+        $form = $this->createForm(UploadFormType::class);
+        $form->handleRequest($request);
 
+        if ($form->isValid() === true) {
+            $data  = $form->getData();
+            $image = $this->handleUploadedFile($data, $image);
+
+            $event = new ImageEvent($image, $data);
+            $dispatcher = $this->get('event_dispatcher');
+            $dispatcher->dispatch(ImageEvent::IMAGE_CREATE_EVENT, $event);
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($image);
             $entityManager->flush();
  
-            $flash->success('Image sucessfully uploaded!');
             return $this->redirectToRoute('_gallery');
         }
         return $this->render('AppBundle:Twig:upload.html.twig', array('title' => 'sandbox|project', 'form' => $form->createView()));
@@ -133,14 +134,14 @@ class GalleryController extends Controller
             $flash->error('Sadly, You were not authorized to edit this image.');
             return $this->redirectToRoute('_image', array('id' => $id));
         } else {
-            $hasVoted  = $entityManager->getRepository('AppBundle:Vote')->checkForVote($user, $image);
+            $hasVoted = $entityManager->getRepository('AppBundle:Vote')->checkForVote($user, $image);
         }
  
         $form = $this->createFormBuilder()
                      ->add('title', TextType::class, array(
                                                    'data' => $image->getTitle(),
                                                    'constraints' => new Length(array('min' => 3), new NotBlank)))
-                     ->add('description', TextareaType::class, array( 'data' => $image->getDescription(), 'required' => true))
+                     ->add('description', TextareaType::class, array('data' => $image->getDescription(), 'required' => true))
                      ->add('Save', SubmitType::class)
                      ->getForm();
  
@@ -150,9 +151,10 @@ class GalleryController extends Controller
             $data = $form->getData();
             $image->setTitle($data['title'])
                   ->setDescription($data['description'])
-                  ->setUpdated(new \DateTime());;
+                  ->setUpdated(new \DateTime()); ;
             $entityManager->flush();
             $flash->success('Image details were edited and changes saved.');
+
             return $this->redirectToRoute('_image', array('id' => $id));
         }
 
@@ -161,7 +163,6 @@ class GalleryController extends Controller
             'image'    => $image, 
             'hasVoted' => $hasVoted,
             'form'     => $form->createView()));
- 
     }
  
  
@@ -177,20 +178,15 @@ class GalleryController extends Controller
         }
  
         if ($image === null) {
-            $flash->error('Sadly, I could not find the image with id "' . $id . '"');
+            $flash->error('Sadly, I could not find the image with id "'.$id.'"');
         } else {
-            $fileSystem = new Filesystem();
-            $imageDir   = $this->get('kernel')->getRootDir().'/../web/';
-            $fileSystem->remove($imageDir.$image->getPath());
-
-            $cacheManager = $this->container->get('liip_imagine.cache.manager');
-            $cacheManager->remove($image->getPath());
+            $event = new ImageEvent($image);
+            $dispatcher = $this->get('event_dispatcher');
+            $dispatcher->dispatch(ImageEvent::IMAGE_DELETE_EVENT, $event);
 
             $entityManager->remove($image);
             $entityManager->flush();
 
-            $flash->alert('Image was successfully deleted.');
- 
         }
         return $this->redirectToRoute('_gallery');
  
@@ -199,18 +195,18 @@ class GalleryController extends Controller
  
     public function imageVoteAction(Request $request)
     {
-        $voteValue     = $request->request->get('voteValue');
-        $imageId       = $request->request->get('id');
-        $entityManager = $this->getDoctrine()->getManager();
-        $image         = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $imageId));
-        $user          = $this->getUser();
-        $voteWhiteList = array(-1, 1);
-        $flash         = $this->get('braincrafted_bootstrap.flash');
+        $voteValue          = $request->request->get('voteValue');
+        $imageId            = $request->request->get('id');
+        $entityManager      = $this->getDoctrine()->getManager();
+        $image              = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $imageId));
+        $user               = $this->getUser();
+        $allowedVoteValues  = array(-1, 1);
+        $flash              = $this->get('braincrafted_bootstrap.flash');
 
  
         $voteCheck = $entityManager->getRepository('AppBundle:Vote')->findOneBy(array('user' => $user, 'image' => $image));
  
-        if ($this->isGranted('vote', $image) === false || $voteCheck !== null || in_array($voteValue, $voteWhiteList) === false) {
+        if ($this->isGranted('vote', $image) === false || $voteCheck !== null || in_array($voteValue, $allowedVoteValues) === false) {
                 $flash->error('Voting access unauthorized, sorry!');
                 return $this->redirectToRoute('_gallery');
         }
@@ -237,15 +233,14 @@ class GalleryController extends Controller
         $fileSize         = $data['file']->getSize();
             
         $image->setPath("/images/".$newFileName.".".$fileExtension)
-              ->setSize($fileSize)
-              ->setResolution($imageResolution)
-              ->setTitle($imageTitle)
-              ->setDescription($imageDescription)
-              ->setUpdated(new \DateTime())
-              ->setCreated(new \DateTime());
-
-        $imageDir = $this->get('kernel')->getRootDir().'/../web/';
-        $data['file']->move($imageDir.'images/', $image->getPath());
+                ->setSize($fileSize)
+                ->setResolution($imageResolution)
+                ->setTitle($imageTitle)
+                ->setDescription($imageDescription)
+                ->setUpdated(new \DateTime())
+                ->setCreated(new \DateTime())
+                ->setOwner($this->getUser());
+        return $image;
     }
 
 }

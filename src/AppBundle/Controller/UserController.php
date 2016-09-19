@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Event\UserEvent;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Entity\User;
@@ -16,7 +17,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class UserController extends Controller
 {
-    const ITEMS_PER_PAGE = 4;
+    const IMAGES_PER_PAGE = 4;
 
     public function indexAction(Request $request, $userId)
     {
@@ -25,22 +26,22 @@ class UserController extends Controller
         $user   = $entityManager->getRepository('AppBundle:User')
                                 ->findOneBy(array('id' => $userId));
         $recent = $entityManager->getRepository('AppBundle:Image')
-                                ->findBy(array('owner' => $user), array('created' => 'DESC'), self::ITEMS_PER_PAGE);
+                                ->findBy(array('owner' => $user), array('created' => 'DESC'), self::IMAGES_PER_PAGE);
 
 
         $passwordForm = $this->createForm(PasswordChangeFormType::class);
         $emailForm    = $this->createForm(EmailChangeFormType::class);
 
-        if($user === $this->getUser()) {
-            if($user->getEnabled() === false){
+        if ($user === $this->getUser()) {
+            if ($user->getEnabled() === false) {
                 $flash = $this->get('braincrafted_bootstrap.flash');
-                $flash->error('This user account has not been verified yet. Please check Your email for verification link or use "Resend Verification Link" button bellow!');
+                $flash->error('This user account is not verified. Please check Your email for verification link or use "Resend Verification Link" button bellow!');
             }
 
             $emailForm->handleRequest($request);
             $passwordForm->handleRequest($request);
             
-            if($this->handleForm($emailForm, $passwordForm)) {
+            if ($this->handleForm($emailForm, $passwordForm)) {
                 return $this->redirectToRoute('_user', array('userId' => $user->getId()));
             }
         }
@@ -78,10 +79,9 @@ class UserController extends Controller
             $entityManager->persist($user);
             $entityManager->flush();
 
-            $this->sendEmail($user, 'AppBundle:Email:registration.txt.twig');
-            
-            $flash = $this->get('braincrafted_bootstrap.flash');
-            $flash->success('Registration submitted, please check Your email and finish registration progress.');
+            $event = new UserEvent($user, $request->getSession());
+            $eventDispatcher = $this->get('event_dispatcher');
+            $eventDispatcher->dispatch(UserEvent::USER_CREATED_EVENT, $event);
 
             return $this->redirectToRoute('_home');
         }
@@ -96,12 +96,12 @@ class UserController extends Controller
 
     }
 
-    public function emailVerificationAction($confirmationToken)
+    public function verifyUserAction($confirmationToken)
     {
         $entityManager = $this->getDoctrine()->getManager();
         $flash         = $this->get('braincrafted_bootstrap.flash');
 
-        if($confirmationToken === null){
+        if ($confirmationToken === null) {
             $flash->error('Invalid verification token!');
             return $this->redirectToRoute('_home');
         }
@@ -136,13 +136,13 @@ class UserController extends Controller
             $flash         = $this->get('braincrafted_bootstrap.flash');
 
             if ($user !== null) {
-                $confirmationTokenManager = new confirmationTokenGenerator();
+                $confirmationTokenManager = new ConfirmationTokenGenerator();
                 $user->setConfirmationToken($confirmationTokenManager->generateConfirmationToken());
                 $entityManager->flush();
 
-                $this->sendEmail($user, 'AppBundle:Email:reset.txt.twig');
-
-                $flash->success('User '.$user->getUsername().' reset email sent successfuly!');
+                $dispatcher = $this->get('event_dispatcher');
+                $event = new UserEvent($user, $request->getSession());
+                $dispatcher->dispatch(UserEvent::USER_VERIFICATION_EVENT, $event);
             } else {
                 $flash->error('Oops, no user with matching token found!');
             }
@@ -173,11 +173,12 @@ class UserController extends Controller
         $form = $this->createForm(VerificationFormType::class);
         $form->handleRequest($request);
 
-        if ($form->isValid() === true) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             $user->setPlainPassword($data['plainPassword']);
             $user->setConfirmationToken(null);
             $user->setUpdated(new \Datetime());
+
             $entityManager->flush();
             $flash->success('Password for '.$user->getUsername().' was changed successfully!');
 
@@ -195,13 +196,17 @@ class UserController extends Controller
     }
 
 
+    /**
+     * @param \Symfony\Component\Form\Form $emailForm
+     * @param \Symfony\Component\Form\Form $passwordForm
+     */
     private function handleForm($emailForm, $passwordForm)
     {
         $entityManager = $this->getDoctrine()->getManager();
         $flash         = $this->get('braincrafted_bootstrap.flash');
         $user          = $this->getUser();
 
-        if($emailForm->isValid() === true){
+        if ($emailForm->isValid() === true) {
             $data = $emailForm->getData();
             $user->setEmail($data['email']);
             $user->setUpdated(new \Datetime());
@@ -217,13 +222,14 @@ class UserController extends Controller
         }
 
 
-        if($passwordForm->isValid() === true) {
+        if ($passwordForm->isValid() === true) {
             $data = $passwordForm->getData();
             $encoder = $this->get('security.password_encoder');
             $password = $encoder->encodePassword($user, $data['plainPassword']);
             $user->setPassword($password);
             $user->setUpdated(new \Datetime());
             $flash->success('User '.$user->getUsername().' password was changed successfully!');
+            $entityManager->persist($user);
             $entityManager->flush();
             return true;
         } else {
@@ -240,27 +246,12 @@ class UserController extends Controller
     public function resendVerificationAction()
     {
         $user = $this->getUser();
-        if($user->getEnabled() === false){
-            $this->sendEmail($user, 'AppBundle:Email:verify.txt.twig');
-            $flash = $this->get('braincrafted_bootstrap.flash');
-            $flash->success('Email containing Verification Link has been successfully sent to' . $user->getEmail());
+        if ($user->getEnabled() === false) {
+            $event = new UserEvent($user, $this->getRequest()->getSession());
+            $dispatcher = $this->get('event_dispatcher');
+            $dispatcher->dispatch(UserEvent::USER_VERIFICATION_EVENT, $event);
         }
         return $this->redirectToRoute('_home');   
-    }
-    private function sendEmail($user, $messageTemplate)
-    {
-        $message = \Swift_Message::newInstance()
-            ->setContentType("text/html")
-            ->setSubject('codeSandbox Email Robot')
-            ->setFrom('robot@codesandbox.info')
-            ->setTo($user->getEmail())
-            ->setBody(
-                $this->renderView(
-                    $messageTemplate,
-                    array('link' => $user->getConfirmationToken())
-                )
-            );
-            $this->get('mailer')->send($message);
     }
 
 }

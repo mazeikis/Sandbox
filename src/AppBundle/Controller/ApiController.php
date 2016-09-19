@@ -24,13 +24,13 @@ class ApiController extends Controller
         $message = array('message'=> 'Welcome to CodeSandbox API.');
         return new JsonResponse($message, Response::HTTP_OK);
 	}
- 
+
     public function galleryAction(Request $request)
     {
         $q = $request->query->get('q');
 
-        $currentPage = max( 1, $request->query->getInt('page'));
- 
+        $currentPage = max(1, $request->query->getInt('page'));
+
         $sortBy    = $request->query->get('sortBy', 'created');
         $whiteList = array('created', 'rating', 'title');
         if (in_array($sortBy, $whiteList) === false) {
@@ -52,7 +52,7 @@ class ApiController extends Controller
         $pagerfanta = new Pagerfanta($adapter);
         
 
-        if($currentPage > $pagerfanta->getNbPages()) {
+        if ($currentPage > $pagerfanta->getNbPages()) {
             $message = array('error' => "Page $currentPage not found.");
             return new JsonResponse($message, Response::HTTP_NOT_FOUND);
         }
@@ -63,7 +63,7 @@ class ApiController extends Controller
         $cacheManager = $this->container->get('liip_imagine.cache.manager');
         $gallery      = array();
 
-        foreach($result as $image){
+        foreach ($result as $image) {
         	$gallery[] = array(
             'id'          => $image[0]->getId(),
         	'thumbLink'   => $cacheManager->getBrowserPath($image[0]->getPath(), 'thumb'),
@@ -74,8 +74,8 @@ class ApiController extends Controller
 
         $message = array(
             'currentPage' => $currentPage, 
-            'sortedBy' => $sortBy, 
-            'order' => $order, 
+            'sortedBy' => $sortBy,
+            'order' => $order,
             'gallery' => $gallery
             );
 
@@ -87,11 +87,11 @@ class ApiController extends Controller
 
     public function imageAction(Request $request, $id)
     {
-    	$user          = $this->getUser();
+    	$user = $this->getUser();
         $entityManager = $this->getDoctrine()->getManager();
         $image         = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
 
-        if(!preg_match('/^\d+$/', $id)) {
+        if (!preg_match('/^\d+$/', $id)) {
             $message = array('error' => "id value is invalid, only positive integers are accepted.");
             return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
         }
@@ -165,24 +165,24 @@ class ApiController extends Controller
         $user          = $this->getUser();
 
         $image = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
-        if($image === null){
+        if ($image === null) {
             $message = array('error' => "Image file with id $id not found.");
             return new JsonResponse($message, Response::HTTP_NOT_FOUND);
         }
 
-        if($voteValue != 1 && $voteValue != -1){
+        if ($this->isGranted('vote', $image) === false) {
+            $message = array('error' => "Voting access unauthorized, sorry!");
+            return new JsonResponse($message, Response::HTTP_UNAUTHORIZED);
+        }
+
+        if ($voteValue != 1 && $voteValue != -1) {
             $message = array('error' => "Vote value of $voteValue is invalid. Use '1' to upvote or '-1' to downvote an image.");
             return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
         }
  
         $voteCheck = $entityManager->getRepository('AppBundle:Vote')->findOneBy(array('user' => $user, 'image' => $image));        
-        if($voteCheck !== null){
+        if ($voteCheck !== null) {
             $message = array('error' => "User ".$user->getUsername()." has already voted on image ".$image->getId());
-            return new JsonResponse($message, Response::HTTP_UNAUTHORIZED);
-        }
-
-        if ($this->isGranted('vote', $image) === false) {
-            $message = array('error' => "Voting access unauthorized, sorry!");
             return new JsonResponse($message, Response::HTTP_UNAUTHORIZED);
         }
  
@@ -191,7 +191,6 @@ class ApiController extends Controller
         $entityManager->persist($vote);
         $entityManager->flush();
 
- 
         $message = array('message' => "Vote recorded successfully.");
         return new JsonResponse($message, Response::HTTP_OK);
  

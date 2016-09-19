@@ -17,7 +17,7 @@ class DefaultController extends Controller
     {
         $entityManager = $this->getDoctrine()->getManager();
         $recent        = $entityManager->getRepository('AppBundle:Image')
-                                       ->findBy(array(), array('created' => 'DESC'), self::ITEMS_PER_PAGE);
+                                        ->findBy(array(), array('created' => 'DESC'), self::ITEMS_PER_PAGE);
 
         return $this->render('AppBundle:Twig:index.html.twig', array('title' => 'sandbox|project', 'recent' => $recent));
 
@@ -33,19 +33,19 @@ class DefaultController extends Controller
         if ($form->isValid() === true) {
             $data    = $form->getData();
             $message = \Swift_Message::newInstance()
-            ->setContentType("text/html")
-            ->setSubject($data['subject'])
-            ->setFrom($data['from'])
-            ->setTo('robot@codesandbox.info')
-            ->setBody(
-                $this->renderView(
-                    'AppBundle:Email:contact.txt.twig',
-                    array(
-                     'message' => $data['message'],
-                     'user'    => $this->getUser(),
-                    )
-                )
-            );
+                            ->setContentType("text/html")
+                            ->setSubject($data['subject'])
+                            ->setFrom($data['from'])
+                            ->setTo('robot@codesandbox.info')
+                            ->setBody(
+                                $this->renderView(
+                                    'AppBundle:Email:contact.txt.twig',
+                                    array(
+                                        'message' => $data['message'],
+                                        'user'    => $this->getUser(),
+                                    )
+                                )
+                            );
             $this->get('mailer')->send($message);
 
             $flash = $this->get('braincrafted_bootstrap.flash');
@@ -70,14 +70,18 @@ class DefaultController extends Controller
         $form    = $this->createForm(LoginFormType::class);
         $helper  = $this->get('security.authentication_utils');
         $message = $helper->getLastAuthenticationError();
+
         if($message){
             $flash   = $this->get('braincrafted_bootstrap.flash');
             $flash->error($message);
         }
+
         $form->handleRequest($request);
+
         if($form->isValid() === true && $form->isSubmitted() === true){
             return $this->redirectToRoute('_home');
         }
+
         return $this->render('AppBundle:Twig:login.html.twig', [
             'form'          => $form->createView(),
             'last_username' => $helper->getLastUsername(),
