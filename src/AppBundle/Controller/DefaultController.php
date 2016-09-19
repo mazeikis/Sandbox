@@ -17,7 +17,7 @@ class DefaultController extends Controller
     {
         $entityManager = $this->getDoctrine()->getManager();
         $recent        = $entityManager->getRepository('AppBundle:Image')
-                                       ->findBy(array(), array('created' => 'DESC'), self::ITEMS_PER_PAGE);
+                                        ->findBy(array(), array('created' => 'DESC'), self::ITEMS_PER_PAGE);
 
         return $this->render('AppBundle:Twig:index.html.twig', array('title' => 'sandbox|project', 'recent' => $recent));
 
@@ -41,8 +41,8 @@ class DefaultController extends Controller
                                 $this->renderView(
                                     'AppBundle:Email:contact.txt.twig',
                                     array(
-                                     'message' => $data['message'],
-                                     'user'    => $this->getUser(),
+                                        'message' => $data['message'],
+                                        'user'    => $this->getUser(),
                                     )
                                 )
                             );

@@ -28,7 +28,7 @@ class UserEventListener
      * UserEventListener constructor.
      * @param $container
      */
-    public function __construct($container){
+    public function __construct($container) {
         $this->container = $container;
     }
 
@@ -36,7 +36,7 @@ class UserEventListener
      * Sends email with user verification link and adds success flash message.
      * @param UserEvent $event
      */
-    public function onUserCreatedAction(UserEvent $event){
+    public function onUserCreatedAction(UserEvent $event) {
         $user    = $event->getUser();
         $session = $event->getSession();
         $session->getFlashBag()->add('success', 'Registration submitted, please check Your email and finish registration progress.');
@@ -50,7 +50,7 @@ class UserEventListener
      * Sends email with link to password reset and adds success flash message.
      * @param UserEvent $event
      */
-    public function onUserVerificationAction(UserEvent $event){
+    public function onUserVerificationAction(UserEvent $event) {
         $user    = $event->getUser();
         $session = $event->getSession();
 
@@ -64,9 +64,9 @@ class UserEventListener
     /**
      * Helper method for sending email, DRY.
      * @param User $user
-     * @param $template
+     * @param string $template
      */
-    private function sendEmail(User $user, $template){
+    private function sendEmail(User $user, $template) {
         $message = \Swift_Message::newInstance()
             ->setContentType("text/html")
             ->setSubject('codeSandbox Email Robot')

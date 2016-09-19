@@ -32,8 +32,8 @@ class UserController extends Controller
         $passwordForm = $this->createForm(PasswordChangeFormType::class);
         $emailForm    = $this->createForm(EmailChangeFormType::class);
 
-        if($user === $this->getUser()) {
-            if($user->getEnabled() === false){
+        if ($user === $this->getUser()) {
+            if ($user->getEnabled() === false) {
                 $flash = $this->get('braincrafted_bootstrap.flash');
                 $flash->error('This user account is not verified. Please check Your email for verification link or use "Resend Verification Link" button bellow!');
             }
@@ -41,7 +41,7 @@ class UserController extends Controller
             $emailForm->handleRequest($request);
             $passwordForm->handleRequest($request);
             
-            if($this->handleForm($emailForm, $passwordForm)) {
+            if ($this->handleForm($emailForm, $passwordForm)) {
                 return $this->redirectToRoute('_user', array('userId' => $user->getId()));
             }
         }
@@ -101,7 +101,7 @@ class UserController extends Controller
         $entityManager = $this->getDoctrine()->getManager();
         $flash         = $this->get('braincrafted_bootstrap.flash');
 
-        if($confirmationToken === null){
+        if ($confirmationToken === null) {
             $flash->error('Invalid verification token!');
             return $this->redirectToRoute('_home');
         }
@@ -196,13 +196,17 @@ class UserController extends Controller
     }
 
 
+    /**
+     * @param \Symfony\Component\Form\Form $emailForm
+     * @param \Symfony\Component\Form\Form $passwordForm
+     */
     private function handleForm($emailForm, $passwordForm)
     {
         $entityManager = $this->getDoctrine()->getManager();
         $flash         = $this->get('braincrafted_bootstrap.flash');
         $user          = $this->getUser();
 
-        if($emailForm->isValid() === true){
+        if ($emailForm->isValid() === true) {
             $data = $emailForm->getData();
             $user->setEmail($data['email']);
             $user->setUpdated(new \Datetime());
@@ -218,7 +222,7 @@ class UserController extends Controller
         }
 
 
-        if($passwordForm->isValid() === true) {
+        if ($passwordForm->isValid() === true) {
             $data = $passwordForm->getData();
             $encoder = $this->get('security.password_encoder');
             $password = $encoder->encodePassword($user, $data['plainPassword']);
@@ -242,7 +246,7 @@ class UserController extends Controller
     public function resendVerificationAction()
     {
         $user = $this->getUser();
-        if($user->getEnabled() === false){
+        if ($user->getEnabled() === false) {
             $event = new UserEvent($user, $this->getRequest()->getSession());
             $dispatcher = $this->get('event_dispatcher');
             $dispatcher->dispatch(UserEvent::USER_VERIFICATION_EVENT, $event);

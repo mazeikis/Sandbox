@@ -28,7 +28,7 @@ class UserEvent extends Event
      * @param User $user
      * @param SessionInterface $session
      */
-    public function __construct(User $user, SessionInterface $session){
+    public function __construct(User $user, SessionInterface $session) {
         $this->user    = $user;
         $this->session = $session;
     }
@@ -44,7 +44,7 @@ class UserEvent extends Event
     /**
      * @return User
      */
-    public function getUser(){
+    public function getUser() {
         return $this->user;
     }
 }
