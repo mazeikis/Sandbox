@@ -24,7 +24,7 @@ class GalleryController extends Controller
     public function indexAction(Request $request)
     {
         $q           = $request->query->get('q');
-        $currentPage = max( 1, $request->query->get('page'));
+        $currentPage = max(1, $request->query->get('page'));
 
         $sortBy = $request->query->get('sortBy');
         $whiteList = array('created', 'rating', 'title');
@@ -50,7 +50,7 @@ class GalleryController extends Controller
         $template = $request->isXmlHttpRequest() ? 'AppBundle:Twig:gallery-content.html.twig' 
                                                  : 'AppBundle:Twig:gallery.html.twig';
 
-        return $this->render( $template,
+        return $this->render($template,
                 array(
                  'title'   => 'sandbox|gallery',
                  'content' => $result,
@@ -69,7 +69,7 @@ class GalleryController extends Controller
 
         if ($image === null) {
             $flash = $this->get('braincrafted_bootstrap.flash');
-            $flash->error('Sadly, I could not find the image with id "' . $id . '"');
+            $flash->error('Sadly, I could not find the image with id "'.$id.'"');
             return $this->redirectToRoute('_gallery');        
         }
  
@@ -77,7 +77,7 @@ class GalleryController extends Controller
         $rating = $query->getSingleScalarResult();
 
         if ($user !== null) {
-            $hasVoted  = $entityManager->getRepository('AppBundle:Vote')->checkForVote($user, $image);
+            $hasVoted = $entityManager->getRepository('AppBundle:Vote')->checkForVote($user, $image);
         } else {
             $hasVoted = false;
         }
@@ -102,7 +102,7 @@ class GalleryController extends Controller
             return $this->redirectToRoute('_gallery');
         }
 
-        $form  = $this->createForm(UploadFormType::class);
+        $form = $this->createForm(UploadFormType::class);
         $form->handleRequest($request);
 
         if ($form->isValid() === true) {
@@ -134,14 +134,14 @@ class GalleryController extends Controller
             $flash->error('Sadly, You were not authorized to edit this image.');
             return $this->redirectToRoute('_image', array('id' => $id));
         } else {
-            $hasVoted  = $entityManager->getRepository('AppBundle:Vote')->checkForVote($user, $image);
+            $hasVoted = $entityManager->getRepository('AppBundle:Vote')->checkForVote($user, $image);
         }
  
         $form = $this->createFormBuilder()
                      ->add('title', TextType::class, array(
                                                    'data' => $image->getTitle(),
                                                    'constraints' => new Length(array('min' => 3), new NotBlank)))
-                     ->add('description', TextareaType::class, array( 'data' => $image->getDescription(), 'required' => true))
+                     ->add('description', TextareaType::class, array('data' => $image->getDescription(), 'required' => true))
                      ->add('Save', SubmitType::class)
                      ->getForm();
  
@@ -151,7 +151,7 @@ class GalleryController extends Controller
             $data = $form->getData();
             $image->setTitle($data['title'])
                   ->setDescription($data['description'])
-                  ->setUpdated(new \DateTime());;
+                  ->setUpdated(new \DateTime()); ;
             $entityManager->flush();
             $flash->success('Image details were edited and changes saved.');
 
@@ -178,7 +178,7 @@ class GalleryController extends Controller
         }
  
         if ($image === null) {
-            $flash->error('Sadly, I could not find the image with id "' . $id . '"');
+            $flash->error('Sadly, I could not find the image with id "'.$id.'"');
         } else {
             $event = new ImageEvent($image);
             $dispatcher = $this->get('event_dispatcher');
@@ -233,13 +233,13 @@ class GalleryController extends Controller
         $fileSize         = $data['file']->getSize();
             
         $image->setPath("/images/".$newFileName.".".$fileExtension)
-              ->setSize($fileSize)
-              ->setResolution($imageResolution)
-              ->setTitle($imageTitle)
-              ->setDescription($imageDescription)
-              ->setUpdated(new \DateTime())
-              ->setCreated(new \DateTime())
-              ->setOwner($this->getUser());
+                ->setSize($fileSize)
+                ->setResolution($imageResolution)
+                ->setTitle($imageTitle)
+                ->setDescription($imageDescription)
+                ->setUpdated(new \DateTime())
+                ->setCreated(new \DateTime())
+                ->setOwner($this->getUser());
         return $image;
     }
 

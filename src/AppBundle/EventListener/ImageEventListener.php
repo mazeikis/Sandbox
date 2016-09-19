@@ -32,7 +32,7 @@ class ImageEventListener extends Event
     /**
      * @param ImageEvent $event
      */
-    public function onImageDeleteAction(ImageEvent $event){
+    public function onImageDeleteAction(ImageEvent $event) {
         $fileSystem = new Filesystem();
         $imageDir   = $this->container->get('kernel')->getRootDir().'/../web/';
         $image      = $event->getImage();
@@ -46,7 +46,7 @@ class ImageEventListener extends Event
 
     }
 
-    public function onImageCreateAction(ImageEvent $event){
+    public function onImageCreateAction(ImageEvent $event) {
         $image            = $event->getImage();
         $data             = $event->getData();
 
