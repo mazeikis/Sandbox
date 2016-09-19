@@ -95,7 +95,6 @@ class GalleryController extends Controller
     public function uploadAction(Request $request)
     {
         $image = new Image();
-        $user  = $this->getUser();
 
         if ($this->isGranted('create', $image) === false) {
             $flash = $this->get('braincrafted_bootstrap.flash');
@@ -109,7 +108,6 @@ class GalleryController extends Controller
         if ($form->isValid() === true) {
             $data  = $form->getData();
             $image = $this->handleUploadedFile($data, $image);
-            $image->setOwner($user);
 
             $event = new ImageEvent($image, $data);
             $dispatcher = $this->get('event_dispatcher');
@@ -240,7 +238,8 @@ class GalleryController extends Controller
               ->setTitle($imageTitle)
               ->setDescription($imageDescription)
               ->setUpdated(new \DateTime())
-              ->setCreated(new \DateTime());
+              ->setCreated(new \DateTime())
+              ->setOwner($this->getUser());
         return $image;
     }
 

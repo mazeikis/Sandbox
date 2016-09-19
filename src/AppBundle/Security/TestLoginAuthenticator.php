@@ -63,7 +63,6 @@ class TestLoginAuthenticator extends AbstractGuardAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-        //$url = $this->router->generate('_gallery');
         return null;
     }
 

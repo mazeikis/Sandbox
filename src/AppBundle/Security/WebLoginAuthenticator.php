@@ -79,8 +79,6 @@ class WebLoginAuthenticator extends AbstractGuardAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-        //$url = $this->router->generate('_gallery');
-        //return new RedirectResponse($url);
         return null;
     }
 

@@ -19,25 +19,18 @@ class ApiController extends Controller
     const MAX_PER_PAGE = 8;
 
 
-    /**
-     * @return JsonResponse
-     */
-    public function defaultAction()
+	public function defaultAction()
 	{
         $message = array('message'=> 'Welcome to CodeSandbox API.');
         return new JsonResponse($message, Response::HTTP_OK);
 	}
 
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
     public function galleryAction(Request $request)
     {
         $q = $request->query->get('q');
 
         $currentPage = max( 1, $request->query->getInt('page'));
- 
+
         $sortBy    = $request->query->get('sortBy', 'created');
         $whiteList = array('created', 'rating', 'title');
         if (in_array($sortBy, $whiteList) === false) {
@@ -81,8 +74,8 @@ class ApiController extends Controller
 
         $message = array(
             'currentPage' => $currentPage, 
-            'sortedBy' => $sortBy, 
-            'order' => $order, 
+            'sortedBy' => $sortBy,
+            'order' => $order,
             'gallery' => $gallery
             );
 
@@ -92,11 +85,6 @@ class ApiController extends Controller
 
     }
 
-    /**
-     * @param Request $request
-     * @param $id
-     * @return JsonResponse
-     */
     public function imageAction(Request $request, $id)
     {
     	$user          = $this->getUser();
@@ -138,10 +126,6 @@ class ApiController extends Controller
          
     }
 
-    /**
-     * @param $id
-     * @return JsonResponse
-     */
     public function imageDeleteAction($id)
     {
         $entityManager = $this->getDoctrine()->getManager();
@@ -173,10 +157,6 @@ class ApiController extends Controller
  
     }
 
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
     public function imageVoteAction(Request $request)
     {
         $voteValue     = $request->request->get('voteValue');
@@ -190,19 +170,19 @@ class ApiController extends Controller
             return new JsonResponse($message, Response::HTTP_NOT_FOUND);
         }
 
+        if ($this->isGranted('vote', $image) === false) {
+            $message = array('error' => "Voting access unauthorized, sorry!");
+            return new JsonResponse($message, Response::HTTP_UNAUTHORIZED);
+        }
+
         if($voteValue != 1 && $voteValue != -1){
             $message = array('error' => "Vote value of $voteValue is invalid. Use '1' to upvote or '-1' to downvote an image.");
             return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
         }
  
         $voteCheck = $entityManager->getRepository('AppBundle:Vote')->findOneBy(array('user' => $user, 'image' => $image));        
-        if($voteCheck !== null){
-            $message = array('error' => "User ".$user->getUsername()." has already voted on image ".$image->getId());
-            return new JsonResponse($message, Response::HTTP_UNAUTHORIZED);
-        }
-
-        if ($this->isGranted('vote', $image) === false) {
-            $message = array('error' => "Voting access unauthorized, sorry!");
+        if($voteCheck !== null) {
+            $message = array('error' => "User " . $user->getUsername() . " has already voted on image " . $image->getId());
             return new JsonResponse($message, Response::HTTP_UNAUTHORIZED);
         }
  
@@ -211,15 +191,11 @@ class ApiController extends Controller
         $entityManager->persist($vote);
         $entityManager->flush();
 
- 
         $message = array('message' => "Vote recorded successfully.");
         return new JsonResponse($message, Response::HTTP_OK);
  
     }
 
-    /**
-     * @return string
-     */
     private function getImageDir()
     {
         return $this->get('kernel')->getRootDir().'/../web';
