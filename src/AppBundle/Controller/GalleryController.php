@@ -80,7 +80,6 @@ class GalleryController extends Controller
     public function imageAction($image)
     {
         $user          = $this->getUser();
-        //$image         = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
 
         if ($image === null) {
             $flash = $this->get('braincrafted_bootstrap.flash');
