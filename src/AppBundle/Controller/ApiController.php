@@ -6,30 +6,50 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Pagerfanta\Pagerfanta;
 use Symfony\Component\Filesystem\Filesystem;
 use AppBundle\Entity\Vote;
+use AppBundle\Entity\Image;
 
 
+/**
+ * Class ApiController
+ * @package AppBundle\Controller
+ */
 class ApiController extends Controller
 {
 
 
+    /**
+     * Maximum items (images) per page, required for pagerfanta.
+     */
     const MAX_PER_PAGE = 8;
 
 
-	public function defaultAction()
+    /**
+     * @return JsonResponse
+     */
+    public function defaultAction()
 	{
         $message = array('message'=> 'Welcome to CodeSandbox API.');
         return new JsonResponse($message, Response::HTTP_OK);
 	}
 
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function galleryAction(Request $request)
     {
         $q = $request->query->get('q');
 
-        $currentPage = max(1, $request->query->getInt('page'));
+        $currentPage = $request->query->getInt('page', 1);
+        if(!is_int($currentPage) || $currentPage < 0){
+            $message = array('error' => "Invalid page number format.");
+            return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
+        }
 
         $sortBy    = $request->query->get('sortBy', 'created');
         $whiteList = array('created', 'rating', 'title');
@@ -85,22 +105,16 @@ class ApiController extends Controller
 
     }
 
-    public function imageAction(Request $request, $id)
+    /**
+     * @param Request $request
+     * @ParamConverter("image", class="AppBundle:Image")
+     * @return JsonResponse
+     */
+    public function imageAction(Request $request, Image $image)
     {
     	$user = $this->getUser();
+
         $entityManager = $this->getDoctrine()->getManager();
-        $image         = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
-
-        if (!preg_match('/^\d+$/', $id)) {
-            $message = array('error' => "id value is invalid, only positive integers are accepted.");
-            return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
-        }
-
-        if ($image === null) {
-            $message = array('error' => "Image file with id $id not found.");
-        	return new JsonResponse($message, Response::HTTP_NOT_FOUND);
-        }
- 
         $rating = $entityManager->getRepository('AppBundle:Vote')
         						->countVotes($image)
         						->getQuery()
@@ -119,28 +133,23 @@ class ApiController extends Controller
         			  'created' 	 => $image->getCreated()->format("d-M-Y H:i:s"),
         			  'updated' 	 => $image->getUpdated()->format("d-M-Y H:i:s"),
         			  'owner' 		 => $image->getOwner()->getUsername(),
-        			  'rating' 		 => $rating
+        			  'rating' 		 => $rating,
         			  );
 
         return new JsonResponse($message, Response::HTTP_OK);
          
     }
 
-    public function imageDeleteAction($id)
+    /**
+     * @ParamConverter("image", class="AppBundle:Image")
+     * @return JsonResponse
+     */
+    public function imageDeleteAction($image)
     {
-        $entityManager = $this->getDoctrine()->getManager();
-        $image         = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
- 
-        if ($image === null) {
-            $message = array('error' => "Image file with id $id not found.");
-            return new JsonResponse($message, Response::HTTP_NOT_FOUND);
-        } 
         if ($this->isGranted('delete', $image) === false) {
             $message = array('error' => "You are not authorized to delete this image.");
             return new JsonResponse($message, Response::HTTP_UNAUTHORIZED);
         }
- 
-        
 
         $fileSystem = new Filesystem();
         $imageDir   = $this->getImageDir();
@@ -149,6 +158,7 @@ class ApiController extends Controller
         $cacheManager = $this->container->get('liip_imagine.cache.manager');
         $cacheManager->remove($image->getPath());
 
+        $entityManager = $this->getDoctrine()->getManager();
         $entityManager->remove($image);
         $entityManager->flush();
 
@@ -157,6 +167,10 @@ class ApiController extends Controller
  
     }
 
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function imageVoteAction(Request $request)
     {
         $voteValue     = $request->request->get('voteValue');
@@ -196,6 +210,10 @@ class ApiController extends Controller
  
     }
 
+    /**
+     *
+     * @return string
+     */
     private function getImageDir()
     {
         return $this->get('kernel')->getRootDir().'/../web';
