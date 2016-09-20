@@ -15,16 +15,28 @@ use AppBundle\Form\Type\UploadFormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
- 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+
+/**
+ * Class GalleryController
+ * @package AppBundle\Controller
+ */
 class GalleryController extends Controller
 {
- 
+
+    /**
+     *
+     */
     const MAX_PER_PAGE = 8;
- 
+
+    /**
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function indexAction(Request $request)
     {
         $q           = $request->query->get('q');
-        $currentPage = max(1, $request->query->get('page'));
+        $currentPage = $request->query->get('page', 1);
 
         $sortBy = $request->query->get('sortBy');
         $whiteList = array('created', 'rating', 'title');
@@ -59,20 +71,23 @@ class GalleryController extends Controller
         );
  
     }
- 
- 
-    public function imageAction($id)
+
+    /**
+     * @param $id
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @paramConverter("image", class="AppBundle:Image")
+     */
+    public function imageAction($image)
     {
         $user          = $this->getUser();
-        $entityManager = $this->getDoctrine()->getManager();
-        $image         = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
+        //$image         = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
 
         if ($image === null) {
             $flash = $this->get('braincrafted_bootstrap.flash');
             $flash->error('Sadly, I could not find the image with id "'.$id.'"');
             return $this->redirectToRoute('_gallery');        
         }
- 
+        $entityManager = $this->getDoctrine()->getManager();
         $query  = $entityManager->getRepository('AppBundle:Vote')->countVotes($image)->getQuery();
         $rating = $query->getSingleScalarResult();
 
@@ -90,8 +105,12 @@ class GalleryController extends Controller
             ));
  
     }
- 
- 
+
+
+    /**
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
     public function uploadAction(Request $request)
     {
         $image = new Image();
@@ -121,12 +140,16 @@ class GalleryController extends Controller
         return $this->render('AppBundle:Twig:upload.html.twig', array('title' => 'sandbox|project', 'form' => $form->createView()));
  
     }
- 
- 
-    public function imageEditAction(Request $request, $id)
+
+
+    /**
+     * @param Request $request
+     * @paramConverter("image", class="AppBundle:Image")
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
+    public function imageEditAction(Request $request, $image)
     {
         $entityManager = $this->getDoctrine()->getManager();
-        $image         = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
         $flash         = $this->get('braincrafted_bootstrap.flash');
         $user          = $this->getUser();
  
@@ -164,8 +187,12 @@ class GalleryController extends Controller
             'hasVoted' => $hasVoted,
             'form'     => $form->createView()));
     }
- 
- 
+
+
+    /**
+     * @param $id
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
     public function imageDeleteAction($id)
     {
         $entityManager = $this->getDoctrine()->getManager();
@@ -191,8 +218,12 @@ class GalleryController extends Controller
         return $this->redirectToRoute('_gallery');
  
     }
- 
- 
+
+
+    /**
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
     public function imageVoteAction(Request $request)
     {
         $voteValue          = $request->request->get('voteValue');
@@ -220,8 +251,13 @@ class GalleryController extends Controller
         return $this->redirectToRoute('_image', array('id' => $imageId));
  
     }
- 
 
+
+    /**
+     * @param $data
+     * @param Image $image
+     * @return Image
+     */
     private function handleUploadedFile($data, Image $image)
     {
         $imageSizeDetails = getimagesize($data['file']->getPathName());
