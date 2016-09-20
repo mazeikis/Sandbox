@@ -36,7 +36,7 @@ security:
             pattern:  ^/(_(profiler|wdt)|css|images|js)/
             security: false
     access_control:
-        - { path: ^/gallery, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/gallery, roles: IS_AUTHENTICATED_ANONYMOUSLY}
         - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/user/reset, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/upload, roles: ROLE_USER }

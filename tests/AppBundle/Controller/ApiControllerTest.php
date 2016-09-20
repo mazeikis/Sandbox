@@ -4,205 +4,145 @@ namespace Tests\AppBundle\Controller;
 
 use Tests\AppBundle\FixturesAwareWebTestCase;
 
+/**
+ * Class ApiControllerTest
+ * @package Tests\AppBundle\Controller
+ */
 Class ApiControllerTest extends FixturesAwareWebTestCase
 {
-
-    public function testGalleryAction()
+    /**
+     * @dataProvider galleryActionProvider
+     */
+    public function testGalleryAction($key, $value, $httpStatusCode = 400)
     {
-    	$method = 'GET';
-    	$uri 	= '/api/gallery/';
-    	$parameters = array();
-
-
         $client = static::createClient();
 
-        $client->request($method, $uri, $parameters, array(), array('HTTP_X-Token' => 'TestApiKey1'));
+        $client->request('GET', '/api/gallery/', array($key => $value));
         $response = $client->getResponse();
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals($httpStatusCode, $response->getStatusCode());
         $this->assertTrue($response->headers->contains(
             'Content-Type',
             'application/json'
     	));
 
-        $parameters = array('page' => -1);
-        $client->request($method, $uri, $parameters, array(), array('HTTP_X-Token' => 'TestApiKey1'));
-        $response = $client->getResponse();
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertTrue($response->headers->contains(
-            'Content-Type',
-            'application/json'
-        ));
-
-        $parameters = array('page' => 'xoxo');
-        $client->request($method, $uri, $parameters, array(), array('HTTP_X-Token' => 'TestApiKey1'));
-        $response = $client->getResponse();
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertTrue($response->headers->contains(
-            'Content-Type',
-            'application/json'
-        ));
-
-        $parameters = array('page' => 1);
-        $client->request($method, $uri, $parameters, array(), array('HTTP_X-Token' => 'TestApiKey1'));
-        $response = $client->getResponse();
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertTrue($response->headers->contains(
-            'Content-Type',
-            'application/json'
-        ));
-
-        $parameters = array('sortBy' => 'xoxo');
-        $client->request($method, $uri, $parameters, array(), array('HTTP_X-Token' => 'TestApiKey1'));
-        $response = $client->getResponse();
-        $this->assertEquals(400, $response->getStatusCode());
-        $this->assertTrue($response->headers->contains(
-            'Content-Type',
-            'application/json'
-        ));
-
-        $parameters = array('order' => 'xoxo');
-        $client->request($method, $uri, $parameters, array(), array('HTTP_X-Token' => 'TestApiKey1'));
-        $response = $client->getResponse();
-        $this->assertEquals(400, $response->getStatusCode());
-        $this->assertTrue($response->headers->contains(
-            'Content-Type',
-            'application/json'
-        ));
-
-
     }
-    public function testImageAction()
+
+    /**
+     * @return array
+     */
+    public function galleryActionProvider(){
+        return [
+            'No parameter      assert 200' => [null, null, 200],
+            'Negative integer  assert 400' => ['page', -1, 400],
+            'String page       assert 400' => ['page', 'xoxo', 404],
+            'Positive integer  assert 200' => ['page', 1, 200],
+            'Sort by "xoxo"    assert 400' => ['sortBy', 'xoxo', 400],
+            'Sort by "created" assert 200' => ['sortBy', 'created', 200],
+            'Sort by "title"   assert 200' => ['sortBy', 'title', 200],
+            'Sort by "rating"  assert 200' => ['sortBy', 'rating', 200],
+            'Order by "xoxo"   assert 400' => ['order', 'xoxo', 400],
+            'Order by "ASC"    assert 200' => ['order', 'asc', 200],
+            'Order by "DESC"   assert 200' => ['order', 'desc', 200]
+        ];
+    }
+
+    /**
+     * @dataProvider imageActionProvider
+     */
+    public function testImageAction($uri, $httpStatuCode)
     {
-        $method = 'GET';
-        $uri    = '/api/image/1';
         $client = static::createClient();
 
         //Correct and existing image id
-        $client->request($method, $uri, array(), array(), array('HTTP_X-Token' => 'TestApiKey1'));
+        $client->request('GET', $uri);
         $response = $client->getResponse();
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertTrue($response->headers->contains(
-            'Content-Type',
-            'application/json'
-        ));
-
-        //Incorrect and non existant image id
-        $uri    = '/api/image/xoxo';
-        $client->request($method, $uri, array(), array(), array('HTTP_X-Token' => 'TestApiKey1'));
-        $response = $client->getResponse();
-        $this->assertEquals(400, $response->getStatusCode());
-        $this->assertTrue($response->headers->contains(
-            'Content-Type',
-            'application/json'
-        ));
-
-        //Correct, but non existant image id
-        $uri    = '/api/image/191919';
-        $client->request($method, $uri, array(), array(), array('HTTP_X-Token' => 'TestApiKey1'));
-        $response = $client->getResponse();
-        $this->assertEquals(404, $response->getStatusCode());
+        $this->assertEquals($httpStatuCode, $response->getStatusCode());
         $this->assertTrue($response->headers->contains(
             'Content-Type',
             'application/json'
         ));
     }
-    public function testImageDeleteAction()
+
+    /**
+     * @return array
+     */
+    public function imageActionProvider(){
+        return [
+            'Correct uri     200' => ['/api/image/1', 200],
+            'Invalid format  400' => ['/api/image/xoxo', 404],
+            'Non existant id 404' => ['/api/image/3', 404]
+        ];
+    }
+
+    /**
+     * @param $uri
+     * @param $tokenKey
+     * @param $tokenValue
+     * @param $httpStatusCode
+     * @dataProvider imageDeleteActionProvider
+     */
+    public function testImageDeleteAction($uri, $tokenValue, $httpStatusCode)
     {
-        $method     = 'DELETE';
-        $uri        = '/api/image/delete/1';
         $client     = static::createClient();
 
-        //No user logged in
-        $client->request($method, $uri);
+        $client->request('DELETE', $uri, array(), array(), array('HTTP_X-Token' => $tokenValue));
         $response = $client->getResponse();
-        $this->assertEquals(401, $response->getStatusCode());
+        $this->assertEquals($httpStatusCode, $response->getStatusCode());
         $this->assertTrue($response->headers->contains(
             'Content-Type',
             'application/json'
         ));
-
-        //With authorised user logged in, but no 'delete' rights
-        $client->request($method, $uri, array(), array(), array('HTTP_X-Token' => 'TestApiKey2'));
-        $response = $client->getResponse();
-        $this->assertEquals(401, $response->getStatusCode());
-        $this->assertTrue($response->headers->contains(
-            'Content-Type',
-            'application/json'
-        ));
-
-        //With authorised user logged in
-        $client->request($method, $uri, array(), array(), array('HTTP_X-Token' => 'TestApiKey1'));
-        $response = $client->getResponse();
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertTrue($response->headers->contains(
-            'Content-Type',
-            'application/json'
-        ));
-
-        //Non existing and incorrect format of id with value of 'xoxo'
-        $uri    = '/api/image/delete/xoxo';
-        $client->request($method, $uri, array(), array(), array('HTTP_X-Token' => 'TestApiKey1'));
-        $response = $client->getResponse();
-        $this->assertEquals(404, $response->getStatusCode());
-        $this->assertTrue($response->headers->contains(
-            'Content-Type',
-            'application/json'
-        ));
-
     }
-    public function testImageVoteAction()
+
+    /**
+     * @return array
+     */
+    public function imageDeleteActionProvider(){
+        return [
+            'Correct uri, no user'                   => ['/api/image/delete/1', null, 401],
+            'Correct uri, user logged in, no rights' => ['/api/image/delete/1', 'TestApiKey2', 401],
+            'Correct uri, authorized user'           => ['/api/image/delete/1', 'TestApiKey1', 200],
+            'Incorrect uri, user logged in'          => ['/api/image/delete/xoxo', 'TestApiKey1', 404],
+            'Non existing image, user logged in'     => ['/api/image/delete/3', 'TestApiKey1', 404],
+        ];
+    }
+
+    /**
+     * @param $id
+     * @param $voteValue
+     * @param $token
+     * @dataProvider imageVoteActionProvider
+     */
+    public function testImageVoteAction($id, $voteValue, $token, $httpStatusCode)
     {
-        $method = 'POST';
-        $uri    = '/api/image/vote/';
         $client = static::createClient();
 
-        //Wrong value
-        $parameters = array('id' => 1, 'voteValue' => 'xoxo');
-        $client->request($method, $uri, $parameters, array(), array('HTTP_X-Token' => 'TestApiKey2'));
-        $response = $client->getResponse();
-        $this->assertEquals(400, $response->getStatusCode());
-        $this->assertTrue($response->headers->contains(
-            'Content-Type',
-            'application/json'
-        ));
+        $client->request('POST',
+                         '/api/image/vote/',
+                         array('id' => $id, 'voteValue' => $voteValue),
+                         array(),
+                         array('HTTP_X-Token' => $token)
+        );
 
-        //Non existing id
-        $parameters = array('id' => 12345, 'voteValue' => '1');
-        $client->request($method, $uri, $parameters, array(), array('HTTP_X-Token' => 'TestApiKey2'));
         $response = $client->getResponse();
-        $this->assertEquals(404, $response->getStatusCode());
+        $this->assertEquals($httpStatusCode, $response->getStatusCode());
         $this->assertTrue($response->headers->contains(
             'Content-Type',
             'application/json'
         ));
+    }
 
-        //Existing id and correct value, but no authorised user.
-        $parameters = array('id' => 1, 'voteValue' => '1');
-        $client->request($method, $uri, $parameters, array(), array('HTTP_X-Token' => 'TestApiKey1'));
-        $response = $client->getResponse();
-        $this->assertEquals(401, $response->getStatusCode());
-        $this->assertTrue($response->headers->contains(
-            'Content-Type',
-            'application/json'
-        ));
-        
-        //With user logged in, but has no rights to vote
-        $client->request($method, $uri, $parameters, array(), array('HTTP_X-Token' => 'TestApiKey1'));
-        $response = $client->getResponse();
-        $this->assertEquals(401, $response->getStatusCode());
-        $this->assertTrue($response->headers->contains(
-            'Content-Type',
-            'application/json'
-        ));
-
-        //With authorised user logged in, that has rights to vote
-        $client->request($method, $uri, $parameters, array(), array('HTTP_X-Token' => 'TestApiKey2'));
-        $response = $client->getResponse();
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertTrue($response->headers->contains(
-            'Content-Type',
-            'application/json'
-        ));
+    /**
+     * @return array
+     */
+    public function imageVoteActionProvider(){
+        return [
+            'Correct id, incorrect vote format, no right to vote' => [1, 'xoxo', 'TestApiKey1', 401],
+            'Non existant id, correct vote format, no right to vote' => [3, 1, 'TestApiKey1', 404],
+            'Correct id and vote format, no user' => [1, 1, null, 401],
+            'Correct id and vote format, no rights to vote' => [1, 1, 'TestApiKey1', 401],
+            'Correct id and vote format, has right to vote' => [1, 1, 'TestApiKey2', 200]
+        ];
     }
 }

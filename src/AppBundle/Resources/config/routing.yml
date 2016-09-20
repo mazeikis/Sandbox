@@ -74,7 +74,7 @@ _api_gallery:
     methods: [GET]
 _api_image:
     path: /api/image/{id}
-    defaults: { _controller: AppBundle:Api:image, id: null, _format: json }
+    defaults: { _controller: AppBundle:Api:image, _format: json }
     methods: [GET]
 _api_image_vote:
     path: /api/image/vote/
