@@ -52,7 +52,6 @@ class GalleryController extends Controller
  
         $repository = $this->getDoctrine()->getManager()->getRepository('AppBundle:Image');
         $query      = $repository->getImages($sortBy, $order, $q);
- 
         $adapter    = new DoctrineORMAdapter($query);
         $pagerfanta = new Pagerfanta($adapter);
         $result     = $pagerfanta->setMaxPerPage(self::MAX_PER_PAGE)
@@ -154,7 +153,7 @@ class GalleryController extends Controller
  
         if ($this->isGranted('edit', $image) === false) {
             $flash->error('Sadly, You were not authorized to edit this image.');
-            return $this->redirectToRoute('_image', array('id' => $id));
+            return $this->redirectToRoute('_image', array('id' => $image->getId()));
         } else {
             $hasVoted = $entityManager->getRepository('AppBundle:Vote')->checkForVote($user, $image);
         }
@@ -177,7 +176,7 @@ class GalleryController extends Controller
             $entityManager->flush();
             $flash->success('Image details were edited and changes saved.');
 
-            return $this->redirectToRoute('_image', array('id' => $id));
+            return $this->redirectToRoute('_image', array('id' => $image->getId()));
         }
 
         return $this->render('AppBundle:Twig:image.html.twig', array(

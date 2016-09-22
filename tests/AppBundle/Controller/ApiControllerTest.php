@@ -35,7 +35,7 @@ Class ApiControllerTest extends FixturesAwareWebTestCase
         return [
             'No parameter      assert 200' => [null, null, 200],
             'Negative integer  assert 400' => ['page', -1, 400],
-            'String page       assert 400' => ['page', 'xoxo', 404],
+            'String page       assert 404' => ['page', 'xoxo', 404],
             'Positive integer  assert 200' => ['page', 1, 200],
             'Sort by "xoxo"    assert 400' => ['sortBy', 'xoxo', 400],
             'Sort by "created" assert 200' => ['sortBy', 'created', 200],

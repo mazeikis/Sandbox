@@ -48,19 +48,6 @@ class LoadTestData implements FixtureInterface, ContainerAwareInterface
         $image->setUpdated(new \DateTime());
         $image->setOwner($user);
 
-
-        $manager->persist($image);
-
-
-        $vote = new Vote();
-        $vote->setUser($user);
-        $vote->setImage($image);
-        $vote->setVote(1);
-
-
-        $manager->persist($vote);
-
-
         $user = new User();
         $user->setId(2);
         $user->setUserName('TestUsername2');
@@ -74,8 +61,14 @@ class LoadTestData implements FixtureInterface, ContainerAwareInterface
         $user->setApiKey('TestApiKey2');
         $user->setEmail('jon.doe2@test.com');
 
-        $manager->persist($user);
+        $vote = new Vote();
+        $vote->setUser($user);
+        $vote->setImage($image);
+        $vote->setVote(1);
 
+        $manager->persist($image);
+        $manager->persist($user);
+        $manager->persist($vote);
 
         $manager->flush();
 

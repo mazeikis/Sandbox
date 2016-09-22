@@ -72,7 +72,7 @@ class WebLoginAuthenticator extends AbstractGuardAuthenticator
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
         $request->getSession()->set(Security::AUTHENTICATION_ERROR, $exception);
-        $this->flash->error('Password does not match the username. Wrong password entered or the user does not exist. Please try again or use password reset.');
+        $this->flash->error('No mathcing username/password combination found. Please try again or use password reset.');
         $url = $this->router->generate('_home');
         return new RedirectResponse($url);
     }

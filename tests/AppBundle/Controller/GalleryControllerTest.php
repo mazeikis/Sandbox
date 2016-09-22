@@ -21,13 +21,13 @@ Class GalleryControllerTest extends FixturesAwareWebTestCase
     }
     public function indexActionProvider(){
         return [
-            'No parameters'                  => [null, null, 200],
-            'Negative page'                  => ['page', -1, 404],
-            'Page !integer'                  => ['page', 'xoxo', 404],
-            'Page does not exist'            => ['page', 111, 404],
-            'Page is integer and exists'     => ['page', 1, 200],
-            'SortBy != created|title|rating' => ['sortBY', 'xoxo', 200],
-            'Order != asc|desc'              => ['order', 'xoxo', 200]
+            'No parameters assert 200'                  => [null, null, 200],
+            'Negative page assert 404'                  => ['page', -1, 404],
+            'Page !integer assert 404'                  => ['page', 'xoxo', 404],
+            'Page does not exist assert 404'            => ['page', 111, 404],
+            'Page is integer and exists assert 200'     => ['page', 1, 200],
+            'SortBy != created|title|rating assert 200' => ['sortBY', 'xoxo', 200],
+            'Order != asc|desc assert 200'              => ['order', 'xoxo', 200]
 
         ];
     }
@@ -46,9 +46,9 @@ Class GalleryControllerTest extends FixturesAwareWebTestCase
     }
     public function imageActionProvider(){
         return [
-            'Existing id'        => ['/gallery/image/1', 200],
-            'Non existant id'    => ['/gallery/image/111', 404],
-            'Incorret format id' => ['/gallery/image/xoxo', 404]
+            'Existing id assert 200'        => ['/gallery/image/1', 200],
+            'Non existant id assert 404'    => ['/gallery/image/111', 404],
+            'Incorret format id assert 404' => ['/gallery/image/xoxo', 404]
         ];
     }
 
@@ -66,7 +66,9 @@ Class GalleryControllerTest extends FixturesAwareWebTestCase
     }
     public function imageEditActionProvider(){
         return [
-            'Correct id, authorized user' => ['/gallery/image/edit/1', 'TestUsername1', 'TestPassword1', 302]
+            'Correct id, authorized user 302'    => ['/gallery/image/edit/1', 'TestUsername1', 'TestPassword1', 302],
+            'Bad format id, authorized user 404' => ['/gallery/image/edit/xoxo', 'TestUsername1', 'TestPassword1', 404],
+            'Coorect id, no user 302'            => ['/gallery/image/edit/1', null, null, 302],
         ];
     }
 }
