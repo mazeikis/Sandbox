@@ -142,7 +142,7 @@ Class ApiControllerTest extends FixturesAwareWebTestCase
             'Non existant id, correct vote format, no right to vote' => [3, 1, 'TestApiKey1', 404],
             'Correct id and vote format, no user' => [1, 1, null, 401],
             'Correct id and vote format, no rights to vote' => [1, 1, 'TestApiKey1', 401],
-            'Correct id and vote format, has right to vote' => [1, 1, 'TestApiKey2', 200]
+            'Correct id and vote format, has right to vote' => [1, 1, 'TestApiKey3', 200]
         ];
     }
 }

@@ -37,18 +37,9 @@ class GalleryController extends Controller
     {
         $q           = $request->query->get('q');
         $currentPage = $request->query->get('page', 1);
+        $sortBy      = $request->query->get('sortBy', 'created');
+        $order       = $request->query->get('order', 'desc');
 
-        $sortBy = $request->query->get('sortBy');
-        $whiteList = array('created', 'rating', 'title');
-        if (in_array($sortBy, $whiteList) === false) {
-            $sortBy = reset($whiteList);
-        }
- 
-        $order     = $request->query->get('order');
-        $whiteList = array('desc', 'asc');
-        if (in_array($order, $whiteList) === false) {
-            $order = reset($whiteList);
-        }
  
         $repository = $this->getDoctrine()->getManager()->getRepository('AppBundle:Image');
         $query      = $repository->getImages($sortBy, $order, $q);
@@ -78,7 +69,7 @@ class GalleryController extends Controller
      */
     public function imageAction($image)
     {
-        $user          = $this->getUser();
+        $user = $this->getUser();
 
         if ($image === null) {
             $flash = $this->get('braincrafted_bootstrap.flash');
@@ -224,13 +215,13 @@ class GalleryController extends Controller
      */
     public function imageVoteAction(Request $request)
     {
-        $voteValue          = $request->request->get('voteValue');
-        $imageId            = $request->request->get('id');
-        $entityManager      = $this->getDoctrine()->getManager();
-        $image              = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $imageId));
-        $user               = $this->getUser();
-        $allowedVoteValues  = array(-1, 1);
-        $flash              = $this->get('braincrafted_bootstrap.flash');
+        $voteValue         = $request->request->get('voteValue');
+        $imageId           = $request->request->get('id');
+        $entityManager     = $this->getDoctrine()->getManager();
+        $image             = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $imageId));
+        $user              = $this->getUser();
+        $allowedVoteValues = array(-1, 1);
+        $flash             = $this->get('braincrafted_bootstrap.flash');
 
  
         $voteCheck = $entityManager->getRepository('AppBundle:Vote')->findOneBy(array('user' => $user, 'image' => $image));

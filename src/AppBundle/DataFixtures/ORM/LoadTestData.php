@@ -22,10 +22,11 @@ class LoadTestData implements FixtureInterface, ContainerAwareInterface
     }
     public function load(ObjectManager $manager)
     {
+        $encoder  = $this->container->get('security.password_encoder');
+
         $user = new User();
         $user->setId(1);
         $user->setUserName('TestUsername1');
-        $encoder  = $this->container->get('security.password_encoder');
         $password = $encoder->encodePassword($user, 'TestPassword1');
         $user->setPassword($password);
         $user->setFirstName('Jon');
@@ -51,7 +52,6 @@ class LoadTestData implements FixtureInterface, ContainerAwareInterface
         $user = new User();
         $user->setId(2);
         $user->setUserName('TestUsername2');
-        $encoder  = $this->container->get('security.password_encoder');
         $password = $encoder->encodePassword($user, 'TestPassword2');
         $user->setPassword($password);
         $user->setFirstName('Jon');
@@ -65,6 +65,20 @@ class LoadTestData implements FixtureInterface, ContainerAwareInterface
         $vote->setUser($user);
         $vote->setImage($image);
         $vote->setVote(1);
+
+        $manager->persist($user);
+
+        $user = new User();
+        $user->setId(3);
+        $user->setUserName('TestUsername3');
+        $password = $encoder->encodePassword($user, 'TestPassword3');
+        $user->setPassword($password);
+        $user->setFirstName('Jon');
+        $user->setLastName('Doe');
+        $user->setRoles('ROLE_USER');
+        $user->setEnabled(true);
+        $user->setApiKey('TestApiKey3');
+        $user->setEmail('jon.doe3@test.com');
 
         $manager->persist($image);
         $manager->persist($user);

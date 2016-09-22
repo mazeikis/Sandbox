@@ -6,21 +6,24 @@ use Tests\AppBundle\FixturesAwareWebTestCase;
 
 Class DefaultControllerTest extends FixturesAwareWebTestCase
 {
-    public function testIndexAction()
+    /**
+     * @dataProvider testIndexActionProvider
+     */
+    public function testIndexAction($httpStatusCode, $username, $password)
     {
         $client = static::createClient();
-        $method = 'GET';
-        $uri    = '/user/1';
 
-        //User page wen user is not logged in
-        $client->request($method, $uri);
+        $client->request('GET', '/user/1', array(), array(), array('PHP_AUTH_USER' => $username,
+            'PHP_AUTH_PW'   => $password));
         $response = $client->getResponse();
-        $this->assertEquals(302, $response->getStatusCode());
-        //User page when user logged in
-        $client->request($method, $uri, array(), array(), array('PHP_AUTH_USER' => 'TestUsername1',
-            'PHP_AUTH_PW'   => 'TestPassword1'));
-        $response = $client->getResponse();
-        //This will fail, as Guard uses "redirect" HTTP method on both successful authentication and failed one.
-        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertEquals($httpStatusCode, $response->getStatusCode());
+    }
+    public function testIndexActionProvider()
+    {
+        return [
+            'No user assert 401' => [401, null, null],
+            'Username with wrong password' => [403, 'TestUsername1', 'xoxoxoxo'],
+            'Username with correct password' => [200, 'TestUsername1', 'TestPassword1'],
+        ];
     }
 }
