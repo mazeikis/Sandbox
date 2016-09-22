@@ -15,12 +15,10 @@ use Doctrine\ORM\EntityManager;
 
 class TestLoginAuthenticator extends AbstractGuardAuthenticator
 {
-    private $em;
     private $encoder;
 
-    public function __construct(EntityManager $em, UserPasswordEncoder $encoder)
+    public function __construct(UserPasswordEncoder $encoder)
     {
-        $this->em      = $em;
         $this->encoder = $encoder;
     }
 

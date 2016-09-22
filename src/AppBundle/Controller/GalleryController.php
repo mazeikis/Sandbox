@@ -65,7 +65,7 @@ class GalleryController extends Controller
     /**
      * @param $id
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
-     * @paramConverter("image", class="AppBundle:Image")
+     * @ParamConverter("image", class="AppBundle:Image")
      */
     public function imageAction($image)
     {
@@ -73,7 +73,7 @@ class GalleryController extends Controller
 
         if ($image === null) {
             $flash = $this->get('braincrafted_bootstrap.flash');
-            $flash->error('Sadly, I could not find the image with id "'.$id.'"');
+            $flash->error('Sorry, image was not found.');
             return $this->redirectToRoute('_gallery');        
         }
         $entityManager = $this->getDoctrine()->getManager();
@@ -133,7 +133,7 @@ class GalleryController extends Controller
 
     /**
      * @param Request $request
-     * @paramConverter("image", class="AppBundle:Image")
+     * @ParamConverter("image", class="AppBundle:Image")
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function imageEditAction(Request $request, $image)
@@ -179,22 +179,21 @@ class GalleryController extends Controller
 
 
     /**
-     * @param $id
+     * @ParamConverter("image", Class="AppBundle:Image")
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function imageDeleteAction($id)
+    public function imageDeleteAction($image)
     {
         $entityManager = $this->getDoctrine()->getManager();
-        $image         = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
         $flash         = $this->get('braincrafted_bootstrap.flash');
  
         if ($this->isGranted('delete', $image) === false) {
             $flash->error('Sadly, You were not authorized to delete this image.');
-            return $this->redirectToRoute('_image', array('id' => $id));
+            return $this->redirectToRoute('_image', array('id' => $image->getId()));
         }
  
         if ($image === null) {
-            $flash->error('Sadly, I could not find the image with id "'.$id.'"');
+            $flash->error('Sorry, image was not found.');
         } else {
             $event = new ImageEvent($image);
             $dispatcher = $this->get('event_dispatcher');

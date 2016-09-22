@@ -47,9 +47,9 @@ _send_verification:
 _user_verification:
     path:    /verify/{confirmationToken}
     defaults: { _controller: AppBundle:User:verifyUser }
-    methods: [GET, POST]
+    methods: [GET]
 _user:
-    path: /user/{userId}
+    path: /user/{id}
     defaults: { _controller: AppBundle:User:index }
     requirements:
         slug: \d+

@@ -30,7 +30,9 @@ class ImageRepositoryTest extends FixturesAwareWebTestCase
         $this->em = static::$kernel->getContainer()->get('doctrine')->getManager();
 
         $images = $this->em->getRepository('AppBundle:Image')->getImages('created', 'desc')->getQuery()->getResult();
-        $this->assertCount(1, $images);
+        $this->assertCount(3, $images);
+        $images = $this->em->getRepository('AppBundle:Image')->getImages('created', 'desc', 'query')->getQuery()->getResult();
+        $this->assertCount(2, $images);
 
     }
 }

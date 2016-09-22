@@ -24,7 +24,7 @@ services:
         arguments: [ "@doctrine.orm.entity_manager" ] 
     test_login_authenticator:
         class: AppBundle\Security\TestLoginAuthenticator
-        arguments: [ "@doctrine.orm.entity_manager", "@security.password_encoder" ]
+        arguments: [ "@security.password_encoder" ]
     kernel.listener.user.created.event:
         class: AppBundle\EventListener\UserEventListener
         arguments: [ "@service_container" ]
