@@ -69,16 +69,10 @@ class GalleryController extends Controller
      */
     public function imageAction($image)
     {
-        $user = $this->getUser();
-
-        if ($image === null) {
-            $flash = $this->get('braincrafted_bootstrap.flash');
-            $flash->error('Sorry, image was not found.');
-            return $this->redirectToRoute('_gallery');        
-        }
+        $user          = $this->getUser();
         $entityManager = $this->getDoctrine()->getManager();
-        $query  = $entityManager->getRepository('AppBundle:Vote')->countVotes($image)->getQuery();
-        $rating = $query->getSingleScalarResult();
+        $query         = $entityManager->getRepository('AppBundle:Vote')->countVotes($image)->getQuery();
+        $rating        = $query->getSingleScalarResult();
 
         if ($user !== null) {
             $hasVoted = $entityManager->getRepository('AppBundle:Vote')->checkForVote($user, $image);
@@ -211,13 +205,12 @@ class GalleryController extends Controller
     /**
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @ParamConverter("image" class="AppBundle:Image")
      */
-    public function imageVoteAction(Request $request)
+    public function imageVoteAction(Request $request, Image $image)
     {
         $voteValue         = $request->request->get('voteValue');
-        $imageId           = $request->request->get('id');
         $entityManager     = $this->getDoctrine()->getManager();
-        $image             = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $imageId));
         $user              = $this->getUser();
         $allowedVoteValues = array(-1, 1);
         $flash             = $this->get('braincrafted_bootstrap.flash');
@@ -236,7 +229,7 @@ class GalleryController extends Controller
         $entityManager->flush();
         $flash->success('Vote recorded, thanks!');
 
-        return $this->redirectToRoute('_image', array('id' => $imageId));
+        return $this->redirectToRoute('_image', array('id' => $image->getId()));
  
     }
 

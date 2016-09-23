@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Event\UserEvent;
+use AppBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Security\ConfirmationTokenGenerator;
@@ -102,11 +103,6 @@ class UserController extends Controller
     {
         $entityManager = $this->getDoctrine()->getManager();
         $flash         = $this->get('braincrafted_bootstrap.flash');
-
-        if ($confirmationToken === null) {
-            $flash->error('Invalid verification token!');
-            return $this->redirectToRoute('_home');
-        }
 
         $user = $entityManager->getRepository('AppBundle:User')->findOneBy(array('confirmationToken' => $confirmationToken));
 

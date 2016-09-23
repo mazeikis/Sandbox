@@ -32,7 +32,7 @@ Class UserControllerTest extends FixturesAwareWebTestCase
             'No user 401' => ['/user/1', 401, null, null],
             'Username with wrong password 403' => ['/user/1', 403, 'TestUsername1', 'xoxoxoxo'],
             'Username with correct password 200' => ['/user/1', 200, 'TestUsername1', 'TestPassword1'],
-            'Not enabled user with password 200' => ['/user/1', 200, 'TestUsername3', 'TestPassword3']
+            'Not enabled user with password 200' => ['/user/3', 200, 'TestUsername3', 'TestPassword3']
         ];
     }
 
