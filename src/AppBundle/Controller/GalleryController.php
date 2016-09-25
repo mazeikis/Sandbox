@@ -15,32 +15,35 @@ use AppBundle\Form\Type\UploadFormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
- 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+
+/**
+ * Class GalleryController
+ * @package AppBundle\Controller
+ */
 class GalleryController extends Controller
 {
- 
+
+    /**
+     *
+     */
     const MAX_PER_PAGE = 8;
- 
+
+    /**
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function indexAction(Request $request)
     {
         $q           = $request->query->get('q');
-        $currentPage = max(1, $request->query->get('page'));
+        $currentPage = $request->query->get('page', 1);
+        $sortBy      = $request->query->get('sortBy', 'created');
+        $order       = $request->query->get('order', 'desc');
 
-        $sortBy = $request->query->get('sortBy');
-        $whiteList = array('created', 'rating', 'title');
-        if (in_array($sortBy, $whiteList) === false) {
-            $sortBy = reset($whiteList);
-        }
- 
-        $order     = $request->query->get('order');
-        $whiteList = array('desc', 'asc');
-        if (in_array($order, $whiteList) === false) {
-            $order = reset($whiteList);
-        }
  
         $repository = $this->getDoctrine()->getManager()->getRepository('AppBundle:Image');
         $query      = $repository->getImages($sortBy, $order, $q);
- 
         $adapter    = new DoctrineORMAdapter($query);
         $pagerfanta = new Pagerfanta($adapter);
         $result     = $pagerfanta->setMaxPerPage(self::MAX_PER_PAGE)
@@ -59,22 +62,18 @@ class GalleryController extends Controller
         );
  
     }
- 
- 
-    public function imageAction($id)
+
+    /**
+     * @param $id
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @ParamConverter("image", class="AppBundle:Image")
+     */
+    public function imageAction($image)
     {
         $user          = $this->getUser();
         $entityManager = $this->getDoctrine()->getManager();
-        $image         = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
-
-        if ($image === null) {
-            $flash = $this->get('braincrafted_bootstrap.flash');
-            $flash->error('Sadly, I could not find the image with id "'.$id.'"');
-            return $this->redirectToRoute('_gallery');        
-        }
- 
-        $query  = $entityManager->getRepository('AppBundle:Vote')->countVotes($image)->getQuery();
-        $rating = $query->getSingleScalarResult();
+        $query         = $entityManager->getRepository('AppBundle:Vote')->countVotes($image)->getQuery();
+        $rating        = $query->getSingleScalarResult();
 
         if ($user !== null) {
             $hasVoted = $entityManager->getRepository('AppBundle:Vote')->checkForVote($user, $image);
@@ -90,8 +89,12 @@ class GalleryController extends Controller
             ));
  
     }
- 
- 
+
+
+    /**
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
     public function uploadAction(Request $request)
     {
         $image = new Image();
@@ -121,18 +124,22 @@ class GalleryController extends Controller
         return $this->render('AppBundle:Twig:upload.html.twig', array('title' => 'sandbox|project', 'form' => $form->createView()));
  
     }
- 
- 
-    public function imageEditAction(Request $request, $id)
+
+
+    /**
+     * @param Request $request
+     * @ParamConverter("image", class="AppBundle:Image")
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
+    public function imageEditAction(Request $request, $image)
     {
         $entityManager = $this->getDoctrine()->getManager();
-        $image         = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
         $flash         = $this->get('braincrafted_bootstrap.flash');
         $user          = $this->getUser();
  
         if ($this->isGranted('edit', $image) === false) {
             $flash->error('Sadly, You were not authorized to edit this image.');
-            return $this->redirectToRoute('_image', array('id' => $id));
+            return $this->redirectToRoute('_image', array('id' => $image->getId()));
         } else {
             $hasVoted = $entityManager->getRepository('AppBundle:Vote')->checkForVote($user, $image);
         }
@@ -155,7 +162,7 @@ class GalleryController extends Controller
             $entityManager->flush();
             $flash->success('Image details were edited and changes saved.');
 
-            return $this->redirectToRoute('_image', array('id' => $id));
+            return $this->redirectToRoute('_image', array('id' => $image->getId()));
         }
 
         return $this->render('AppBundle:Twig:image.html.twig', array(
@@ -164,21 +171,23 @@ class GalleryController extends Controller
             'hasVoted' => $hasVoted,
             'form'     => $form->createView()));
     }
- 
- 
-    public function imageDeleteAction($id)
+
+
+    /**
+     * @ParamConverter("image", class="AppBundle:Image")
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function imageDeleteAction($image)
     {
         $entityManager = $this->getDoctrine()->getManager();
-        $image         = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $id));
         $flash         = $this->get('braincrafted_bootstrap.flash');
  
         if ($this->isGranted('delete', $image) === false) {
-            $flash->error('Sadly, You were not authorized to delete this image.');
-            return $this->redirectToRoute('_image', array('id' => $id));
+            throw new AccessDeniedException();
         }
  
         if ($image === null) {
-            $flash->error('Sadly, I could not find the image with id "'.$id.'"');
+            $flash->error('Sorry, image was not found.');
         } else {
             $event = new ImageEvent($image);
             $dispatcher = $this->get('event_dispatcher');
@@ -191,24 +200,30 @@ class GalleryController extends Controller
         return $this->redirectToRoute('_gallery');
  
     }
- 
- 
-    public function imageVoteAction(Request $request)
-    {
-        $voteValue          = $request->request->get('voteValue');
-        $imageId            = $request->request->get('id');
-        $entityManager      = $this->getDoctrine()->getManager();
-        $image              = $entityManager->getRepository('AppBundle:Image')->findOneBy(array('id' => $imageId));
-        $user               = $this->getUser();
-        $allowedVoteValues  = array(-1, 1);
-        $flash              = $this->get('braincrafted_bootstrap.flash');
 
+
+    /**
+     * @param Request $request
+     * @param Image $image
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @ParamConverter("image", class="AppBundle:Image")
+     */
+    public function imageVoteAction(Request $request, Image $image)
+    {
+        $voteValue         = $request->request->get('voteValue');
+        $entityManager     = $this->getDoctrine()->getManager();
+        $user              = $this->getUser();
+        $allowedVoteValues = array(-1, 1);
+        $flash             = $this->get('braincrafted_bootstrap.flash');
+
+        if ($user === null || in_array($voteValue, $allowedVoteValues) === false) {
+            throw new AccessDeniedException();
+        }
  
-        $voteCheck = $entityManager->getRepository('AppBundle:Vote')->findOneBy(array('user' => $user, 'image' => $image));
- 
-        if ($this->isGranted('vote', $image) === false || $voteCheck !== null || in_array($voteValue, $allowedVoteValues) === false) {
-                $flash->error('Voting access unauthorized, sorry!');
-                return $this->redirectToRoute('_gallery');
+        $voteCheck = $entityManager->getRepository('AppBundle:Vote')->checkForVote($user, $image);
+
+        if ($this->isGranted('vote', $image) === false || $voteCheck !== false) {
+            throw new AccessDeniedException();
         }
  
         $vote = new Vote();
@@ -217,11 +232,16 @@ class GalleryController extends Controller
         $entityManager->flush();
         $flash->success('Vote recorded, thanks!');
 
-        return $this->redirectToRoute('_image', array('id' => $imageId));
+        return $this->redirectToRoute('_image', array('id' => $image->getId()));
  
     }
- 
 
+
+    /**
+     * @param $data
+     * @param Image $image
+     * @return Image
+     */
     private function handleUploadedFile($data, Image $image)
     {
         $imageSizeDetails = getimagesize($data['file']->getPathName());

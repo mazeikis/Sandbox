@@ -17,8 +17,10 @@ _image:
         id: \d+
     methods:  [GET]
 _image_vote:
-    path:    /gallery/image/vote
+    path:    /gallery/image/vote/{id}
     defaults: { _controller: AppBundle:Gallery:imageVote }
+    requirements:
+        id: \d+
     methods: [POST]
 _image_edit:
     path:    /gallery/image/edit/{id}
@@ -49,7 +51,7 @@ _user_verification:
     defaults: { _controller: AppBundle:User:verifyUser }
     methods: [GET, POST]
 _user:
-    path: /user/{userId}
+    path: /user/{id}
     defaults: { _controller: AppBundle:User:index }
     requirements:
         slug: \d+

@@ -22,10 +22,11 @@ class LoadTestData implements FixtureInterface, ContainerAwareInterface
     }
     public function load(ObjectManager $manager)
     {
+        $encoder  = $this->container->get('security.password_encoder');
+
         $user = new User();
         $user->setId(1);
         $user->setUserName('TestUsername1');
-        $encoder  = $this->container->get('security.password_encoder');
         $password = $encoder->encodePassword($user, 'TestPassword1');
         $user->setPassword($password);
         $user->setFirstName('Jon');
@@ -39,7 +40,7 @@ class LoadTestData implements FixtureInterface, ContainerAwareInterface
 
         $image = new Image();
         $image->setId(1);
-        $image->setPath('/test/path/to/image/');
+        $image->setPath('/test/path/to/image/1');
         $image->setSize(12345);
         $image->setTitle('Test Image Title 1');
         $image->setDescription('Test Image 1 description');
@@ -48,23 +49,11 @@ class LoadTestData implements FixtureInterface, ContainerAwareInterface
         $image->setUpdated(new \DateTime());
         $image->setOwner($user);
 
-
         $manager->persist($image);
-
-
-        $vote = new Vote();
-        $vote->setUser($user);
-        $vote->setImage($image);
-        $vote->setVote(1);
-
-
-        $manager->persist($vote);
-
 
         $user = new User();
         $user->setId(2);
         $user->setUserName('TestUsername2');
-        $encoder  = $this->container->get('security.password_encoder');
         $password = $encoder->encodePassword($user, 'TestPassword2');
         $user->setPassword($password);
         $user->setFirstName('Jon');
@@ -76,6 +65,68 @@ class LoadTestData implements FixtureInterface, ContainerAwareInterface
 
         $manager->persist($user);
 
+        $vote = new Vote();
+        $vote->setUser($user);
+        $vote->setImage($image);
+        $vote->setVote(1);
+
+        $manager->persist($vote);
+
+        $user = new User();
+        $user->setId(3);
+        $user->setUserName('TestUsername3');
+        $password = $encoder->encodePassword($user, 'TestPassword3');
+        $user->setPassword($password);
+        $user->setFirstName('Jon');
+        $user->setLastName('Doe');
+        $user->setRoles('ROLE_USER');
+        $user->setEnabled(false);
+        $user->setConfirmationToken('TestConfirmationToken1');
+        $user->setApiKey('TestApiKey3');
+        $user->setEmail('jon.doe3@test.com');
+
+        $manager->persist($user);
+
+        $user = new User();
+        $user->setId(4);
+        $user->setUserName('TestUsername4');
+        $password = $encoder->encodePassword($user, 'TestPassword4');
+        $user->setPassword($password);
+        $user->setFirstName('Jon');
+        $user->setLastName('Doe');
+        $user->setRoles('ROLE_USER');
+        $user->setEnabled(True);
+        $user->setConfirmationToken('TestConfirmationToken2');
+        $user->setApiKey('TestApiKey4');
+        $user->setEmail('jon.doe4@test.com');
+
+        $manager->persist($user);
+
+        $image = new Image();
+        $image->setId(2);
+        $image->setPath('/test/path/to/image/2');
+        $image->setSize(12345);
+        $image->setTitle('Test Image Title 2');
+        $image->setDescription('Test Image 2 description with query');
+        $image->setResolution('test X test');
+        $image->setCreated(new \DateTime());
+        $image->setUpdated(new \DateTime());
+        $image->setOwner($user);
+
+        $manager->persist($image);
+
+        $image = new Image();
+        $image->setId(3);
+        $image->setPath('/test/path/to/image/3');
+        $image->setSize(12345);
+        $image->setTitle('Test Image Title 3');
+        $image->setDescription('Test Image 3 description with query');
+        $image->setResolution('test X test');
+        $image->setCreated(new \DateTime());
+        $image->setUpdated(new \DateTime());
+        $image->setOwner($user);
+
+        $manager->persist($image);
 
         $manager->flush();
 

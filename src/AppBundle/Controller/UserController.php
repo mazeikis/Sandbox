@@ -3,9 +3,9 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Event\UserEvent;
+use AppBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use AppBundle\Entity\User;
 use AppBundle\Security\ConfirmationTokenGenerator;
 use AppBundle\Form\Type\RegistrationFormType;
 use AppBundle\Form\Type\VerificationFormType;
@@ -13,19 +13,22 @@ use AppBundle\Form\Type\PasswordChangeFormType;
 use AppBundle\Form\Type\EmailChangeFormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 
 class UserController extends Controller
 {
     const IMAGES_PER_PAGE = 4;
 
-    public function indexAction(Request $request, $userId)
+    /**
+     * @param Request $request
+     * @ParamConverter("user", class="AppBundle:User")
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
+    public function indexAction($user, Request $request)
     {
         $entityManager = $this->getDoctrine()->getManager();
-
-        $user   = $entityManager->getRepository('AppBundle:User')
-                                ->findOneBy(array('id' => $userId));
-        $recent = $entityManager->getRepository('AppBundle:Image')
+        $recent        = $entityManager->getRepository('AppBundle:Image')
                                 ->findBy(array('owner' => $user), array('created' => 'DESC'), self::IMAGES_PER_PAGE);
 
 
@@ -42,7 +45,7 @@ class UserController extends Controller
             $passwordForm->handleRequest($request);
             
             if ($this->handleForm($emailForm, $passwordForm)) {
-                return $this->redirectToRoute('_user', array('userId' => $user->getId()));
+                return $this->redirectToRoute('_user', array('id' => $user->getId()));
             }
         }
 
@@ -101,14 +104,9 @@ class UserController extends Controller
         $entityManager = $this->getDoctrine()->getManager();
         $flash         = $this->get('braincrafted_bootstrap.flash');
 
-        if ($confirmationToken === null) {
-            $flash->error('Invalid verification token!');
-            return $this->redirectToRoute('_home');
-        }
-
         $user = $entityManager->getRepository('AppBundle:User')->findOneBy(array('confirmationToken' => $confirmationToken));
 
-        if ($user === false) {
+        if ($user === null) {
             $flash->error('Oops, no user with matching token found!');
         } else {
             $user->setEnabled(true)->setConfirmationToken(null);
@@ -182,7 +180,7 @@ class UserController extends Controller
             $entityManager->flush();
             $flash->success('Password for '.$user->getUsername().' was changed successfully!');
 
-            return $this->redirectToRoute('_user', array('userId' => $user->getId()));
+            return $this->redirectToRoute('_user', array('id' => $user->getId()));
         }
 
         return $this->render(

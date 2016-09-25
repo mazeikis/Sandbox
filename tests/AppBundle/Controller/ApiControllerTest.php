@@ -35,7 +35,7 @@ Class ApiControllerTest extends FixturesAwareWebTestCase
         return [
             'No parameter      assert 200' => [null, null, 200],
             'Negative integer  assert 400' => ['page', -1, 400],
-            'String page       assert 400' => ['page', 'xoxo', 404],
+            'String page       assert 404' => ['page', 'xoxo', 404],
             'Positive integer  assert 200' => ['page', 1, 200],
             'Sort by "xoxo"    assert 400' => ['sortBy', 'xoxo', 400],
             'Sort by "created" assert 200' => ['sortBy', 'created', 200],
@@ -71,7 +71,7 @@ Class ApiControllerTest extends FixturesAwareWebTestCase
         return [
             'Correct uri     200' => ['/api/image/1', 200],
             'Invalid format  400' => ['/api/image/xoxo', 404],
-            'Non existant id 404' => ['/api/image/3', 404]
+            'Non existant id 404' => ['/api/image/111', 404]
         ];
     }
 
@@ -104,7 +104,7 @@ Class ApiControllerTest extends FixturesAwareWebTestCase
             'Correct uri, user logged in, no rights' => ['/api/image/delete/1', 'TestApiKey2', 401],
             'Correct uri, authorized user'           => ['/api/image/delete/1', 'TestApiKey1', 200],
             'Incorrect uri, user logged in'          => ['/api/image/delete/xoxo', 'TestApiKey1', 404],
-            'Non existing image, user logged in'     => ['/api/image/delete/3', 'TestApiKey1', 404],
+            'Non existing image, user logged in'     => ['/api/image/delete/111', 'TestApiKey1', 404],
         ];
     }
 
@@ -139,10 +139,10 @@ Class ApiControllerTest extends FixturesAwareWebTestCase
     public function imageVoteActionProvider(){
         return [
             'Correct id, incorrect vote format, no right to vote' => [1, 'xoxo', 'TestApiKey1', 401],
-            'Non existant id, correct vote format, no right to vote' => [3, 1, 'TestApiKey1', 404],
+            'Non existant id, correct vote format, no right to vote' => [111, 1, 'TestApiKey1', 404],
             'Correct id and vote format, no user' => [1, 1, null, 401],
             'Correct id and vote format, no rights to vote' => [1, 1, 'TestApiKey1', 401],
-            'Correct id and vote format, has right to vote' => [1, 1, 'TestApiKey2', 200]
+            'Correct id and vote format, has right to vote' => [1, 1, 'TestApiKey4', 200]
         ];
     }
 }
