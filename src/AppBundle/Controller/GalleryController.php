@@ -216,7 +216,7 @@ class GalleryController extends Controller
         $allowedVoteValues = array(-1, 1);
         $flash             = $this->get('braincrafted_bootstrap.flash');
 
-        if ($user == null || in_array($voteValue, $allowedVoteValues) === false) {
+        if ($user === null || in_array($voteValue, $allowedVoteValues) === false) {
             throw new AccessDeniedException();
         }
  
