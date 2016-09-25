@@ -17,5 +17,4 @@ var/bootstrap.php.cache
 .idea/symfony2.xml
 .idea/vcs.xml
 .idea/workspace.xml
-.DS_Store
 app/test.db
