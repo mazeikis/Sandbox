@@ -32,3 +32,7 @@ var/bootstrap.php.cache
 .idea/vcs.xml
 
 .idea/workspace.xml
+
+.DS_Store
+
+app/test.db

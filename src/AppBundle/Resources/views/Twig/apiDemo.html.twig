@@ -16,43 +16,74 @@
         <h3>Requests</h3>
     </div>
     <div class="row center-block">
-        <div class="col-md-8">
+        <div class="col-md-12">
             <h4>GET request for a single image by "id".<br>
             <small>Positive integers are accepted as "id" value.</small></h4>
-            <div class="form-inline form-group-sm">
-                <label for="image-id"><span class="http-method">GET</span> {{ url('_api_image') }}/
-                </label>
-                <input id="image-id" class="form-control" placeholder=":image id" style="width: 7em">
-                <a class="btn btn-sm btn-success pull-xs-left pull-md-right pull-lg-right" id="get-image">Request</a>
-            </div>
+            <form class="form-horizontal">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="input-group">
+                            <span class="input-group-addon">GET</span>
+                            <input type="text" class="form-control" id="image-uri" value="{{ url('_api_image', {'id': 1}) }}">
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <a class="btn btn-success pull-xs-left pull-md-right pull-lg-right" id="post-vote">Request</a>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
     <div class="row center-block top-buffer">
-        <div class="col-md-8">
+        <div class="col-md-12">
             <h4>GET request for a page of gallery.<br>
             <small>Accepts page number and sort criteria with direction. Available sort criteria is "created" (default), "rating" and "title". 
             Available sort direction is "asc" for ascending and "desc" for descending (default).</small></h4>
-            <div class="form-inline form-group-sm">
-                <label><span class="http-method">GET</span> {{ url('_api_gallery') }}
-                </label>
-                <input type="text" id="gallery-page" class="form-control" placeholder=":page" style="width: 7em">
-                <input type="text" id="gallery-sortBy" class="form-control" placeholder=":sort by" style="width: 7em">
-                <input type="text" id="gallery-order" class="form-control" placeholder=":order" style="width: 7em">
-                <a class="btn btn-sm btn-success pull-xs-left pull-md-right pull-lg-right" id="get-gallery">Request</a>
-            </div>
+            <form class="form-horizontal">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="input-group">
+                            <span class="input-group-addon">GET</span>
+                            <input type="text" class="form-control" value="{{ url('_api_gallery') }}">
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="input-group">
+                            <input type="text" id="gallery-page" class="form-control" placeholder=":page" style="width: 6em">
+                            <input type="text" id="gallery-sortBy" class="form-control" placeholder=":sort by" style="width: 6em">
+                            <input type="text" id="gallery-order" class="form-control" placeholder=":order" style="width: 6em">
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <a class="btn btn-success pull-xs-left pull-md-right pull-lg-right" id="get-gallery">Request</a>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
     <div class="row center-block top-buffer">
-        <div class="col-md-8">
+        <div class="col-md-12">
             <h4>POST request for voting on image.<br> 
             <small>Requires image id and vote value. For vote value use "1" to upvote, "-1" to downvote.</small></h4>
-            <div class="form-inline form-group form-group-sm">
-                <label for="vote-id"><span class="http-method">POST</span> {{ url('_api_image_vote') }}
-                </label>
-                <input id="vote-id" class="form-control" placeholder=":image id" style="width: 7em">
-                <input id="vote-value" class="form-control" placeholder=":vote value" style="width: 7em">
-                <a class="btn btn-sm btn-success pull-xs-left pull-md-right pull-lg-right" id="post-vote">Request</a>
-            </div>
+            <form class="form-horizontal">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="input-group">
+                            <span class="input-group-addon">POST</span>
+                            <input type="text" class="form-control" value="{{ url('_api_image_vote') }}">
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="input-group">
+                            <input type="text" id="vote-id" class="form-control" placeholder=":image id" style="width: 7em">
+                            <input type="text" id="vote-value" class="form-control" placeholder=":vote value" style="width: 7em">
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <a class="btn btn-success pull-xs-left pull-md-right pull-lg-right" id="post-vote">Request</a>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
     <div class="row">
@@ -67,12 +98,12 @@
 <script>
     $(document).ready(function(){
         $("#get-image").click(function(){
-            var id = +$("#image-id").val();
-            if(typeof id !== 'undefined'){
-                id = '/'+ id;
-            };
+            var uri = +$("#image-uri").val();
+            if(typeof id === 'undefined'){
+                uri = "{{ url('_api_image', {'id': 1}) }}";
+            }
             var response;
-            $.ajax("{{url('_api_image')}}" + id, 
+            $.ajax( uri,
                 {
                     method: "GET",
                     contentType: 'application/json',

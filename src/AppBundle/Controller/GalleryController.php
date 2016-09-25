@@ -16,6 +16,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Class GalleryController
@@ -173,7 +174,7 @@ class GalleryController extends Controller
 
 
     /**
-     * @ParamConverter("image", Class="AppBundle:Image")
+     * @ParamConverter("image", class="AppBundle:Image")
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function imageDeleteAction($image)
@@ -182,8 +183,7 @@ class GalleryController extends Controller
         $flash         = $this->get('braincrafted_bootstrap.flash');
  
         if ($this->isGranted('delete', $image) === false) {
-            $flash->error('Sadly, You were not authorized to delete this image.');
-            return $this->redirectToRoute('_image', array('id' => $image->getId()));
+            throw new AccessDeniedException();
         }
  
         if ($image === null) {
@@ -204,8 +204,9 @@ class GalleryController extends Controller
 
     /**
      * @param Request $request
+     * @param Image $image
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
-     * @ParamConverter("image" class="AppBundle:Image")
+     * @ParamConverter("image", class="AppBundle:Image")
      */
     public function imageVoteAction(Request $request, Image $image)
     {
@@ -215,12 +216,14 @@ class GalleryController extends Controller
         $allowedVoteValues = array(-1, 1);
         $flash             = $this->get('braincrafted_bootstrap.flash');
 
+        if ($user == null || in_array($voteValue, $allowedVoteValues) === false) {
+            throw new AccessDeniedException();
+        }
  
-        $voteCheck = $entityManager->getRepository('AppBundle:Vote')->findOneBy(array('user' => $user, 'image' => $image));
- 
-        if ($this->isGranted('vote', $image) === false || $voteCheck !== null || in_array($voteValue, $allowedVoteValues) === false) {
-                $flash->error('Voting access unauthorized, sorry!');
-                return $this->redirectToRoute('_gallery');
+        $voteCheck = $entityManager->getRepository('AppBundle:Vote')->checkForVote($user, $image);
+
+        if ($this->isGranted('vote', $image) === false || $voteCheck !== false) {
+            throw new AccessDeniedException();
         }
  
         $vote = new Vote();
