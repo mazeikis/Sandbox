@@ -205,14 +205,5 @@ class ApiController extends Controller
         return new JsonResponse($message, Response::HTTP_OK);
  
     }
-
-    /**
-     *
-     * @return string
-     */
-    private function getImageDir()
-    {
-        return $this->get('kernel')->getRootDir().'/../web';
-    }
  
 }
