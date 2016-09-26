@@ -105,16 +105,16 @@ class GalleryController extends Controller
             return $this->redirectToRoute('_gallery');
         }
 
-        $form = $this->createForm(UploadFormType::class);
+        $form = $this->createForm(UploadFormType::class, $image);
         $form->handleRequest($request);
 
         if ($form->isValid() === true) {
-            $data  = $form->getData();
-            $image = $this->handleUploadedFile($data, $image);
-
-            $event = new ImageEvent($image, $data);
+            $user = $this->getUser();
+            $image->setOwner($user);
+            $event = new ImageEvent($image);
             $dispatcher = $this->get('event_dispatcher');
             $dispatcher->dispatch(ImageEvent::IMAGE_CREATE_EVENT, $event);
+
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($image);
             $entityManager->flush();
@@ -180,23 +180,18 @@ class GalleryController extends Controller
     public function imageDeleteAction($image)
     {
         $entityManager = $this->getDoctrine()->getManager();
-        $flash         = $this->get('braincrafted_bootstrap.flash');
  
         if ($this->isGranted('delete', $image) === false) {
             throw new AccessDeniedException();
         }
- 
-        if ($image === null) {
-            $flash->error('Sorry, image was not found.');
-        } else {
-            $event = new ImageEvent($image);
-            $dispatcher = $this->get('event_dispatcher');
-            $dispatcher->dispatch(ImageEvent::IMAGE_DELETE_EVENT, $event);
 
-            $entityManager->remove($image);
-            $entityManager->flush();
+        $event = new ImageEvent($image);
+        $dispatcher = $this->get('event_dispatcher');
+        $dispatcher->dispatch(ImageEvent::IMAGE_DELETE_EVENT, $event);
 
-        }
+        $entityManager->remove($image);
+        $entityManager->flush();
+
         return $this->redirectToRoute('_gallery');
  
     }
@@ -234,33 +229,6 @@ class GalleryController extends Controller
 
         return $this->redirectToRoute('_image', array('id' => $image->getId()));
  
-    }
-
-
-    /**
-     * @param $data
-     * @param Image $image
-     * @return Image
-     */
-    private function handleUploadedFile($data, Image $image)
-    {
-        $imageSizeDetails = getimagesize($data['file']->getPathName());
-        $imageResolution  = strval($imageSizeDetails[0]).' x '.strval($imageSizeDetails[1]);
-        $imageTitle       = $data['title'];
-        $imageDescription = $data['description'];
-        $newFileName      = sha1(uniqid());
-        $fileExtension    = $data['file']->getClientOriginalExtension();
-        $fileSize         = $data['file']->getSize();
-            
-        $image->setPath("/images/".$newFileName.".".$fileExtension)
-                ->setSize($fileSize)
-                ->setResolution($imageResolution)
-                ->setTitle($imageTitle)
-                ->setDescription($imageDescription)
-                ->setUpdated(new \DateTime())
-                ->setCreated(new \DateTime())
-                ->setOwner($this->getUser());
-        return $image;
     }
 
 }

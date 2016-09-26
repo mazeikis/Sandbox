@@ -40,7 +40,7 @@ class LoadTestData implements FixtureInterface, ContainerAwareInterface
 
         $image = new Image();
         $image->setId(1);
-        $image->setPath('/test/path/to/image/1');
+        $image->setFile('/test/path/to/image/1');
         $image->setSize(12345);
         $image->setTitle('Test Image Title 1');
         $image->setDescription('Test Image 1 description');
@@ -104,7 +104,7 @@ class LoadTestData implements FixtureInterface, ContainerAwareInterface
 
         $image = new Image();
         $image->setId(2);
-        $image->setPath('/test/path/to/image/2');
+        $image->setFile('/test/path/to/image/2');
         $image->setSize(12345);
         $image->setTitle('Test Image Title 2');
         $image->setDescription('Test Image 2 description with query');
@@ -117,7 +117,7 @@ class LoadTestData implements FixtureInterface, ContainerAwareInterface
 
         $image = new Image();
         $image->setId(3);
-        $image->setPath('/test/path/to/image/3');
+        $image->setFile('/test/path/to/image/3');
         $image->setSize(12345);
         $image->setTitle('Test Image Title 3');
         $image->setDescription('Test Image 3 description with query');

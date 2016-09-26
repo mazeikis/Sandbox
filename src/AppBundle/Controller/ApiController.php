@@ -9,10 +9,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Pagerfanta\Pagerfanta;
-use Symfony\Component\Filesystem\Filesystem;
 use AppBundle\Entity\Vote;
 use AppBundle\Entity\Image;
-
+use AppBundle\Event\ImageEvent;
 
 /**
  * Class ApiController
@@ -86,7 +85,7 @@ class ApiController extends Controller
         foreach ($result as $image) {
         	$gallery[] = array(
             'id'          => $image[0]->getId(),
-        	'thumbLink'   => $cacheManager->getBrowserPath($image[0]->getPath(), 'thumb'),
+        	'thumbLink'   => $cacheManager->getBrowserPath($image[0]->getFile(), 'thumb'),
         	'imageTitle'  => $image[0]->getTitle(),
         	'imageRating' => $image['votes_sum']
         	);
@@ -126,7 +125,7 @@ class ApiController extends Controller
 
         $message = array(
                       'imageId' 	 => $image->getId(), 
-        			  'fullSizeLink' => $request->getUriForPath($image->getPath()),
+        			  'fullSizeLink' => $request->getUriForPath($this->getParameter('image_directory').'/'.$image->getFile()),
         			  'title' 		 => $image->getTitle(),
         			  'description'  => $image->getDescription(),
         			  'resolution' 	 => $image->getResolution(),
@@ -151,12 +150,9 @@ class ApiController extends Controller
             return new JsonResponse($message, Response::HTTP_UNAUTHORIZED);
         }
 
-        $fileSystem = new Filesystem();
-        $imageDir   = $this->getImageDir();
-        $fileSystem->remove($imageDir.$image->getPath());
-
-        $cacheManager = $this->container->get('liip_imagine.cache.manager');
-        $cacheManager->remove($image->getPath());
+        $event = new ImageEvent($image);
+        $dispatcher = $this->get('event_dispatcher');
+        $dispatcher->dispatch(ImageEvent::IMAGE_DELETE_EVENT, $event);
 
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->remove($image);

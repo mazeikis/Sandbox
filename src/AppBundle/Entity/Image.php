@@ -1,12 +1,20 @@
 <?php
 namespace AppBundle\Entity;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class Image
 {
 
     protected $id;
 
-    protected $path;
+    /**
+     * @ORM\Column(type="string")
+     *
+     * @Assert\NotBlank(message="Please, upload the image file.")
+     * @Assert\File(mimeTypes={ "image/jpeg" })
+     */
+    protected $file;
 
     protected $resolution;
 
@@ -46,33 +54,6 @@ class Image
     public function getId()
     {
         return $this->id;
-
-    }
-
-
-    /**
-     * Set path
-     *
-     * @param  string $path
-     * @return Images
-     */
-    public function setPath($path)
-    {
-        $this->path = $path;
-
-        return $this;
-
-    }
-
-
-    /**
-     * Get Path
-     *
-     * @return string
-     */
-    public function getPath()
-    {
-        return $this->path;
 
     }
 
@@ -283,6 +264,24 @@ class Image
     {
         $this->votes = new \Doctrine\Common\Collections\ArrayCollection();
     }
+
+    /**
+     * @return mixed
+     */
+    public function getFile()
+    {
+        return $this->file;
+    }
+
+    /**
+     * @param mixed $file
+     */
+    public function setFile($file)
+    {
+        $this->file = $file;
+    }
+
+
 
     /**
      * Add votes

@@ -17,5 +17,5 @@ AppBundle\Entity\User:
 AppBundle\Entity\Image:
     properties:
         file:
-            - File:
+            - Image:
                 maxSize: 5000000

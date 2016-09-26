@@ -33,8 +33,9 @@ class UploadFormType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
-
+        $resolver->setDefaults(array('data_class' => 'AppBundle\Entity\Image'));
     }
 
 
 }
+

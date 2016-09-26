@@ -59,4 +59,24 @@ Class UserControllerTest extends FixturesAwareWebTestCase
             'Correct token 302' => [302, 'TestConfirmationToken1']
         ];
     }
+
+    /**
+     * @dataProvider registrationActionProvider()
+     */
+    public function testRegistrationAction($method, $uri, $httpStatusCode)
+    {
+        $client = static::createClient();
+
+        $client->request($method, $uri);
+        $response = $client->getResponse();
+
+        $this->assertEquals($httpStatusCode, $response->getStatusCode());
+
+    }
+    public function registrationActionProvider()
+    {
+        return [
+            'Placeholder data' => ['GET', '/registration/', 200]
+        ];
+    }
 }

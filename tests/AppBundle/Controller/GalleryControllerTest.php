@@ -110,9 +110,10 @@ Class GalleryControllerTest extends FixturesAwareWebTestCase
     public function imageVoteActionProvider()
     {
         return [
-            'Correct id, authorized user 200' => ['/gallery/image/vote/1', 1, 'TestUsername4', 'TestPassword4', 302],
+            'Correct id, authorized user 200'    => ['/gallery/image/vote/1', 1, 'TestUsername4', 'TestPassword4', 302],
+            'Correct id, unauthorized user 403'  => ['/gallery/image/vote/1', 1, 'TestUsername1', 'TestPassword1', 403],
             'Bad format id, authorized user 404' => ['/gallery/image/vote/xoxo', 1, 'TestUsername1', 'TestPassword1', 404],
-            'Corect id, no user 302' => ['/gallery/image/vote/1', 1, null, null, 401],
+            'Corect id, no user 302'             => ['/gallery/image/vote/1', 1, null, null, 401],
         ];
     }
 
@@ -140,10 +141,9 @@ Class GalleryControllerTest extends FixturesAwareWebTestCase
     public function imageDeleteActionProvider()
     {
         return [
-            'Correct id, authorized user 302' => ['/gallery/image/delete/1', 'TestUsername1', 'TestPassword1', 302],
+            'Correct id, authorized user 302'    => ['/gallery/image/delete/1', 'TestUsername1', 'TestPassword1', 302],
             'Bad format id, authorized user 404' => ['/gallery/image/delete/xoxo', 'TestUsername1', 'TestPassword1', 404],
-            'Correct id, no user 302' => ['/gallery/image/delete/1', null, null, 401],
+            'Correct id, no user 302'            => ['/gallery/image/delete/1', null, null, 401],
         ];
     }
-
 }

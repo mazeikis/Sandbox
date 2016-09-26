@@ -21,7 +21,7 @@
         <!-- Portfolio Item Row -->
         <div class="row">
             <div class="col-md-8">
-                <img class="img-responsive" src="{{asset(image.getpath)}}" alt="">
+                <img class="img-responsive" src="{{asset('/images/' ~ image.getfile)}}" alt="">
             </div>
             <div class="col-md-4">
                 <p><strong>Current Image Rating:</strong>  {{rating|default('None :(')}}</p>

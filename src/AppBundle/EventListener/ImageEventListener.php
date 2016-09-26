@@ -34,24 +34,35 @@ class ImageEventListener extends Event
      */
     public function onImageDeleteAction(ImageEvent $event) {
         $fileSystem = new Filesystem();
-        $imageDir   = $this->container->get('kernel')->getRootDir().'/../web/';
+        $imageDir   = $this->container->getParameter('image_directory');
         $image      = $event->getImage();
-        $fileSystem->remove($imageDir.$image->getPath());
+        $fileSystem->remove($imageDir.$image->getFile());
 
 
         $cacheManager = $this->container->get('liip_imagine.cache.manager');
-        $cacheManager->remove($image->getPath());
+        $cacheManager->remove($image->getFile());
         $flash = $this->container->get('braincrafted_bootstrap.flash');
         $flash->alert('Image was successfully deleted.');
 
     }
 
     public function onImageCreateAction(ImageEvent $event) {
-        $image            = $event->getImage();
-        $data             = $event->getData();
+        $image = $event->getImage();
+        $file  = $image->getFile() ;
 
-        $imageDir = $this->container->get('kernel')->getRootDir().'/../web/';
-        $data['file']->move($imageDir.'images/', $image->getPath());
+        $imageSizeDetails = getimagesize($file->getPathname());
+        $imageResolution  = strval($imageSizeDetails[0]).' x '.strval($imageSizeDetails[1]);
+        $fileSize = $file->getSize();
+        $fileName = md5(uniqid()).'.'.$file->guessExtension();
+
+        $file->move($this->container->getParameter('image_directory'), $fileName);
+
+        $image->setFile($fileName);
+        $image->setResolution($imageResolution)
+              ->setCreated(new \DateTime())
+              ->setUpdated(new \DateTime())
+              ->setSize($fileSize);
+
         $flash = $this->container->get('braincrafted_bootstrap.flash');
         $flash->success('Image sucessfully uploaded!');
     }
