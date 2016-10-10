@@ -106,3 +106,5 @@ braincrafted_bootstrap:
         variables_file: ~
         bootstrap_output: "%kernel.root_dir%/Resources/less/bootstrap.less"
         bootstrap_template: BraincraftedBootstrapBundle:Bootstrap:bootstrap.less.twig
+parameters:
+    image_directory: '%kernel.root_dir%/../web/images'

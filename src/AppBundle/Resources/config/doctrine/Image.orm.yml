@@ -8,7 +8,7 @@ AppBundle\Entity\Image:
             generator:
                 strategy: AUTO
     fields:
-        path:
+        file:
             type: string
             length: 100
         resolution:

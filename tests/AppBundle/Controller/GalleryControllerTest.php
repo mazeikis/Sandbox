@@ -15,10 +15,8 @@ Class GalleryControllerTest extends FixturesAwareWebTestCase
      */
     public function testIndexAction($key, $value, $httpStatusCode)
     {
-        $client = static::createClient();
-
-        $client->request('GET', '/gallery/', array($key => $value));
-        $response = $client->getResponse();
+        $this->client->request('GET', '/gallery/', array($key => $value));
+        $response = $this->client->getResponse();
 
         $this->assertEquals($httpStatusCode, $response->getStatusCode());
 
@@ -27,7 +25,8 @@ Class GalleryControllerTest extends FixturesAwareWebTestCase
     /**
      * @return array
      */
-    public function indexActionProvider(){
+    public function indexActionProvider()
+    {
         return [
             'No parameters assert 200'                  => [null, null, 200],
             'Negative page assert 404'                  => ['page', -1, 404],
@@ -43,12 +42,12 @@ Class GalleryControllerTest extends FixturesAwareWebTestCase
     /**
      * @dataProvider imageActionProvider
      */
-    public function testImageAction($uri, $username, $password, $httpStatusCode){
+    public function testImageAction($uri, $username, $password, $httpStatusCode)
+    {
 
-        $client = static::createClient();
-
-        $client->request('GET', $uri, array(), array(), array('PHP_AUTH_USER' => $username,
-            'PHP_AUTH_PW'   => $password));        $response = $client->getResponse();
+        $this->client->request('GET', $uri, array(), array(), array('PHP_AUTH_USER' => $username,
+            'PHP_AUTH_PW'   => $password));
+        $response = $this->client->getResponse();
 
         $this->assertEquals($httpStatusCode, $response->getStatusCode());
     }
@@ -68,12 +67,12 @@ Class GalleryControllerTest extends FixturesAwareWebTestCase
     /**
      * @dataProvider imageEditActionProvider
      */
-    public function testImageEditAction($uri, $username, $password, $httpStatusCode){
-        $client = static::createClient();
+    public function testImageEditAction($uri, $username, $password, $httpStatusCode)
+    {
 
-        $client->request('POST', $uri, array(), array(), array('PHP_AUTH_USER' => $username,
+        $this->client->request('POST', $uri, array(), array(), array('PHP_AUTH_USER' => $username,
             'PHP_AUTH_PW'   => $password));
-        $response = $client->getResponse();
+        $response = $this->client->getResponse();
 
         $this->assertEquals($httpStatusCode, $response->getStatusCode());
     }
@@ -95,11 +94,9 @@ Class GalleryControllerTest extends FixturesAwareWebTestCase
      */
     public function testImageVoteAction($uri, $voteValue, $username, $password,  $httpStatusCode)
     {
-        $client = static::createClient();
-
-        $client->request('POST', $uri, array('voteValue' => $voteValue), array(), array('PHP_AUTH_USER' => $username,
+        $this->client->request('POST', $uri, array('voteValue' => $voteValue), array(), array('PHP_AUTH_USER' => $username,
             'PHP_AUTH_PW'   => $password));
-        $response = $client->getResponse();
+        $response = $this->client->getResponse();
 
         $this->assertEquals($httpStatusCode, $response->getStatusCode());
     }
@@ -110,9 +107,10 @@ Class GalleryControllerTest extends FixturesAwareWebTestCase
     public function imageVoteActionProvider()
     {
         return [
-            'Correct id, authorized user 200' => ['/gallery/image/vote/1', 1, 'TestUsername4', 'TestPassword4', 302],
+            'Correct id, authorized user 200'    => ['/gallery/image/vote/1', 1, 'TestUsername4', 'TestPassword4', 302],
+            'Correct id, unauthorized user 403'  => ['/gallery/image/vote/1', 1, 'TestUsername1', 'TestPassword1', 403],
             'Bad format id, authorized user 404' => ['/gallery/image/vote/xoxo', 1, 'TestUsername1', 'TestPassword1', 404],
-            'Corect id, no user 302' => ['/gallery/image/vote/1', 1, null, null, 401],
+            'Corect id, no user 302'             => ['/gallery/image/vote/1', 1, null, null, 401],
         ];
     }
 
@@ -125,11 +123,9 @@ Class GalleryControllerTest extends FixturesAwareWebTestCase
      */
     public function testImageDeleteAction($uri, $username, $password,  $httpStatusCode)
     {
-        $client = static::createClient();
-
-        $client->request('POST', $uri, array(), array(), array('PHP_AUTH_USER' => $username,
+        $this->client->request('POST', $uri, array(), array(), array('PHP_AUTH_USER' => $username,
             'PHP_AUTH_PW'   => $password));
-        $response = $client->getResponse();
+        $response = $this->client->getResponse();
 
         $this->assertEquals($httpStatusCode, $response->getStatusCode());
     }
@@ -140,10 +136,9 @@ Class GalleryControllerTest extends FixturesAwareWebTestCase
     public function imageDeleteActionProvider()
     {
         return [
-            'Correct id, authorized user 302' => ['/gallery/image/delete/1', 'TestUsername1', 'TestPassword1', 302],
+            'Correct id, authorized user 302'    => ['/gallery/image/delete/1', 'TestUsername1', 'TestPassword1', 302],
             'Bad format id, authorized user 404' => ['/gallery/image/delete/xoxo', 'TestUsername1', 'TestPassword1', 404],
-            'Correct id, no user 302' => ['/gallery/image/delete/1', null, null, 401],
+            'Correct id, no user 302'            => ['/gallery/image/delete/1', null, null, 401],
         ];
     }
-
 }

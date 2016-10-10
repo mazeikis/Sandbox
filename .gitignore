@@ -7,6 +7,7 @@
 .htaccess
 /var/cache/*
 /app/config/parameters.yml
+/var/SymfonyRequirements.php
 /var/logs/*
 /vendor/
 /bin/

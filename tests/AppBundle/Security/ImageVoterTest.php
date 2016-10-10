@@ -9,8 +9,8 @@
 namespace Tests\AppBundle\Security;
 
 
+use AppBundle\Entity\Image;
 use AppBundle\Security\ImageVoter;
-use Doctrine\ORM\EntityManager;
 use Tests\AppBundle\FixturesAwareWebTestCase;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
@@ -20,17 +20,12 @@ use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
  */
 class ImageVoterTest extends FixturesAwareWebTestCase
 {
-    /**
-     * @var EntityManager
-     */
-    private $em;
 
     /**
      * @dataProvider testSupportsProvider
      */
     public function testSupports($attribute)
     {
-        $this->em = static::$kernel->getContainer()->get('doctrine')->getManager();
         $image = $this->em->getRepository('AppBundle:Image')->findOneBy(array('id' => 1));
         $voter = new ImageVoter();
         $this->assertTrue($voter->supports($attribute, $image));
@@ -54,14 +49,28 @@ class ImageVoterTest extends FixturesAwareWebTestCase
      */
     public function testVoteOnAttribute()
     {
-        $this->em = static::$kernel->getContainer()->get('doctrine')->getManager();
-        $image = $this->em->getRepository('AppBundle:Image')->findOneBy(array('id' => 1));
-        $user = $this->em->getRepository('AppBundle:User')->findOneBy(array('id' => 2));
+        $user = $this->em->getRepository('AppBundle:User')->findOneBy(array('id' => 1));
         $token = new UsernamePasswordToken($user, null, "main", $user->getRoles());
         $voter = new ImageVoter();
-        $result = $voter->voteOnAttribute('create', $image, $token);
 
+        $image = new Image();
+
+        //Authorized user creating image
+        $result = $voter->voteOnAttribute('create', $image, $token);
         $this->assertTrue($result);
+
+
+        //Image owner editing image
+        $image = $this->em->getRepository('AppBundle:Image')->findOneBy(array('id' => 1));
+        $result = $voter->voteOnAttribute('edit', $image, $token);
+        $this->assertTrue($result);
+
+        //Unauthorized user editing image
+        $user = $this->em->getRepository('AppBundle:User')->findOneBy(array('id' => 3));
+        $token = new UsernamePasswordToken($user, null, "main", $user->getRoles());
+
+        $result = $voter->voteOnAttribute('edit', $image, $token);
+        $this->assertFalse($result);
 
     }
 }
