@@ -3,23 +3,37 @@
 namespace Tests\AppBundle\Controller;
 
 use Tests\AppBundle\FixturesAwareWebTestCase;
-
+use AppBundle\DataFixtures\ORM\LoadUserData;
+use Doctrine\Common\DataFixtures\Loader;
+use Doctrine\Common\DataFixtures\Purger\ORMPurger;
+use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 /**
  * Class UserControllerTest
  * @package Tests\AppBundle\Controller
  */
 Class UserControllerTest extends FixturesAwareWebTestCase
 {
+    public function setUp()
+    {
+        $loader   = new Loader();
+        $purger   = new ORMPurger();
+        $executor = new ORMExecutor($this->em, $purger);
+
+        $testData = new LoadUserData();
+        $testData->setContainer($this->container);
+        $loader->addFixture($testData);
+
+        $executor->execute($loader->getFixtures());
+    }
+
     /**
      * @dataProvider testIndexActionProvider
      */
     public function testIndexAction($uri, $httpStatusCode, $username, $password)
     {
-        $client = static::createClient();
-
-        $client->request('GET', $uri, array(), array(), array('PHP_AUTH_USER' => $username,
+        $this->client->request('GET', $uri, array(), array(), array('PHP_AUTH_USER' => $username,
             'PHP_AUTH_PW'   => $password));
-        $response = $client->getResponse();
+        $response = $this->client->getResponse();
         $this->assertEquals($httpStatusCode, $response->getStatusCode());
     }
 
@@ -41,10 +55,8 @@ Class UserControllerTest extends FixturesAwareWebTestCase
      */
     public function testVerifyUserAction($httpStatusCode, $confirmationToken)
     {
-        $client = static::createClient();
-
-        $client->request('GET', '/verify/'.$confirmationToken);
-        $response = $client->getResponse();
+        $this->client->request('GET', '/verify/'.$confirmationToken);
+        $response = $this->client->getResponse();
         $this->assertEquals($httpStatusCode, $response->getStatusCode());
     }
 
@@ -65,10 +77,8 @@ Class UserControllerTest extends FixturesAwareWebTestCase
      */
     public function testRegistrationAction($method, $uri, $httpStatusCode)
     {
-        $client = static::createClient();
-
-        $client->request($method, $uri);
-        $response = $client->getResponse();
+        $this->client->request($method, $uri);
+        $response = $this->client->getResponse();
 
         $this->assertEquals($httpStatusCode, $response->getStatusCode());
 

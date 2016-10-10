@@ -9,34 +9,37 @@
 namespace Tests\AppBundle\Controller;
 
 
-use Tests\AppBundle\FixturesAwareWebTestCase;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class DefaultControllerTest extends FixturesAwareWebTestCase
+class DefaultControllerTest extends WebTestCase
 {
+    protected $client;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->client = static::createClient();
+    }
+
     public function testIndexAction()
     {
-        $client = static::createClient();
 
-        $client->request('GET', '/');
-        $response = $client->getResponse();
+        $this->client->request('GET', '/');
+        $response = $this->client->getResponse();
 
         $this->assertEquals(200, $response->getStatusCode());
     }
     public function testAboutAction()
     {
-        $client = static::createClient();
-
-        $client->request('GET', '/about/');
-        $response = $client->getResponse();
+        $this->client->request('GET', '/about/');
+        $response = $this->client->getResponse();
 
         $this->assertEquals(200, $response->getStatusCode());
     }
     public function testApiDemoAction()
     {
-        $client = static::createClient();
-
-        $client->request('GET', '/rest/');
-        $response = $client->getResponse();
+        $this->client->request('GET', '/rest/');
+        $response = $this->client->getResponse();
 
         $this->assertEquals(200, $response->getStatusCode());
     }

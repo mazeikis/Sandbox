@@ -15,10 +15,9 @@ Class ApiControllerTest extends FixturesAwareWebTestCase
      */
     public function testGalleryAction($key, $value, $httpStatusCode = 400)
     {
-        $client = static::createClient();
 
-        $client->request('GET', '/api/gallery/', array($key => $value));
-        $response = $client->getResponse();
+        $this->client->request('GET', '/api/gallery/', array($key => $value));
+        $response = $this->client->getResponse();
 
         $this->assertEquals($httpStatusCode, $response->getStatusCode());
         $this->assertTrue($response->headers->contains(
@@ -52,11 +51,9 @@ Class ApiControllerTest extends FixturesAwareWebTestCase
      */
     public function testImageAction($uri, $httpStatuCode)
     {
-        $client = static::createClient();
-
         //Correct and existing image id
-        $client->request('GET', $uri);
-        $response = $client->getResponse();
+        $this->client->request('GET', $uri);
+        $response = $this->client->getResponse();
         $this->assertEquals($httpStatuCode, $response->getStatusCode());
         $this->assertTrue($response->headers->contains(
             'Content-Type',
@@ -84,10 +81,8 @@ Class ApiControllerTest extends FixturesAwareWebTestCase
      */
     public function testImageDeleteAction($uri, $tokenValue, $httpStatusCode)
     {
-        $client     = static::createClient();
-
-        $client->request('DELETE', $uri, array(), array(), array('HTTP_X-Token' => $tokenValue));
-        $response = $client->getResponse();
+        $this->client->request('DELETE', $uri, array(), array(), array('HTTP_X-Token' => $tokenValue));
+        $response = $this->client->getResponse();
         $this->assertEquals($httpStatusCode, $response->getStatusCode());
         $this->assertTrue($response->headers->contains(
             'Content-Type',
@@ -116,16 +111,14 @@ Class ApiControllerTest extends FixturesAwareWebTestCase
      */
     public function testImageVoteAction($id, $voteValue, $token, $httpStatusCode)
     {
-        $client = static::createClient();
-
-        $client->request('POST',
+        $this->client->request('POST',
                          '/api/image/vote/',
                          array('id' => $id, 'voteValue' => $voteValue),
                          array(),
                          array('HTTP_X-Token' => $token)
         );
 
-        $response = $client->getResponse();
+        $response = $this->client->getResponse();
         $this->assertEquals($httpStatusCode, $response->getStatusCode());
         $this->assertTrue($response->headers->contains(
             'Content-Type',
